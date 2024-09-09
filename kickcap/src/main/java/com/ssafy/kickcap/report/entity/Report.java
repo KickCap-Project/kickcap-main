@@ -2,7 +2,7 @@ package com.ssafy.kickcap.report.entity;
 
 import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.user.entity.Police;
-import com.ssafy.kickcap.user.entity.User;
+import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.violationtype.entity.ViolationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -51,7 +51,7 @@ public class Report extends BaseEntity {
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accused_idx", nullable = false)
-    private User user;
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "police_idx", nullable = false)

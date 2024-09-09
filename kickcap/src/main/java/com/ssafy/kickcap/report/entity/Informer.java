@@ -1,7 +1,7 @@
 package com.ssafy.kickcap.report.entity;
 
 import com.ssafy.kickcap.common.BaseEntity;
-import com.ssafy.kickcap.user.entity.User;
+import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,5 +30,5 @@ public class Informer extends BaseEntity {
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "informer_idx", nullable = false)
-    private User user;
+    private Member member;
 }

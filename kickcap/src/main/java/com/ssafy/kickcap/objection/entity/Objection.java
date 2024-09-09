@@ -1,7 +1,7 @@
 package com.ssafy.kickcap.objection.entity;
 
 import com.ssafy.kickcap.bill.entity.Bill;
-import com.ssafy.kickcap.user.entity.User;
+import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,8 +40,8 @@ public class Objection {
     private Bill bill;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx", nullable = false)
-    private User user;
+    @JoinColumn(name = "member_idx", nullable = false)
+    private Member member;
 
     @OneToOne(mappedBy = "objection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Answer answer;

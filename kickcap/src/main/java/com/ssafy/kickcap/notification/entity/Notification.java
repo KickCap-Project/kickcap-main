@@ -1,13 +1,10 @@
 package com.ssafy.kickcap.notification.entity;
-import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.common.BaseEntity;
-import com.ssafy.kickcap.user.entity.User;
+import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,8 +18,8 @@ public class Notification extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx", nullable = false)
-    private User user;
+    @JoinColumn(name = "member_idx", nullable = false)
+    private Member member;
 
     @Column(name = "bill_idx")
     private Long billId;

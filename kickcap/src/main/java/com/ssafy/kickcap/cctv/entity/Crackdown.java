@@ -1,7 +1,7 @@
 package com.ssafy.kickcap.cctv.entity;
 
 import com.ssafy.kickcap.common.BaseEntity;
-import com.ssafy.kickcap.user.entity.User;
+import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.violationtype.entity.ViolationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,9 +35,9 @@ public class Crackdown extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accused_idx", nullable = false)
-    private User user;
+    private Member member;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type", nullable = false)
-    private ViolationType type;
+    private ViolationType violationType;
 }

@@ -3,7 +3,7 @@ package com.ssafy.kickcap.bill.entity;
 import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.user.entity.Police;
-import com.ssafy.kickcap.user.entity.User;
+import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,8 +45,8 @@ public class Bill extends BaseEntity {
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx", nullable = false)
-    private User user;
+    @JoinColumn(name = "member_idx", nullable = false)
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "police_idx", nullable = false)

@@ -24,6 +24,6 @@ public class DeviceInfo extends BaseEntity {
     private Police police;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx")
-    private User user;
+    @JoinColumn(name = "member_idx")
+    private Member member;
 }
