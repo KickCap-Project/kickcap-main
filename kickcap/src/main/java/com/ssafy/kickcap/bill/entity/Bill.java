@@ -44,11 +44,11 @@ public class Bill extends BaseEntity {
     private String field;
 
     // Relationships
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx", nullable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "police_idx", nullable = false)
     private Police police;
 
