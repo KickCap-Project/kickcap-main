@@ -3,18 +3,21 @@ import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "objection")
 public class Objection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "bill_idx", nullable = false)
@@ -30,15 +33,12 @@ public class Objection {
     @Column(nullable = false, length = 50)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "objection", cascade = CascadeType.ALL)
-    private List<Answer> answers;
+    @OneToOne(mappedBy = "objection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Answer answer;
 }

@@ -4,18 +4,22 @@ import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "bill")
 public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_idx", nullable = false)
@@ -47,11 +51,8 @@ public class Bill {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Objection> objections;
-
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
-    private List<Notification> notifications;
 
     // Enum for Paid Status
     public enum PaidStatus {

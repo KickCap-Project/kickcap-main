@@ -2,17 +2,21 @@ package com.ssafy.kickcap.notification.entity;
 import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "notification")
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_idx", nullable = false)
@@ -21,7 +25,7 @@ public class Notification {
     @Column(nullable = true)
     private Long billIdx;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(nullable = false)
