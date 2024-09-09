@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:17
 
 # tzdata 패키지 설치 및 타임존 설정
 RUN apt-get update && apt-get install -y tzdata && \
