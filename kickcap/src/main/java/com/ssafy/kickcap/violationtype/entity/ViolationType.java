@@ -23,7 +23,7 @@ public class ViolationType extends BaseEntity {
     @Column(nullable = false)
     private int fine;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String name;
 
     @Column(nullable = false)
