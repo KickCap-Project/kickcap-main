@@ -5,7 +5,9 @@ import { basicTheme } from './styles/theme';
 import GlobalStyle from './styles/global-styles';
 import Button from './components/Common/Button';
 import { ReactComponent as test } from './asset/img/svg/noPark.svg';
+
 import SplashPage from './pages/SplashPage';
+import MainPage from './pages/MainPage';
 
 const s = {
   Background: styled.section`
@@ -51,7 +53,7 @@ function App() {
       <GlobalStyle />
       <s.Background />
       <s.Container>
-        <SplashPage />
+        <MainPage />
       </s.Container>
     </ThemeProvider>
   );
