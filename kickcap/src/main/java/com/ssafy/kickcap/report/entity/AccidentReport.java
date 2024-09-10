@@ -26,10 +26,10 @@ public class AccidentReport extends BaseEntity {
     private String address;
 
     @Column(name = "lat",nullable = false)
-    private String latitude;
+    private float latitude;
 
     @Column(name = "long",nullable = false)
-    private String longitude;
+    private float longitude;
 
     @Column(name = "report_time", nullable = false)
     private LocalDateTime reportTime;

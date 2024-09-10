@@ -30,10 +30,10 @@ public class Report extends BaseEntity {
     private String address;
 
     @Column(name = "lat",nullable = false)
-    private String latitude;
+    private float latitude;
 
     @Column(name = "long",nullable = false)
-    private String longitude;
+    private float longitude;
 
     @Column(name = "kickboard_number", nullable = false)
     private String kickboardNumber;

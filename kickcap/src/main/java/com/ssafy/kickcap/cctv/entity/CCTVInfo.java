@@ -28,10 +28,10 @@ public class CCTVInfo extends BaseEntity {
     private String location;
 
     @Column(name = "lat",nullable = false)
-    private String latitude;
+    private float latitude;
 
     @Column(name = "long",nullable = false)
-    private String longitude;
+    private float longitude;
 
     // Relationships
     @OneToMany(mappedBy = "cctvInfo")
