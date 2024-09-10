@@ -30,7 +30,7 @@ public class CCTVInfo extends BaseEntity {
     @Column(name = "lat",nullable = false)
     private float latitude;
 
-    @Column(name = "long",nullable = false)
+    @Column(name = "lng",nullable = false)
     private float longitude;
 
     // Relationships

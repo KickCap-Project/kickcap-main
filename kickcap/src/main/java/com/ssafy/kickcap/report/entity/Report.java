@@ -32,7 +32,7 @@ public class Report extends BaseEntity {
     @Column(name = "lat",nullable = false)
     private float latitude;
 
-    @Column(name = "long",nullable = false)
+    @Column(name = "lng",nullable = false)
     private float longitude;
 
     @Column(name = "kickboard_number", nullable = false, length = 10)

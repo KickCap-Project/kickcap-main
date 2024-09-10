@@ -28,7 +28,7 @@ public class AccidentReport extends BaseEntity {
     @Column(name = "lat",nullable = false)
     private float latitude;
 
-    @Column(name = "long",nullable = false)
+    @Column(name = "lng",nullable = false)
     private float longitude;
 
     @Column(name = "report_time", nullable = false)
