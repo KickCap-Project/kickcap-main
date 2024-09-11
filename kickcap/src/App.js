@@ -7,6 +7,7 @@ import Button from './components/Common/Button';
 import { ReactComponent as test } from './asset/img/svg/noPark.svg';
 
 import SplashPage from './pages/SplashPage';
+import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
 
 const s = {
