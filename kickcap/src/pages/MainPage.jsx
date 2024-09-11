@@ -49,6 +49,16 @@ const s = {
     top: 82%;
     right: 5%;
     width: 15%;
+
+    @media (min-width: 768px) {
+      width: 10%; /* 태블릿 화면에서 아이콘 크기 조정 */
+      bottom: 10%; /* 아이콘이 Footer에 겹치지 않도록 위치 조정 */
+    }
+
+    @media (min-width: 1024px) {
+      width: 8%; /* 큰 화면에서는 더 작은 크기로 */
+      bottom: 15%; /* 더 넉넉한 공간 확보 */
+    }
   `,
 };
 
@@ -76,8 +86,6 @@ const MainPage = () => {
 
         <Carousel />
         <s.ChatbotButton src={ChatbotBtn} />
-        {/* <img src={ChatbotBtn} alt="chatbotbutton" style={{ width: '100px' }} />
-        </s.ChatbotButton> */}
       </s.MainArea>
 
       <Footer />
