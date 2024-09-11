@@ -33,7 +33,7 @@ public class Police extends BaseEntity {
     @Column(nullable = false, length = 30)
     private String password;
 
-    @Column(name = "refresh_token", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "refresh_token", columnDefinition = "TEXT")
     private String refreshToken;
 
     // Relationships
