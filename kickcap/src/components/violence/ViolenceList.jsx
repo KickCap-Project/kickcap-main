@@ -9,18 +9,25 @@ const s = {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    height: 100%;
     min-height: 100vh;
     background-color: ${(props) => props.theme.bgColor};
   `,
   Index: styled.div`
     display: flex;
-    justify-content: center;
-    width: 100%;
-    height: 10%;
+    justify-content: space-between;
+    border: 2px solid black;
+    height: 100%;
+  `,
+  IndexContent: styled.div`
+    border: 1px solid black;
+    width: fit-content;
+    display: flex;
+    margin-right: 10px;
   `,
   IndexColor: styled.div`
-    width: 10px;
-    height: 5px;
+    width: 25px;
+    height: 15px;
     background-color: ${(props) => props.color};
   `,
   IndexTag: styled(Text)``,
@@ -28,10 +35,10 @@ const s = {
 
 const IndexComponent = ({ color, title }) => {
   return (
-    <div>
+    <s.IndexContent>
       <s.IndexColor color={color} />
-      <s.IndexTag>{title}</s.IndexTag>
-    </div>
+      <s.IndexTag bold={'800'}>{title}</s.IndexTag>
+    </s.IndexContent>
   );
 };
 

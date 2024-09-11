@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Header from './../../components/Header';
 import Footer from './../../components/Footer';
 import ViolenceEmpty from './../../components/violence/ViolenceEmpty';
-import ViolenceList from '../../components/violence/ViolenceList';
+import ViolenceList from './../../components/violence/ViolenceList';
 
 const s = {
   Container: styled.div`
@@ -32,7 +32,14 @@ const s = {
 };
 
 const ViolenceListPage = () => {
-  const violenceList = [];
+  const violenceList = [
+    {
+      idx: 1,
+      addr: 'asdf',
+      type: '0',
+      date: '2024-09-02 오후 23:59:59',
+    },
+  ];
 
   return (
     <s.Container>
