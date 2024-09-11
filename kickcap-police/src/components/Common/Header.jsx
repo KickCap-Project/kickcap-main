@@ -7,10 +7,16 @@ import IconSvg from './IconSvg';
 const s = {
   Container: styled.header`
     height: 180px;
-    border: 1px solid red;
+    border: 3px solid red;
+  `,
+  fixedArea: styled.div`
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    background-color: ${(props) => props.theme.textBasic};
   `,
   topArea: styled.div`
-    height: 50px;
+    height: 100%;
     border: 1px solid blue;
     display: flex;
     justify-content: space-between;
@@ -25,6 +31,7 @@ const s = {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 50px;
   `,
   TitleArea: styled.div`
     width: 30%;
@@ -60,21 +67,23 @@ const s = {
 const Header = ({ title, subTitle }) => {
   return (
     <s.Container>
-      <s.topArea>
-        <s.TitleArea>
-          <IconSvg Ico={logo} width={'30px'} margin={'0 15px 0 0'} />
-          <s.Title>킥보드 자동화 단속 플랫폼</s.Title>
-        </s.TitleArea>
-        <s.NavArea>
-          <s.Nav>현황 지도</s.Nav>
-          <s.Nav>단속 리스트</s.Nav>
-          <s.Nav>국민 제보함</s.Nav>
-          <s.Nav>이의 제기</s.Nav>
-        </s.NavArea>
-      </s.topArea>
+      <s.fixedArea>
+        <s.topArea>
+          <s.TitleArea>
+            <IconSvg Ico={logo} width={'30px'} margin={'0 15px 0 0'} />
+            <s.Title>킥보드 자동화 단속 플랫폼</s.Title>
+          </s.TitleArea>
+          <s.NavArea>
+            <s.Nav>현황 지도</s.Nav>
+            <s.Nav>단속 리스트</s.Nav>
+            <s.Nav>국민 제보함</s.Nav>
+            <s.Nav>이의 제기</s.Nav>
+          </s.NavArea>
+        </s.topArea>
+      </s.fixedArea>
       <s.mainArea>
         <Text
-          children={'단속 리스트'}
+          children={title}
           textalian={'center'}
           margin={'0 auto 20px'}
           display={'block'}
@@ -83,7 +92,7 @@ const Header = ({ title, subTitle }) => {
           color={'textBasic2'}
         />
         <Text
-          children={'AI 모델이 탑재된 카메라에  단속된 내역입니다.'}
+          children={subTitle}
           textalian={'center'}
           margin={'0 auto'}
           display={'block'}
