@@ -63,20 +63,20 @@ const s = {
   `,
 };
 
-const CrackDownList = () => {
+const ReportList = () => {
   return (
     <s.Container>
       <s.TypeArea>
-        <s.TypeText>안전모 미착용</s.TypeText>
-        <s.TypeText>다인 승차</s.TypeText>
+        <s.TypeText>접수 내역</s.TypeText>
+        <s.TypeText>완료 내역</s.TypeText>
       </s.TypeArea>
       <s.TableArea>
         <s.Table>
           <s.Thead>
             <s.Tr>
-              <s.Th style={{ width: '10%' }}>단속 번호</s.Th>
-              <s.Th style={{ width: '40%' }}>단속 주소</s.Th>
-              <s.Th style={{ width: '15%' }}>단속 종류</s.Th>
+              <s.Th style={{ width: '10%' }}>문의 번호</s.Th>
+              <s.Th style={{ width: '40%' }}>제목</s.Th>
+              <s.Th style={{ width: '15%' }}>작성자</s.Th>
               <s.Th style={{ width: '10%' }}>날 짜</s.Th>
             </s.Tr>
           </s.Thead>
@@ -149,4 +149,4 @@ const CrackDownList = () => {
   );
 };
 
-export default CrackDownList;
+export default ReportList;

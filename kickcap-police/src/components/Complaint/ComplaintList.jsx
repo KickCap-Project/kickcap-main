@@ -63,20 +63,22 @@ const s = {
   `,
 };
 
-const CrackDownList = () => {
+const ComplaintList = () => {
   return (
     <s.Container>
       <s.TypeArea>
+        <s.TypeText>불법 주차</s.TypeText>
         <s.TypeText>안전모 미착용</s.TypeText>
         <s.TypeText>다인 승차</s.TypeText>
+        <s.TypeText>보도 주행</s.TypeText>
+        <s.TypeText>지정차로 위반</s.TypeText>
       </s.TypeArea>
       <s.TableArea>
         <s.Table>
           <s.Thead>
             <s.Tr>
-              <s.Th style={{ width: '10%' }}>단속 번호</s.Th>
-              <s.Th style={{ width: '40%' }}>단속 주소</s.Th>
-              <s.Th style={{ width: '15%' }}>단속 종류</s.Th>
+              <s.Th style={{ width: '10%' }}>신고 번호</s.Th>
+              <s.Th style={{ width: '55%' }}>단속 주소</s.Th>
               <s.Th style={{ width: '10%' }}>날 짜</s.Th>
             </s.Tr>
           </s.Thead>
@@ -84,61 +86,51 @@ const CrackDownList = () => {
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
             <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
               <s.Td>24.09.01</s.Td>
             </s.Tr>
           </s.Tbody>
@@ -149,4 +141,4 @@ const CrackDownList = () => {
   );
 };
 
-export default CrackDownList;
+export default ComplaintList;
