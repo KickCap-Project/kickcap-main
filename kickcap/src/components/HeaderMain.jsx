@@ -11,6 +11,7 @@ const s = {
   HeaderArea: styled.div`
     width: 100%;
     height: 7vh;
+    min-height: 50px;
     border-bottom: 1px solid #d3d3d3;
     background-color: ${(props) => props.theme.AreaColor};
     display: flex;

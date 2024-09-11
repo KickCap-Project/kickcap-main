@@ -6,6 +6,7 @@ const s = {
   FooterArea: styled.div`
     width: 100%;
     height: 10vh;
+    min-height: 65px;
     border-top: 1px solid #d3d3d3;
     display: flex;
     flex-direction: column;

@@ -10,31 +10,40 @@ import google from './../asset/img/login/google.png';
 
 const s = {
   Container: styled.div`
-    height: 100%;
+    height: 100vh;
     background-color: ${(props) => props.theme.bgColor};
   `,
   MainArea: styled.div`
-    width: 100%;
-    margin: 0 auto;
-    position: relative;
-    text-align: center;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    position: relative;
   `,
   CharacterLogoImg: styled.img`
-    margin-top: 40%;
     width: 80%;
+    max-width: 320px;
+    height: auto;
+    position: relative;
+    z-index: 1;
   `,
   LogoImg: styled.img`
     width: 64%;
-    margin-bottom: 10%;
+    max-width: 256px;
+    position: relative;
+    z-index: 2;
+    margin-top: -4vh;
+    margin-bottom: 1.8rem;
   `,
   ButtonArea: styled.div`
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 80%;
+    max-width: 333px;
   `,
 };
 

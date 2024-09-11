@@ -5,7 +5,7 @@ const s = {
   LoginBtn: styled.div`
     border: ${(props) => (props.bgcolor === '#FFFFFF' ? '1px solid #d3d3d3' : '')};
     height: 2rem;
-    width: 70%;
+    width: 85%;
     border-radius: 0.5rem;
     color: ${(props) => props.color};
     background-color: ${(props) => props.bgcolor};
