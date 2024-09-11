@@ -10,6 +10,7 @@ import MainBtn1 from './../asset/img/svg/mainBtn1.svg';
 import MainBtn2 from './../asset/img/svg/mainBtn2.svg';
 import MainBtn3 from './../asset/img/svg/mainBtn3.svg';
 import MainBtn4 from './../asset/img/svg/mainBtn4.svg';
+import ChatbotBtn from './../asset/img/svg/chat.svg';
 
 const s = {
   Container: styled.div`
@@ -43,6 +44,12 @@ const s = {
     display: flex;
     justify-content: space-between;
   `,
+  ChatbotButton: styled.img`
+    position: fixed;
+    top: 82%;
+    right: 5%;
+    width: 15%;
+  `,
 };
 
 const MainPage = () => {
@@ -68,6 +75,9 @@ const MainPage = () => {
         </s.SmallButtonWrapper>
 
         <Carousel />
+        <s.ChatbotButton src={ChatbotBtn} />
+        {/* <img src={ChatbotBtn} alt="chatbotbutton" style={{ width: '100px' }} />
+        </s.ChatbotButton> */}
       </s.MainArea>
 
       <Footer />
