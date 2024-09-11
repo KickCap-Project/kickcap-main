@@ -27,16 +27,16 @@ public class Police extends BaseEntity {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Column(nullable = false, length = 30)
-    private String email;
+    @Column(name = "police_id", nullable = false, length = 30)
+    private String policeId;
 
     @Column(nullable = false, length = 30)
     private String password;
 
-    @Column(name = "refresh_token", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "refresh_token", columnDefinition = "TEXT" )
     private String refreshToken;
 
-    // Relationships
+    // Relationships.
     @OneToMany(mappedBy = "police", cascade = CascadeType.ALL)
     private List<DeviceInfo> deviceInfos = new ArrayList<>();
 
