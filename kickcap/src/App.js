@@ -10,6 +10,8 @@ import SplashPage from './pages/SplashPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
 
+import ViolenceListPage from './pages/violence/ViolenceListPage';
+
 const s = {
   Background: styled.section`
     width: 100vw;
@@ -54,7 +56,7 @@ function App() {
       <GlobalStyle />
       <s.Background />
       <s.Container>
-        <MainPage />
+        <ViolenceListPage />
       </s.Container>
     </ThemeProvider>
   );
