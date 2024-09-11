@@ -6,7 +6,7 @@ const s = {
     width: ${(props) => (props.type === 'big' ? '100%' : '49%')};
     height: ${(props) => (props.type === 'big' ? '5rem' : '6rem')};
     border: 1px solid #d3d3d3;
-    margin-top: 2%;
+    margin-top: ${(props) => (props.type === 'big' ? '2%' : '4%')};
     border-radius: 1rem;
     position: relative;
     background-color: ${(props) => props.theme.AreaColor};
@@ -14,7 +14,7 @@ const s = {
   `,
   Title: styled.div`
     font-size: ${(props) => (props.type === 'big' ? '1.5rem' : '1.25rem')};
-    font-weight: 800;
+    font-weight: 900;
     position: absolute;
     top: 10%;
     right: 5%;
@@ -22,9 +22,9 @@ const s = {
   `,
   Description: styled.div`
     font-size: ${(props) => (props.type === 'big' ? '0.75rem' : '0.65rem')};
-    font-weight: 800;
+    font-weight: 900;
     position: absolute;
-    top: ${(props) => (props.type === 'big' ? '45%' : '35%')};
+    top: ${(props) => (props.type === 'big' ? '50%' : '40%')};
     right: 5%;
     letter-spacing: -0.075rem;
   `,

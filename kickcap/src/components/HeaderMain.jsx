@@ -10,7 +10,7 @@ const notification = false;
 const s = {
   HeaderArea: styled.div`
     width: 100%;
-    height: 7%;
+    height: 7vh;
     border-bottom: 1px solid #d3d3d3;
     background-color: ${(props) => props.theme.AreaColor};
     display: flex;
@@ -20,16 +20,24 @@ const s = {
   `,
   Logo: styled.img`
     position: absolute;
-    height: 75%;
-    left: 1rem;
+    height: 70%;
+    left: 5%;
+  `,
+  ButtonArea: styled.div`
+    position: absolute;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    width: 50%;
+    height: 100%;
+    right: 5%;
   `,
   ButtonNotification: styled.img`
-    position: absolute;
-    right: 3rem;
+    height: 60%;
+    margin-right: 5%;
   `,
   ButtonSetting: styled.img`
-    position: absolute;
-    right: 1rem;
+    height: 60%;
   `,
 };
 
@@ -37,12 +45,14 @@ const Header = () => {
   return (
     <s.HeaderArea>
       <s.Logo src={LogoSvg} />
-      {notification ? (
-        <s.ButtonNotification src={NotificationOnSvg} />
-      ) : (
-        <s.ButtonNotification src={NotificationOffSvg} />
-      )}
-      <s.ButtonSetting src={SettingSvg} />
+      <s.ButtonArea>
+        {notification ? (
+          <s.ButtonNotification src={NotificationOnSvg} />
+        ) : (
+          <s.ButtonNotification src={NotificationOffSvg} />
+        )}
+        <s.ButtonSetting src={SettingSvg} />
+      </s.ButtonArea>
     </s.HeaderArea>
   );
 };

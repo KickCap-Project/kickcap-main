@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import Text from '../components/Common/Text';
 
-import HeaderMain from '../components/HeaderMain';
-import MainButton from '../components/MainButton';
+import HeaderMain from './../components/HeaderMain';
+import MainButton from './../components/MainButton';
+import Carousel from './../components/Carousel';
 import Footer from './../components/Footer';
 
 import MainBtn1 from './../asset/img/svg/mainBtn1.svg';
@@ -17,7 +17,6 @@ const s = {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    height: 100%;
     min-height: 100vh;
     background-color: ${(props) => props.theme.bgColor};
   `,
@@ -26,13 +25,13 @@ const s = {
     justify-content: flex-end;
     align-items: end;
     width: 90%;
-    margin-top: 1.5rem;
+    margin-top: 7%;
   `,
   UserInfoText: styled.div`
-    font-size: ${(props) => (props.type === 'demerit' ? '1.5rem' : '1.2rem')};
-    font-weight: 800;
+    font-size: ${(props) => (props.type === 'demerit' ? '1.25rem' : '1rem')};
+    font-weight: 900;
     letter-spacing: ${(props) => (props.type === 'demerit' ? '-0.15rem' : '-0.12rem')};
-    margin-right: ${(props) => (props.type === 'demerit' ? '' : '0.85rem')};
+    margin-right: ${(props) => (props.type === 'demerit' ? '' : '0.4rem')};
   `,
   MainArea: styled.div`
     flex: 1;
@@ -55,12 +54,8 @@ const MainPage = () => {
       <HeaderMain />
 
       <s.UserInfoArea>
-        <s.UserInfoText type="name" size={'1.2rem'} bold={'800'}>
-          {username}님 벌점 :
-        </s.UserInfoText>
-        <s.UserInfoText type="demerit" size={'1.5rem'} bold={'800'}>
-          {demerit} 점
-        </s.UserInfoText>
+        <s.UserInfoText type="name">{username}님 벌점 :</s.UserInfoText>
+        <s.UserInfoText type="demerit">{demerit} 점</s.UserInfoText>
       </s.UserInfoArea>
 
       <s.MainArea>
@@ -71,6 +66,8 @@ const MainPage = () => {
           <MainButton type="small" title="제보하기" description="잡아주세요!" imgSrc={MainBtn3} />
           <MainButton type="small" title="이의 내역" description="검토해주세요!" imgSrc={MainBtn4} />
         </s.SmallButtonWrapper>
+
+        <Carousel />
       </s.MainArea>
 
       <Footer />

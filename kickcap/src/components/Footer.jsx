@@ -5,11 +5,11 @@ import Text from './Common/Text';
 const s = {
   FooterArea: styled.div`
     width: 100%;
+    height: 10vh;
     border-top: 1px solid #d3d3d3;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     text-align: center;
     background-color: ${(props) => props.theme.AreaColor};
   `,
