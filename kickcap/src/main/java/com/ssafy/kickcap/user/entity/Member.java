@@ -36,9 +36,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String phone;
 
-    @Column(name = "refresh_token", columnDefinition = "TEXT")
-    private String refreshToken;
-
     @Column(nullable = false)
     private int demerit;
 

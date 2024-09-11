@@ -30,11 +30,8 @@ public class Police extends BaseEntity {
     @Column(name = "police_id", nullable = false, length = 30)
     private String policeId;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 30, columnDefinition = "TEXT")
     private String password;
-
-    @Column(name = "refresh_token", columnDefinition = "TEXT" )
-    private String refreshToken;
 
     // Relationships.
     @OneToMany(mappedBy = "police", cascade = CascadeType.ALL)

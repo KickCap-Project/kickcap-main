@@ -19,6 +19,9 @@ public class DeviceInfo extends BaseEntity {
     @Column(name = "fcm_token", nullable = false, columnDefinition = "TEXT")
     private String fcmToken;
 
+    @Column(name = "refresh_token", columnDefinition = "TEXT")
+    private String refreshToken;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "police_idx")
     private Police police;
