@@ -40,8 +40,8 @@ public class Bill extends BaseEntity {
     @Column(name = "paid_status", nullable = false)
     private PaidStatus paidStatus;
 
-    @Column(nullable = false, length = 1)
-    private String field;
+    @Column(name = "is_obj", nullable = false, length = 1)
+    private String isObjection;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)

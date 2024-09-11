@@ -21,7 +21,7 @@ public class Informer extends BaseEntity {
     @Column(nullable = false)
     private Long accusedId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     private String kickboardNumber;
 
     @Column(name = "is_sent", nullable = false, length = 1)

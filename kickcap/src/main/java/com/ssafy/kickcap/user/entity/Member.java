@@ -27,16 +27,13 @@ public class Member extends BaseEntity {
     @Column(name = "idx")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String email;
 
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Column(nullable = false)
-    private String birth;
-
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String phone;
 
     @Column(name = "refresh_token", nullable = false, columnDefinition = "TEXT")
