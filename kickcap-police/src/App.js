@@ -1,11 +1,11 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 import styled, { ThemeProvider } from 'styled-components';
 import { basicTheme } from './styles/theme';
 import GlobalStyle from './styles/global-styles';
 import LoginPage from './pages/LoginPage';
 import CrackDownListPage from './pages/CrackDown/CrackDownListPage';
+import ReportListPage from './pages/Reported/ReportListPage';
+import ComplaintListPage from './pages/Complaint/ComplaintListPage';
 
 const s = {
   Container: styled.div`
@@ -23,7 +23,9 @@ function App() {
       <GlobalStyle />
       <s.Container>
         {/* <LoginPage /> */}
-        <CrackDownListPage />
+        {/* <CrackDownListPage /> */}
+        <ReportListPage />
+        {/* <ComplaintListPage /> */}
       </s.Container>
     </ThemeProvider>
   );
