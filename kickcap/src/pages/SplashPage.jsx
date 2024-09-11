@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import LodingLogo from '../asset/img/splashLogo.gif';
 import Text from './../components/Common/Text';
+
+import LoadingLogo from './../asset/img/splashLogo.gif';
+import Logo from './../asset/img/svg/Logo.svg';
 
 const s = {
   Container: styled.div`
@@ -12,15 +14,21 @@ const s = {
     width: fit-content;
     margin: 0 auto;
     position: relative;
-    bottom: 50%;
-    top: 50%;
-    transform: translate(0, -50%);
+    // bottom: 50%;
+    // top: 50%;
+    // transform: translate(0, -50%);
     text-align: center;
     display: flex;
     flex-direction: column;
+    align-items: center;
   `,
-  Img: styled.img`
-    width: 100%;
+  LoadingLogoImg: styled.img`
+    margin-top: 40%;
+    width: 80%;
+  `,
+  LogoImg: styled.img`
+    width: 64%;
+    margin-bottom: 10%;
   `,
 };
 
@@ -28,7 +36,9 @@ const SplashPage = () => {
   return (
     <s.Container>
       <s.MainArea>
-        <s.Img src={LodingLogo} />
+        <s.LoadingLogoImg src={LoadingLogo} />
+        <s.LogoImg src={Logo} />
+
         <Text size={'20px'} bold={'800'}>
           로딩 중 입니다.
         </Text>
