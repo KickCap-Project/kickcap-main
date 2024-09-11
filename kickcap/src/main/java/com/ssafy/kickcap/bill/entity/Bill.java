@@ -1,14 +1,16 @@
 package com.ssafy.kickcap.bill.entity;
-import com.ssafy.kickcap.notification.entity.Notification;
+
+import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.user.entity.Police;
-import com.ssafy.kickcap.user.entity.User;
+import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,46 +18,40 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "bill")
-public class Bill {
+public class Bill extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idx")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_idx", nullable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "police_idx", nullable = false)
-    private Police police;
-
-    @Column(nullable = false)
-    private String reportType;
+    @Column(name = "report_idx", nullable = false)
+    private Long reportId;
 
     @Column(nullable = false)
     private int fine;
 
-    @Column(nullable = false)
+    @Column(name = "total_bill", nullable = false)
     private int totalBill;
 
     @Column(nullable = false)
     private LocalDateTime deadline;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "paid_status", nullable = false)
     private PaidStatus paidStatus;
 
-    @Column(nullable = false, length = 1)
-    private String field;
+    @Column(name = "is_obj", nullable = false, length = 1)
+    private String isObjection;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    // Relationships
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_idx", nullable = false)
+    private Member member;
 
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Objection> objections;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "police_idx", nullable = false)
+    private Police police;
 
-    // Enum for Paid Status
-    public enum PaidStatus {
-        UNPAID, PAID, CANCEL
-    }
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
+    private List<Objection> objections = new ArrayList<>();
 }

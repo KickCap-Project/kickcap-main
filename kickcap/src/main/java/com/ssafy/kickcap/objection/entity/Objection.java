@@ -1,11 +1,12 @@
 package com.ssafy.kickcap.objection.entity;
+
 import com.ssafy.kickcap.bill.entity.Bill;
-import com.ssafy.kickcap.user.entity.Police;
-import com.ssafy.kickcap.user.entity.User;
+import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -17,17 +18,10 @@ import java.time.LocalDateTime;
 public class Objection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idx")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "bill_idx", nullable = false)
-    private Bill bill;
-
-    @ManyToOne
-    @JoinColumn(name = "user_idx", nullable = false)
-    private User user;
-
-    @Column(nullable = false)
+    @Column(name = "police_idx", nullable = false)
     private Long policeIdx;
 
     @Column(nullable = false, length = 50)
@@ -36,8 +30,18 @@ public class Objection {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false)
+    @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // Relationships
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bill_idx", nullable = false)
+    private Bill bill;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_idx", nullable = false)
+    private Member member;
 
     @OneToOne(mappedBy = "objection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Answer answer;
