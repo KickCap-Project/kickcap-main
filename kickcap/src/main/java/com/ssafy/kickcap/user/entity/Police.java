@@ -21,13 +21,14 @@ import java.util.List;
 public class Police extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idx")
     private Long id;
 
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Column(nullable = false, length = 30)
-    private String email;
+    @Column(name = "police_id", nullable = false, length = 30)
+    private String policeId;
 
     @Column(nullable = false, length = 30)
     private String password;
