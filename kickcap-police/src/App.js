@@ -12,7 +12,7 @@ const s = {
     height: 100vh;
     position: relative;
     margin: 0 auto;
-    border: 3px solid black;
+    /* border: 3px solid black; */
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
   `,
@@ -24,8 +24,8 @@ function App() {
       <s.Container>
         {/* <LoginPage /> */}
         {/* <CrackDownListPage /> */}
-        <ReportListPage />
-        {/* <ComplaintListPage /> */}
+        {/* <ReportListPage /> */}
+        <ComplaintListPage />
       </s.Container>
     </ThemeProvider>
   );
