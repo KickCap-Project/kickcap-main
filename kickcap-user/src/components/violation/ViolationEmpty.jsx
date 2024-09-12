@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Text from '../Common/Text';
-
 import watermark from './../../asset/img/svg/waterMark.svg';
 
 const s = {
@@ -21,21 +19,19 @@ const s = {
     z-index: 1;
   `,
   Text: styled.div`
+    font-size: 20px;
+    font-weight: 800;
     min-width: 250px;
   `,
 };
 
-const ViolenceEmpty = () => {
+const ViolationEmpty = () => {
   return (
     <s.Container>
       <s.WatermarkImg src={watermark} />
-      <Text>
-        <s.Text size={'20px'} bold={'800'}>
-          단속 내역이 존재하지 않습니다.
-        </s.Text>
-      </Text>
+      <s.Text>단속 내역이 존재하지 않습니다.</s.Text>
     </s.Container>
   );
 };
 
-export default ViolenceEmpty;
+export default ViolationEmpty;
