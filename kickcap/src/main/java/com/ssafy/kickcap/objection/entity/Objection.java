@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -32,8 +33,8 @@ public class Objection extends BaseEntity {
     private String content;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime updatedAt;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)

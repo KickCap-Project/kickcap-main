@@ -12,7 +12,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,10 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false)
     private int demerit;
+
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime updatedAt;
 
     // Relationships
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
