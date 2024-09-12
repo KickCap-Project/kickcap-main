@@ -9,12 +9,10 @@ const s = {
   Container: styled.div`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    border: 3px solid orange;
+
     overflow-y: auto;
   `,
-  mainArea: styled.main`
-    border: 1px solid red;
-  `,
+  mainArea: styled.main``,
   searchArea: styled.div`
     width: 430px;
     height: 50px;
