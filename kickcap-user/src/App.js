@@ -10,6 +10,10 @@ import SplashPage from './pages/SplashPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
 
+import ViolationListPage from './pages/violation/ViolationListPage';
+import ViolationDetailPage from './pages/violation/ViolationDetailPage';
+import SuccessPage from './pages/SuccessPage';
+
 const s = {
   Background: styled.section`
     width: 100vw;
@@ -54,7 +58,7 @@ function App() {
       <GlobalStyle />
       <s.Background />
       <s.Container>
-        <MainPage />
+        <SuccessPage message="report" />
       </s.Container>
     </ThemeProvider>
   );
