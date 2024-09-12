@@ -45,6 +45,7 @@ const s = {
     color: ${(props) => props.theme.textBasic2};
     display: flex;
     align-items: center;
+    cursor: default;
   `,
   NavArea: styled.div`
     width: 60%;
