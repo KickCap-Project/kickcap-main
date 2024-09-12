@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import Text from './Text';
 import { ReactComponent as logo } from '../../asset/svg/logo.svg';
 import IconSvg from './IconSvg';
+import { navActions, selectNav } from '../../store/nav';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 
 const s = {
   Container: styled.header`
-    height: 180px;
-    border: 3px solid red;
+    height: 150px;
   `,
   fixedArea: styled.div`
     width: 100%;
@@ -17,15 +18,13 @@ const s = {
   `,
   topArea: styled.div`
     height: 100%;
-    border: 1px solid blue;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 15px 0 15px;
   `,
   mainArea: styled.div`
-    height: 130px;
-    border: 1px solid green;
+    height: 150px;
     background-color: ${(props) => props.theme.AreaColor};
     display: flex;
     flex-direction: column;
@@ -35,7 +34,6 @@ const s = {
   `,
   TitleArea: styled.div`
     width: 30%;
-    border: 1px solid black;
     display: flex;
     justify-content: start;
     align-content: center;
@@ -49,24 +47,34 @@ const s = {
   `,
   NavArea: styled.div`
     width: 60%;
-    border: 1px solid gray;
     display: flex;
     justify-content: space-around;
     align-content: center;
   `,
   Nav: styled.div`
     width: 120px;
+    height: 40px;
+    line-height: 40px;
     text-align: center;
     size: 15px;
     font-weight: 700;
+    border-bottom: 3px solid ${(props) => props.color || props.theme.textBasic};
     cursor: pointer;
-    border: 1px solid black;
   `,
 };
 
 const Header = ({ title, subTitle }) => {
+  const type = useAppSelector(selectNav);
+  const dispatch = useAppDispatch();
+  const handleClickIcon = (mode) => {
+    dispatch(navActions.change(mode));
+  };
+
+  const getColor = (mode) => {
+    return type === mode ? '#0054A6' : undefined;
+  };
   return (
-    <s.Container>
+    <>
       <s.fixedArea>
         <s.topArea>
           <s.TitleArea>
@@ -74,34 +82,44 @@ const Header = ({ title, subTitle }) => {
             <s.Title>킥보드 자동화 단속 플랫폼</s.Title>
           </s.TitleArea>
           <s.NavArea>
-            <s.Nav>현황 지도</s.Nav>
-            <s.Nav>단속 리스트</s.Nav>
-            <s.Nav>국민 제보함</s.Nav>
-            <s.Nav>이의 제기</s.Nav>
+            <s.Nav onClick={() => handleClickIcon('board')} color={getColor('board')}>
+              현황 지도
+            </s.Nav>
+            <s.Nav onClick={() => handleClickIcon('crack')} color={getColor('crack')}>
+              단속 리스트
+            </s.Nav>
+            <s.Nav onClick={() => handleClickIcon('report')} color={getColor('report')}>
+              국민 신고함
+            </s.Nav>
+            <s.Nav onClick={() => handleClickIcon('complaint')} color={getColor('complaint')}>
+              이의 제기
+            </s.Nav>
           </s.NavArea>
         </s.topArea>
       </s.fixedArea>
-      <s.mainArea>
-        <Text
-          children={title}
-          textalian={'center'}
-          margin={'0 auto 20px'}
-          display={'block'}
-          size={'50px'}
-          bold={'700'}
-          color={'textBasic2'}
-        />
-        <Text
-          children={subTitle}
-          textalian={'center'}
-          margin={'0 auto'}
-          display={'block'}
-          size={'15px'}
-          bold={'500'}
-          color={'textBasic2'}
-        />
-      </s.mainArea>
-    </s.Container>
+      <s.Container>
+        <s.mainArea>
+          <Text
+            children={title}
+            textalian={'center'}
+            margin={'0 auto 10px'}
+            display={'block'}
+            size={'50px'}
+            bold={'700'}
+            color={'textBasic2'}
+          />
+          <Text
+            children={subTitle}
+            textalian={'center'}
+            margin={'0 auto'}
+            display={'block'}
+            size={'15px'}
+            bold={'500'}
+            color={'textBasic2'}
+          />
+        </s.mainArea>
+      </s.Container>
+    </>
   );
 };
 
