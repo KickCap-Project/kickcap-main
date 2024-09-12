@@ -7,8 +7,8 @@ const s = {
     margin: 0 auto;
   `,
   TypeArea: styled.div`
-    width: 500px;
-    margin: 10px auto;
+    width: 80%;
+    margin: 20px auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
