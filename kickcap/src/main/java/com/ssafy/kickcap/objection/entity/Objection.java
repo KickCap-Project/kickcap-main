@@ -1,6 +1,7 @@
 package com.ssafy.kickcap.objection.entity;
 
 import com.ssafy.kickcap.bill.entity.Bill;
+import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "objection")
-public class Objection {
+public class Objection extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
