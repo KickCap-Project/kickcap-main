@@ -28,7 +28,7 @@ public class Notification extends BaseEntity {
     private String content;
 
     @Column(nullable = false, length = 1)
-    private boolean isRead;
+    private String isRead;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
