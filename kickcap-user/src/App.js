@@ -58,7 +58,7 @@ function App() {
       <GlobalStyle />
       <s.Background />
       <s.Container>
-        <SuccessPage message="report" />
+        <ViolationDetailPage />
       </s.Container>
     </ThemeProvider>
   );

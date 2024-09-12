@@ -66,6 +66,13 @@ const ViolationDetailPage = () => {
     isReq: 0,
   };
 
+  const objectionEventHandler = () => {
+    console.log(1234);
+  };
+  const paymentEventHandler = () => {
+    console.log(4321);
+  };
+
   return (
     <s.Container>
       <Header title={'나의 단속 내역'} />
@@ -74,10 +81,22 @@ const ViolationDetailPage = () => {
           <s.ImgWrapper></s.ImgWrapper>
           <ViolationDetail detail={detail} />
           <s.ButtonWrapper>
-            <Button width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
-              이의 제기
-            </Button>
-            <Button width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
+            {detail.isReq === 0 ? (
+              <Button
+                width={'120px'}
+                height={'30px'}
+                size={'0.75rem'}
+                bold={'700'}
+                onClick={() => objectionEventHandler()}
+              >
+                이의 제기
+              </Button>
+            ) : (
+              <Button type={'sub'} width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
+                이의 제기
+              </Button>
+            )}
+            <Button width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'} onClick={() => paymentEventHandler()}>
               납부하기
             </Button>
           </s.ButtonWrapper>
