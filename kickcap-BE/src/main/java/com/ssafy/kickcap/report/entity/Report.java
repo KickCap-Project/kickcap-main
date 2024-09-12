@@ -1,15 +1,15 @@
 package com.ssafy.kickcap.report.entity;
 
 import com.ssafy.kickcap.common.BaseEntity;
-import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.entity.Member;
+import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.violationtype.entity.ViolationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -38,8 +38,8 @@ public class Report extends BaseEntity {
     @Column(name = "kickboard_number", nullable = false, length = 10)
     private String kickboardNumber;
 
-    @Column(name = "report_time", nullable = false)
-    private LocalDateTime reportTime;
+    @Column(name = "report_time", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime reportTime;
 
     @Column(columnDefinition = "TEXT")
     private String description;

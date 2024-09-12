@@ -1,14 +1,14 @@
 package com.ssafy.kickcap.report.entity;
 
 import com.ssafy.kickcap.common.BaseEntity;
-import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.entity.Member;
+import com.ssafy.kickcap.user.entity.Police;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -31,8 +31,8 @@ public class AccidentReport extends BaseEntity {
     @Column(name = "lng",nullable = false)
     private float longitude;
 
-    @Column(name = "report_time", nullable = false)
-    private LocalDateTime reportTime;
+    @Column(name = "report_time", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime reportTime;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)

@@ -2,14 +2,14 @@ package com.ssafy.kickcap.bill.entity;
 
 import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.objection.entity.Objection;
-import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.entity.Member;
+import com.ssafy.kickcap.user.entity.Police;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +33,8 @@ public class Bill extends BaseEntity {
     @Column(name = "total_bill", nullable = false)
     private int totalBill;
 
-    @Column(nullable = false)
-    private LocalDateTime deadline;
+    @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime deadline;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "paid_status", nullable = false)

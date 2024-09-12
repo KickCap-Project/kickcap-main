@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -25,8 +25,8 @@ public class Crackdown extends BaseEntity {
     @Column(name = "image_src", nullable = false)
     private String imageSrc;
 
-    @Column(name = "crackdown_time", nullable = false)
-    private LocalDateTime crackdownTime;
+    @Column(name = "crackdown_time", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime crackdownTime;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
