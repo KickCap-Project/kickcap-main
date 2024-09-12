@@ -15,6 +15,7 @@ const s = {
     height: 50px;
     position: fixed;
     background-color: ${(props) => props.theme.textBasic};
+    z-index: 100;
   `,
   topArea: styled.div`
     height: 100%;
