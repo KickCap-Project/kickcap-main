@@ -1,6 +1,7 @@
 package com.ssafy.kickcap.objection.entity;
 
 import com.ssafy.kickcap.bill.entity.Bill;
+import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,13 +10,14 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "objection")
-public class Objection {
+public class Objection extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
@@ -31,8 +33,8 @@ public class Objection {
     private String content;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime updatedAt;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
