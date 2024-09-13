@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import ComplaintDetail from '../../components/Complaint/ComplaintDetail';
+import ComplaintInfoModal from '../../components/Modal/ComplaintInfoModal';
+import ComplaintSendModal from '../../components/Modal/ComplaintSendModal';
 
 const s = {
   Container: styled.div`
@@ -22,6 +24,8 @@ const ComplaintDetailPage = () => {
       <s.mainArea>
         <ComplaintDetail />
       </s.mainArea>
+      <ComplaintInfoModal open={true} />
+      {/* <ComplaintSendModal open={true} /> */}
     </s.Container>
   );
 };

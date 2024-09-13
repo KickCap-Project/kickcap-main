@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import ReportDetail from '../../components/Reported/ReportDetail';
+import ReportParkModal from '../../components/Modal/ReportParkModal';
+import ReportInfoModal from '../../components/Modal/ReportInfoModal';
 
 const s = {
   Container: styled.div`
@@ -22,6 +24,8 @@ const ReportDetailPage = () => {
       <s.mainArea>
         <ReportDetail />
       </s.mainArea>
+      {/* <ReportParkModal open={true} /> */}
+      <ReportInfoModal open={true} />
     </s.Container>
   );
 };
