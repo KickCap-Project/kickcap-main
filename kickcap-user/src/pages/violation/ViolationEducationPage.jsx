@@ -19,11 +19,20 @@ const s = {
     width: 90%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     white-space: pre-line;
   `,
-  VideoArea: styled.div``,
-  TextArea: styled.div``,
+  VideoArea: styled.div`
+    margin-bottom: 30px;
+  `,
+  TextArea: styled.div`
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: -0.075rem;
+    text-align: center;
+    margin-bottom: 100px;
+  `,
 };
 
 const ViolationEducationPage = () => {
