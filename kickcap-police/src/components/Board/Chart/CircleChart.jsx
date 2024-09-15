@@ -1,0 +1,68 @@
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels'; // 추가된 플러그인
+import styled from 'styled-components';
+
+// 라이브러리 등록
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  ChartDataLabels, // 추가된 플러그인
+);
+
+const s = {
+  Container: styled.section`
+    width: 100%;
+    height: 80%;
+    display: flex;
+    border-radius: 10px;
+    justify-content: center;
+    margin: 0 auto;
+    background-color: ${(props) => props.theme.dark};
+  `,
+};
+
+const CircleChart = ({ labels, datas }) => {
+  const options = {
+    responsive: false,
+    plugins: {
+      legend: {
+        display: false, // legend 표시 여부
+      },
+      tooltip: {
+        enabled: true, // tooltip 표시 여부
+      },
+      datalabels: {
+        color: '#fff',
+        display: false,
+        anchor: 'end',
+        align: 'top',
+        formatter: (value) => value.toString(),
+        font: {
+          size: 12,
+        },
+      },
+    },
+  };
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        data: datas,
+        backgroundColor: ['#5EAC24', '#FFCB05', '#FF5023', '#00B6BD', '#1A6FB0'], // 예시 색상 배열
+        borderColor: '#000', // 차트 테두리 색상
+        borderWidth: 1, // 테두리 두께
+      },
+    ],
+  };
+
+  return (
+    <s.Container>
+      <Doughnut options={options} data={data} />
+    </s.Container>
+  );
+};
+
+export default CircleChart;
