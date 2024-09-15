@@ -9,7 +9,9 @@ export const basicTheme = {
   btnText: '#fff', // 버튼 글씨
   mainColor: '#0054A6', // 메인컬러
   subColor: '#FFCB05', // 보조컬러
+  positive: '#CCFF33', // 긍정 초록
   negative: '#FF6E65', // 빨강 및 부정
   WriteInput: '#fff',
   ReadInput: '#F5F7FA',
+  dark: '#0C1125',
 };
