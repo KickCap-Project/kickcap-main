@@ -9,6 +9,7 @@ import ComplaintListPage from './pages/Complaint/ComplaintListPage';
 import CrackDownDetailPage from './pages/CrackDown/CrackDownDetailPage';
 import ReportDetailPage from './pages/Reported/ReportDetailPage';
 import ComplaintDetailPage from './pages/Complaint/ComplaintDetailPage';
+import PoliceBoardPage from './pages/board/PoliceBoardPage';
 
 const s = {
   Container: styled.div`
@@ -31,7 +32,8 @@ function App() {
         {/* <ComplaintListPage /> */}
         {/* <CrackDownDetailPage /> */}
         {/* <ReportDetailPage /> */}
-        <ComplaintDetailPage />
+        {/* <ComplaintDetailPage /> */}
+        <PoliceBoardPage />
       </s.Container>
     </ThemeProvider>
   );
