@@ -6,6 +6,9 @@ import LoginPage from './pages/LoginPage';
 import CrackDownListPage from './pages/CrackDown/CrackDownListPage';
 import ReportListPage from './pages/Reported/ReportListPage';
 import ComplaintListPage from './pages/Complaint/ComplaintListPage';
+import CrackDownDetailPage from './pages/CrackDown/CrackDownDetailPage';
+import ReportDetailPage from './pages/Reported/ReportDetailPage';
+import ComplaintDetailPage from './pages/Complaint/ComplaintDetailPage';
 
 const s = {
   Container: styled.div`
@@ -25,7 +28,10 @@ function App() {
         {/* <LoginPage /> */}
         {/* <CrackDownListPage /> */}
         {/* <ReportListPage /> */}
-        <ComplaintListPage />
+        {/* <ComplaintListPage /> */}
+        {/* <CrackDownDetailPage /> */}
+        {/* <ReportDetailPage /> */}
+        <ComplaintDetailPage />
       </s.Container>
     </ThemeProvider>
   );
