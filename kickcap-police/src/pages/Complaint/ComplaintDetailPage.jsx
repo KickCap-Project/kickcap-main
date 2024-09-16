@@ -24,8 +24,6 @@ const ComplaintDetailPage = () => {
       <s.mainArea>
         <ComplaintDetail />
       </s.mainArea>
-      <ComplaintInfoModal open={true} />
-      {/* <ComplaintSendModal open={true} /> */}
     </s.Container>
   );
 };
