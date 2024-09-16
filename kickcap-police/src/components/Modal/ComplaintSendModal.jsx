@@ -41,7 +41,7 @@ const ComplaintSendModal = ({ open, toggleModal }) => {
     <ReactModal
       isOpen={open}
       ariaHideApp={false}
-      onRequestClose={toggleModal}
+      onRequestClose={() => toggleModal(false)}
       className="centerBigModal"
       overlayClassName="Overlay"
     >
@@ -75,7 +75,14 @@ const ComplaintSendModal = ({ open, toggleModal }) => {
           />
         </s.MapArea>
         <s.BtnArea>
-          <Button bold={'700'} children={'닫 기'} height={'40px'} width={'150px'} size={'20px'} />
+          <Button
+            bold={'700'}
+            children={'닫 기'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={() => toggleModal(false)}
+          />
           <Button bold={'700'} children={'답변 전송'} height={'40px'} width={'150px'} size={'20px'} />
         </s.BtnArea>
       </s.Container>

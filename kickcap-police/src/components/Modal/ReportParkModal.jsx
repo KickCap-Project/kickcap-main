@@ -40,7 +40,7 @@ const ReportParkModal = ({ open, toggleModal }) => {
     <ReactModal
       isOpen={open}
       ariaHideApp={false}
-      onRequestClose={toggleModal}
+      onRequestClose={() => toggleModal(false)}
       className="centerBigModal"
       overlayClassName="Overlay"
     >
@@ -57,7 +57,14 @@ const ReportParkModal = ({ open, toggleModal }) => {
         </s.Header>
         <s.MapArea />
         <s.BtnArea>
-          <Button bold={'700'} children={'닫 기'} height={'40px'} width={'150px'} size={'20px'} />
+          <Button
+            bold={'700'}
+            children={'닫 기'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={() => toggleModal(false)}
+          />
         </s.BtnArea>
       </s.Container>
     </ReactModal>
