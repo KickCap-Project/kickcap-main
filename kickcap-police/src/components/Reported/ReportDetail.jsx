@@ -5,6 +5,11 @@ import CrackInfoTable from '../Common/CrackInfoTable';
 import Button from '../Common/Button';
 import Text from '../Common/Text';
 import TextArea from './../Common/TextArea';
+import ReportInfoModal from '../Modal/ReportInfoModal';
+import ReportParkModal from './../Modal/ReportParkModal';
+import { useModalExitHook } from './../../lib/hook/useModalExitHook';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { modalActions, selectIsReportInfo, selectIsReportPark } from '../../store/modal';
 const s = {
   Container: styled.main`
     width: 90%;
@@ -67,6 +72,17 @@ const s = {
 };
 
 const ReportDetail = () => {
+  useModalExitHook();
+
+  const dispatch = useAppDispatch();
+  const isInfo = useAppSelector(selectIsReportInfo);
+  const isPark = useAppSelector(selectIsReportPark);
+  const handleOpenInfoModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsReportInfo(isFlag));
+  };
+  const handleOpenParkModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsReportPark(isFlag));
+  };
   return (
     <s.Container>
       <s.TableArea>
@@ -106,11 +122,27 @@ const ReportDetail = () => {
       </s.MainArea>
       <s.BtnArea>
         <Button bold={'700'} children={'이 전'} height={'40px'} width={'150px'} size={'20px'} />
-        <Button bold={'700'} children={'주차 확인'} height={'40px'} width={'150px'} size={'20px'} />
-        <Button bold={'700'} children={'단속자 정보'} height={'40px'} width={'150px'} size={'20px'} />
+        <Button
+          bold={'700'}
+          children={'주차 확인'}
+          height={'40px'}
+          width={'150px'}
+          size={'20px'}
+          onClick={() => handleOpenParkModal(true)}
+        />
+        <Button
+          bold={'700'}
+          children={'단속자 정보'}
+          height={'40px'}
+          width={'150px'}
+          size={'20px'}
+          onClick={() => handleOpenInfoModal(true)}
+        />
         <Button bold={'700'} children={'반 려'} height={'40px'} width={'150px'} size={'20px'} />
         <Button bold={'700'} children={'고지서 전송'} height={'40px'} width={'150px'} size={'20px'} />
       </s.BtnArea>
+      <ReportParkModal open={isPark} toggleModal={handleOpenParkModal} />
+      <ReportInfoModal open={isInfo} toggleModal={handleOpenInfoModal} />
     </s.Container>
   );
 };

@@ -6,6 +6,11 @@ import Button from '../Common/Button';
 import Text from '../Common/Text';
 import TextArea from '../Common/TextArea';
 import Input from '../Common/Input';
+import ComplaintInfoModal from '../Modal/ComplaintInfoModal';
+import ComplaintSendModal from './../Modal/ComplaintSendModal';
+import { useModalExitHook } from '../../lib/hook/useModalExitHook';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { modalActions, selectIsComplaintInfo, selectIsComplaintSend } from '../../store/modal';
 const s = {
   Container: styled.main`
     width: 100%;
@@ -58,6 +63,17 @@ const s = {
 };
 
 const ComplaintDetail = () => {
+  useModalExitHook();
+
+  const dispatch = useAppDispatch();
+  const isInfo = useAppSelector(selectIsComplaintInfo);
+  const isSend = useAppSelector(selectIsComplaintSend);
+  const handleOpenInfoModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsComplaintInfo(isFlag));
+  };
+  const handleOpenSendModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsComplaintSend(isFlag));
+  };
   return (
     <s.Container>
       <s.TableArea>
@@ -103,11 +119,27 @@ const ComplaintDetail = () => {
         <TextArea display={'block'} width={'100%'} height={'290px'} size={'20px'} />
         <s.BtnArea>
           <Button bold={'700'} children={'이 전'} height={'40px'} width={'150px'} size={'20px'} />
-          <Button bold={'700'} children={'단속 정보'} height={'40px'} width={'150px'} size={'20px'} />
-          <Button bold={'700'} children={'사유 답변'} height={'40px'} width={'150px'} size={'20px'} />
+          <Button
+            bold={'700'}
+            children={'단속 정보'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={() => handleOpenInfoModal(true)}
+          />
+          <Button
+            bold={'700'}
+            children={'사유 답변'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={() => handleOpenSendModal(true)}
+          />
           <Button bold={'700'} children={'고지 취소'} height={'40px'} width={'150px'} size={'20px'} />
         </s.BtnArea>
       </s.MainArea>
+      <ComplaintInfoModal open={isInfo} toggleModal={handleOpenInfoModal} />
+      <ComplaintSendModal open={isSend} toggleModal={handleOpenSendModal} />
     </s.Container>
   );
 };

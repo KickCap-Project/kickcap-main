@@ -4,6 +4,7 @@ import { ReactComponent as logo } from '../../asset/svg/logo.svg';
 import { navActions, selectNav } from '../../store/nav';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import IconSvg from '../Common/IconSvg';
+import { useNavigate } from 'react-router';
 
 const s = {
   fixedArea: styled.div`
@@ -63,10 +64,12 @@ const s = {
 };
 
 const BoardHeader = () => {
+  const navigate = useNavigate();
   const type = useAppSelector(selectNav);
   const dispatch = useAppDispatch();
   const handleClickIcon = (mode) => {
     dispatch(navActions.change(mode));
+    navigate('/' + mode);
   };
 
   const getColor = (mode) => {
@@ -84,7 +87,7 @@ const BoardHeader = () => {
             <s.Nav onClick={() => handleClickIcon('board')} color={getColor('board')}>
               현황 지도
             </s.Nav>
-            <s.Nav onClick={() => handleClickIcon('crack')} color={getColor('crack')}>
+            <s.Nav onClick={() => handleClickIcon('crackdown')} color={getColor('crackdown')}>
               단속 리스트
             </s.Nav>
             <s.Nav onClick={() => handleClickIcon('report')} color={getColor('report')}>

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectReportNav } from '../../store/page';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -78,6 +79,11 @@ const ReportList = () => {
   const getSize = (mode) => {
     return type === mode ? '30px' : undefined;
   };
+
+  const navigate = useNavigate();
+  const handleMovePage = () => {
+    navigate('read');
+  };
   return (
     <s.Container>
       <s.TypeArea>
@@ -107,7 +113,7 @@ const ReportList = () => {
             </s.Tr>
           </s.Thead>
           <s.Tbody>
-            <s.Tr>
+            <s.Tr onClick={() => handleMovePage()}>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
               <s.Td>24.09.01</s.Td>

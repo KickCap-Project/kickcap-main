@@ -7,6 +7,10 @@ import TimeChart from '../../components/Board/TimeChart';
 import DayInfo from '../../components/Board/DayInfo';
 import CompareInfo from '../../components/Board/CompareInfo';
 import BoardCameraModal from '../../components/Modal/BoardCameraModal';
+import { Outlet } from 'react-router';
+import { usePageNavHook } from '../../lib/hook/usePageNavHook';
+import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
+import { useModalExitHook } from '../../lib/hook/useModalExitHook';
 
 const s = {
   Container: styled.div`
@@ -29,6 +33,8 @@ const s = {
     width: 48%;
     height: 100%;
     border: 1px solid white;
+    display: flex;
+    align-items: center;
   `,
   DataArea: styled.div`
     width: 50%;
@@ -70,12 +76,18 @@ const PoliceBoardPage = () => {
   const crackData = ['59.1', '40.9'];
   const reportLabel = ['불법 주차', '안전모 미착용', '다인 승차', '보도 주행', '지정차로 위반'];
   const reportData = ['50', '10', '15', '5', '20'];
+
+  usePageNavHook('board');
+  usePageTypeHook('board');
+  useModalExitHook();
   return (
     <>
       <BoardHeader />
       <s.Container>
         <s.MainArea>
-          <s.MapArea></s.MapArea>
+          <s.MapArea>
+            <Outlet />
+          </s.MapArea>
           <s.DataArea>
             <s.ChartArea1>
               <WeekChart title={'최근 1주일 단속 수'} datas={datas} labels={labels} />
@@ -97,7 +109,7 @@ const PoliceBoardPage = () => {
           <CompareInfo title={'전일 대비 신고'} data={'-35.2'} />
           <CompareInfo title={'전일 대비 이의'} data={'2.4'} />
         </s.FooterArea>
-        <BoardCameraModal open={true} />
+        {/* <BoardCameraModal open={true} /> */}
       </s.Container>
     </>
   );
