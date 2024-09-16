@@ -28,7 +28,15 @@ const CircleChart = ({ labels, datas }) => {
     responsive: false,
     plugins: {
       legend: {
-        display: false, // legend 표시 여부
+        display: true, // legend 표시 여부
+        position: 'right',
+        labels: {
+          boxWidth: 20,
+          color: '#fff',
+          font: {
+            size: 10,
+          },
+        },
       },
       tooltip: {
         enabled: true, // tooltip 표시 여부

@@ -65,8 +65,9 @@ const BarChart = ({ labels, datas }) => {
     scales: {
       x: {
         ticks: {
+          color: '#fff',
           font: {
-            size: 12, // X축 레이블 크기
+            size: 10, // X축 레이블 크기
           },
         },
       },
