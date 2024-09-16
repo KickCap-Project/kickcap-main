@@ -4,6 +4,9 @@ import Header from '../../components/Common/Header';
 import ComplaintList from '../../components/Complaint/ComplaintList';
 import { ReactComponent as search } from '../../asset/svg/search.svg';
 import IconSvg from '../../components/Common/IconSvg';
+import { Outlet } from 'react-router';
+import { usePageNavHook } from './../../lib/hook/usePageNavHook';
+import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
 const s = {
   Container: styled.div`
     height: 100%;
@@ -33,7 +36,9 @@ const s = {
   `,
 };
 
-const ComplaintListPage = () => {
+const ComplaintPage = () => {
+  usePageNavHook('complaint');
+  usePageTypeHook('complaint');
   return (
     <s.Container>
       <Header title={'이 의 제 기'} subTitle={'단속 사항에 대한 문의 내역입니다.'} />
@@ -42,10 +47,10 @@ const ComplaintListPage = () => {
         <IconSvg Ico={search} width={'20px'} cursor={'pointer'} />
       </s.searchArea>
       <s.mainArea>
-        <ComplaintList />
+        <Outlet />
       </s.mainArea>
     </s.Container>
   );
 };
 
-export default ComplaintListPage;
+export default ComplaintPage;
