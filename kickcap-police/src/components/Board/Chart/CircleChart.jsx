@@ -25,7 +25,8 @@ const s = {
 
 const CircleChart = ({ labels, datas }) => {
   const options = {
-    responsive: false,
+    responsive: true,
+    maintainAspectRatio: false, // 부모 요소의 크기에 맞게 차트의 비율을 유지하지 않음
     plugins: {
       legend: {
         display: true, // legend 표시 여부
