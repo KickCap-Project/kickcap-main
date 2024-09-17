@@ -4,7 +4,7 @@ import { basicTheme } from './styles/theme';
 import GlobalStyle from './styles/global-styles';
 import LoginPage from './pages/LoginPage';
 import PoliceBoardPage from './pages/board/PoliceBoardPage';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import AllMap from './pages/board/MapPage/AllMap';
 import Seoul from './pages/board/MapPage/Seoul';
 import Incheon from './pages/board/MapPage/Incheon';
@@ -32,6 +32,11 @@ import ComplaintDetail from './components/Complaint/ComplaintDetail';
 import ComplaintPage from './pages/Complaint/ComplaintPage';
 import ReportPage from './pages/Reported/ReportPage';
 import CrackDownPage from './pages/CrackDown/CrackDownPage';
+import { PrivateRoute, PublicRoute } from './pages/IsLoginPage';
+import ErrorPage from './pages/ErrorPage';
+import CameraMap from './components/Board/CameraMap';
+import ResponsiveWrapper from './lib/hook/useWindowSizeHook';
+import SizeGuidePage from './pages/SizeGuidePage';
 
 const s = {
   Container: styled.div`
@@ -50,39 +55,58 @@ function App() {
       <s.Container>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Navigate replace to="/board" />} />
-            <Route path="/board" element={<PoliceBoardPage />}>
-              <Route index element={<AllMap />} />
-              <Route path="seoul" element={<Seoul />} />
-              <Route path="incheon" element={<Incheon />} />
-              <Route path="sejong" element={<Sejong />} />
-              <Route path="daejeon" element={<Daejeon />} />
-              <Route path="gwangju" element={<Gwangju />} />
-              <Route path="daegu" element={<Daegu />} />
-              <Route path="ulsan" element={<Ulsan />} />
-              <Route path="busan" element={<Busan />} />
-              <Route path="gyeonggi" element={<Gyeonggi />} />
-              <Route path="chungnam" element={<Chungnam />} />
-              <Route path="chungbuk" element={<Chungbuk />} />
-              <Route path="jeonbuk" element={<Jeonbuk />} />
-              <Route path="jeonnam" element={<Jeonnam />} />
-              <Route path="gangwon" element={<Gangwon />} />
-              <Route path="gyeongbuk" element={<Gyeongbuk />} />
-              <Route path="gyeongnam" element={<Gyeongnam />} />
-              <Route path="jeju" element={<Jeju />} />
+            <Route
+              element={
+                <ResponsiveWrapper>
+                  <PublicRoute />
+                </ResponsiveWrapper>
+              }
+            >
+              <Route path="/" element={<LoginPage />} />
             </Route>
-            <Route path="/crackdown" element={<CrackDownPage />}>
-              <Route index element={<CrackDownList />} />
-              <Route path="read" element={<CrackDownDetail />} />
+            <Route
+              element={
+                <ResponsiveWrapper>
+                  <PrivateRoute />
+                </ResponsiveWrapper>
+              }
+            >
+              <Route path="/" element={<Navigate replace to="/board" />} />
+              <Route path="/board" element={<PoliceBoardPage />}>
+                <Route index element={<AllMap />} />
+                <Route path="seoul" element={<Seoul />} />
+                <Route path="incheon" element={<Incheon />} />
+                <Route path="sejong" element={<Sejong />} />
+                <Route path="daejeon" element={<Daejeon />} />
+                <Route path="gwangju" element={<Gwangju />} />
+                <Route path="daegu" element={<Daegu />} />
+                <Route path="ulsan" element={<Ulsan />} />
+                <Route path="busan" element={<Busan />} />
+                <Route path="gyeonggi" element={<Gyeonggi />} />
+                <Route path="chungnam" element={<Chungnam />} />
+                <Route path="chungbuk" element={<Chungbuk />} />
+                <Route path="jeonbuk" element={<Jeonbuk />} />
+                <Route path="jeonnam" element={<Jeonnam />} />
+                <Route path="gangwon" element={<Gangwon />} />
+                <Route path="gyeongbuk" element={<Gyeongbuk />} />
+                <Route path="gyeongnam" element={<Gyeongnam />} />
+                <Route path="jeju" element={<Jeju />} />
+                <Route path=":location/map" element={<CameraMap />} />
+              </Route>
+              <Route path="/crackdown" element={<CrackDownPage />}>
+                <Route index element={<CrackDownList />} />
+                <Route path="read" element={<CrackDownDetail />} />
+              </Route>
+              <Route path="/report" element={<ReportPage />}>
+                <Route index element={<ReportList />} />
+                <Route path="read" element={<ReportDetail />} />
+              </Route>
+              <Route path="/complaint" element={<ComplaintPage />}>
+                <Route index element={<ComplaintList />} />
+                <Route path="read" element={<ComplaintDetail />} />
+              </Route>
             </Route>
-            <Route path="/report" element={<ReportPage />}>
-              <Route index element={<ReportList />} />
-              <Route path="read" element={<ReportDetail />} />
-            </Route>
-            <Route path="/complaint" element={<ComplaintPage />}>
-              <Route index element={<ComplaintList />} />
-              <Route path="read" element={<ComplaintDetail />} />
-            </Route>
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </BrowserRouter>
         {/* <LoginPage /> */}
