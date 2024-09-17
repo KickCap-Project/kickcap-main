@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ReactComponent as logo } from '../../asset/svg/logo.svg';
+// import { ReactComponent as logo } from '../../asset/svg/logo.svg';
+import { ReactComponent as logo } from '../../asset/svg/police.svg';
 import { navActions, selectNav } from '../../store/nav';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import IconSvg from '../Common/IconSvg';
 import { useNavigate } from 'react-router';
+import Button from './../Common/Button';
 
 const s = {
   fixedArea: styled.div`
@@ -31,14 +33,18 @@ const s = {
     margin-top: 50px;
   `,
   TitleArea: styled.div`
-    width: 30%;
+    width: 40%;
     display: flex;
     justify-content: start;
     align-content: center;
+    border: 1px solid white;
   `,
   Title: styled.div`
+    width: 100%;
     font-weight: 700;
-    size: 15px;
+    font-size: 18px;
+    height: 40px;
+    border: 1px solid red;
     color: ${(props) => props.theme.textBasic};
     display: flex;
     align-items: center;
@@ -51,15 +57,33 @@ const s = {
     align-content: center;
   `,
   Nav: styled.div`
-    width: 120px;
+    width: 100px;
     height: 40px;
     line-height: 40px;
     text-align: center;
-    size: 15px;
+    font-size: 18px;
     font-weight: 700;
     border-bottom: 3px solid ${(props) => props.color || '#1C1C25'};
     color: ${(props) => props.theme.textBasic};
     cursor: pointer;
+  `,
+  nameArea: styled.div`
+    font-size: 10px;
+    color: ${(props) => props.theme.textBasic};
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-left: 10px;
+  `,
+  Btn: styled.button`
+    width: 55px;
+    font-size: 12px;
+    color: #000;
+    background-color: ${(props) => props.theme.AreaColor};
+    border-radius: 5px;
+    font-weight: 700;
+    height: 20px;
+    margin: 0 5px;
   `,
 };
 
@@ -75,13 +99,21 @@ const BoardHeader = () => {
   const getColor = (mode) => {
     return type === mode ? '#0054A6' : undefined;
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    navigate('/');
+  };
   return (
     <>
       <s.fixedArea>
         <s.topArea>
           <s.TitleArea>
-            <IconSvg Ico={logo} width={'30px'} margin={'0 15px 0 0'} />
-            <s.Title>킥보드 자동화 단속 플랫폼</s.Title>
+            <IconSvg Ico={logo} width={'30px'} margin={'0 10px 0 0'} />
+            <s.Title>
+              킥보드 자동화 단속 플랫폼<s.nameArea>(대전 유성경찰서)</s.nameArea>
+              <s.Btn onClick={handleLogout}>로그아웃</s.Btn>
+            </s.Title>
           </s.TitleArea>
           <s.NavArea>
             <s.Nav onClick={() => handleClickIcon('board')} color={getColor('board')}>
