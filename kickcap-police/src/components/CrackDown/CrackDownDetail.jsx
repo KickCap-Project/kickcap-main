@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import test from '../../asset/policeLogo.png';
 import CrackInfoTable from '../Common/CrackInfoTable';
 import Button from '../Common/Button';
+import { useNavigate } from 'react-router';
 const s = {
   Container: styled.main`
     width: 90%;
@@ -65,6 +66,11 @@ const s = {
 };
 
 const CrackDownDetail = () => {
+  const navigate = useNavigate();
+  const handleMoveList = () => {
+    navigate('..');
+  };
+
   return (
     <s.Container>
       <s.TableArea>
@@ -92,7 +98,14 @@ const CrackDownDetail = () => {
         <s.InfoArea>
           <CrackInfoTable />
           <s.BtnArea>
-            <Button bold={'700'} children={'이 전'} height={'40px'} width={'250px'} size={'20px'} />
+            <Button
+              bold={'700'}
+              children={'목록으로'}
+              height={'40px'}
+              width={'250px'}
+              size={'20px'}
+              onClick={handleMoveList}
+            />
           </s.BtnArea>
         </s.InfoArea>
       </s.MainArea>
