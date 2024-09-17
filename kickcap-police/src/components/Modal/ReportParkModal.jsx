@@ -4,6 +4,7 @@ import ReactModal from 'react-modal';
 import '../../styles/modal.css';
 import Text from '../Common/Text';
 import Button from '../Common/Button';
+import ParkingMap from './ParkingMap';
 
 const s = {
   Container: styled.div`
@@ -36,6 +37,12 @@ const s = {
 };
 
 const ReportParkModal = ({ open, toggleModal }) => {
+  const kickBoard = { lat: 33.451, lng: 127.571, title: '킥보드 위치' };
+  const Park = [
+    { lat: 33.453, lng: 126.573, title: '주차장 1' },
+    { lat: 33.454, lng: 126.574, title: '주차장 2' },
+    // 추가 주차장 위치
+  ];
   return (
     <ReactModal
       isOpen={open}
@@ -55,7 +62,9 @@ const ReportParkModal = ({ open, toggleModal }) => {
             color={'textBasic2'}
           />
         </s.Header>
-        <s.MapArea />
+        <s.MapArea>
+          <ParkingMap Park={Park} kickBoard={kickBoard} />
+        </s.MapArea>
         <s.BtnArea>
           <Button
             bold={'700'}
