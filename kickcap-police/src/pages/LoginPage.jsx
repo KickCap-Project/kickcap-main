@@ -6,6 +6,7 @@ import IconSvg from './../components/Common/IconSvg';
 import Input from './../components/Common/Input';
 import Button from './../components/Common/Button';
 import Text from './../components/Common/Text';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.main`
@@ -51,6 +52,11 @@ const s = {
 };
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const handleLogin = () => {
+    localStorage.setItem('accessToken', 'test');
+    navigate('/');
+  };
   return (
     <>
       <s.Container>
@@ -65,7 +71,7 @@ const LoginPage = () => {
               display={'block'}
               margin={'10px auto 30px'}
             />
-            <Button width={'100%'} height={'40px'} display={'block'}>
+            <Button width={'100%'} height={'40px'} display={'block'} onClick={handleLogin}>
               로 그 인
             </Button>
           </s.FormArea>
