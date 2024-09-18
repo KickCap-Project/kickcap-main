@@ -12,7 +12,6 @@ const s = {
   TableArea: styled.div`
     width: 100%;
     margin: 20px auto;
-    border: 1px solid black;
   `,
   Table: styled.table`
     width: 90%;
@@ -36,22 +35,23 @@ const s = {
     vertical-align: middle;
   `,
   MainArea: styled.div`
-    width: 80%;
+    width: 90%;
     height: 500px;
     margin: 0 auto;
-    border: 1px solid blue;
     display: flex;
     justify-content: space-between;
     align-items: center;
   `,
   Img: styled.img`
-    width: 450px;
-    height: 450px;
+    width: 50%;
+    height: 100%;
+    max-width: 400px;
+    max-height: 400px;
+    margin: 0 auto;
   `,
   InfoArea: styled.div`
     width: 50%;
     height: 450px;
-    border: 1px solid green;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -60,7 +60,6 @@ const s = {
     width: 100%;
     display: flex;
     justify-content: end;
-    border: 1px solid orange;
     margin: 30px auto;
   `,
 };

@@ -23,7 +23,6 @@ const s = {
   `,
   MainArea: styled.div`
     width: 100%;
-    border: 1px solid red;
     height: 84%;
     margin: 0 auto;
     display: flex;
@@ -32,14 +31,12 @@ const s = {
   MapArea: styled.div`
     width: 48%;
     height: 100%;
-    border: 1px solid white;
     display: flex;
     align-items: center;
   `,
   DataArea: styled.div`
     width: 50%;
     height: 100%;
-    border: 1px solid white;
     display: flex;
   `,
   ChartArea1: styled.div`
@@ -48,7 +45,6 @@ const s = {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    border: 1px solid aliceblue;
   `,
   ChartArea2: styled.div`
     width: 50%;
@@ -56,12 +52,10 @@ const s = {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    border: 1px solid aliceblue;
   `,
   FooterArea: styled.div`
     width: 100%;
     height: 15%;
-    border: 3px solid yellow;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;

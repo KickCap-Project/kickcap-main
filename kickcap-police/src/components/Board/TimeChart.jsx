@@ -9,8 +9,8 @@ const s = {
     border-radius: 10px;
     width: 95%;
     height: 32%;
-    border: 1px solid red;
     margin: 0 auto;
+    padding: 10px;
   `,
 };
 

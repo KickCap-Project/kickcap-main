@@ -8,7 +8,6 @@ const s = {
     border-radius: 10px;
     width: 190px;
     height: 100%;
-    border: 1px solid red;
     display: flex;
     flex-direction: column;
     justify-content: center;

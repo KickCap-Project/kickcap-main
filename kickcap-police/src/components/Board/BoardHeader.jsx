@@ -37,14 +37,12 @@ const s = {
     display: flex;
     justify-content: start;
     align-content: center;
-    border: 1px solid white;
   `,
   Title: styled.div`
     width: 100%;
     font-weight: 700;
     font-size: 18px;
     height: 40px;
-    border: 1px solid red;
     color: ${(props) => props.theme.textBasic};
     display: flex;
     align-items: center;

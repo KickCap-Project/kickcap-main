@@ -20,7 +20,6 @@ const s = {
   TableArea: styled.div`
     width: 100%;
     margin: 20px auto;
-    border: 1px solid black;
   `,
   Table: styled.table`
     width: 700px;
@@ -58,7 +57,6 @@ const s = {
     width: 800px;
     display: flex;
     justify-content: space-between;
-    border: 1px solid orange;
     margin: 30px auto;
   `,
 };
