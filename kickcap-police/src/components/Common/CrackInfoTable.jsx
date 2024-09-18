@@ -13,6 +13,7 @@ const s = {
     width: 100%;
     height: 40px;
     cursor: default;
+    font-size: 17px;
   `,
   Td: styled.td`
     vertical-align: middle;
