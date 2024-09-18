@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { pageActions, selectCrackNav } from '../../store/page';
 
 const s = {
   Container: styled.div`
@@ -18,11 +20,11 @@ const s = {
     height: 30px;
     text-align: center;
     font-weight: 700;
-    font-size: 25px;
+    font-size: ${(props) => props.size || '25px'};
+    color: ${(props) => props.color || props.theme.textBasic2};
     cursor: pointer;
     &:hover {
       font-size: 30px;
-      color: ${(props) => props.theme.mainColor};
     }
   `,
   TableArea: styled.div`
@@ -64,11 +66,27 @@ const s = {
 };
 
 const CrackDownList = () => {
+  const type = useAppSelector(selectCrackNav);
+  const dispatch = useAppDispatch();
+  const handleClickIcon = (mode) => {
+    dispatch(pageActions.changeCrackType(mode));
+  };
+
+  const getColor = (mode) => {
+    return type === mode ? '#0054A6' : undefined;
+  };
+  const getSize = (mode) => {
+    return type === mode ? '30px' : undefined;
+  };
   return (
     <s.Container>
       <s.TypeArea>
-        <s.TypeText>안전모 미착용</s.TypeText>
-        <s.TypeText>다인 승차</s.TypeText>
+        <s.TypeText onClick={() => handleClickIcon('helmet')} color={getColor('helmet')} size={getSize('helmet')}>
+          안전모 미착용
+        </s.TypeText>
+        <s.TypeText onClick={() => handleClickIcon('peoples')} color={getColor('peoples')} size={getSize('peoples')}>
+          다인 승차
+        </s.TypeText>
       </s.TypeArea>
       <s.TableArea>
         <s.Table>
