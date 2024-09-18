@@ -12,7 +12,6 @@ const s = {
   Container: styled.main`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    border: 3px solid orange;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -21,18 +20,16 @@ const s = {
   LoginArea: styled.div`
     width: 50%;
     margin: 0 auto;
-    border: 1px solid red;
-    padding: 30px;
+    padding: 10px;
   `,
   FormArea: styled.div`
     width: 70%;
-    border: 1px solid blue;
     margin: 30px auto;
   `,
   FooterArea: styled.footer`
     background-color: ${(props) => props.theme.AreaColor};
-    min-height: 130px;
-    border: 1px solid green;
+    height: 20%;
+    max-height: 100px;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -40,14 +37,12 @@ const s = {
   IconArea: styled.div`
     width: 200px;
     height: 100%;
-    border: 1px solid red;
     display: flex;
     justify-content: center;
     align-items: center;
   `,
   TextArea: styled.div`
     width: 400px;
-    border: 1px solid red;
   `,
 };
 
@@ -76,9 +71,10 @@ const LoginPage = () => {
             </Button>
           </s.FormArea>
         </s.LoginArea>
+
         <s.FooterArea>
           <s.IconArea>
-            <IconSvg Ico={police} width={'80px'} display={'block'} margin={'0 auto'} />
+            <IconSvg Ico={police} width={'60px'} display={'block'} margin={'0 auto'} />
           </s.IconArea>
           <s.TextArea>
             <Text
@@ -86,7 +82,7 @@ const LoginPage = () => {
               textalian={'center'}
               margin={'0 auto 20px'}
               display={'block'}
-              size={'25px'}
+              size={'20px'}
               bold={'700'}
               color={'mainColor'}
             />
@@ -95,7 +91,7 @@ const LoginPage = () => {
               textalian={'center'}
               margin={'0 auto'}
               display={'block'}
-              size={'15px'}
+              size={'10px'}
               bold={'700'}
               color={'mainColor'}
             />
