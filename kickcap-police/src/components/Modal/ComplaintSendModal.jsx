@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
 import '../../styles/modal.css';
@@ -35,11 +35,22 @@ const s = {
 };
 
 const ComplaintSendModal = ({ open, toggleModal }) => {
+  const [message, setMessage] = useState('');
+  const handleChangeMessage = (e) => {
+    setMessage(e.target.value);
+  };
+  const handleClickSend = () => {
+    alert(message);
+  };
+  const handleClose = () => {
+    setMessage('');
+    toggleModal(false);
+  };
   return (
     <ReactModal
       isOpen={open}
       ariaHideApp={false}
-      onRequestClose={() => toggleModal(false)}
+      onRequestClose={handleClose}
       className="centerBigModal"
       overlayClassName="Overlay"
     >
@@ -70,18 +81,20 @@ const ComplaintSendModal = ({ open, toggleModal }) => {
             height={'90%'}
             size={'15px'}
             placeholder={'내용을 입력해주세요.'}
+            value={message}
+            onChange={handleChangeMessage}
           />
         </s.MapArea>
         <s.BtnArea>
+          <Button bold={'700'} children={'닫 기'} height={'40px'} width={'150px'} size={'20px'} onClick={handleClose} />
           <Button
             bold={'700'}
-            children={'닫 기'}
+            children={'답변 전송'}
             height={'40px'}
             width={'150px'}
             size={'20px'}
-            onClick={() => toggleModal(false)}
+            onClick={handleClickSend}
           />
-          <Button bold={'700'} children={'답변 전송'} height={'40px'} width={'150px'} size={'20px'} />
         </s.BtnArea>
       </s.Container>
     </ReactModal>

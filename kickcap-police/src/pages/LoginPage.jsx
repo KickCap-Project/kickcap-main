@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as logo } from '../asset/svg/logo.svg';
 import { ReactComponent as police } from '../asset/svg/police.svg';
@@ -48,6 +48,17 @@ const s = {
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [login, setLogin] = useState({
+    id: '',
+    pw: '',
+  });
+
+  const handleChangeLogin = (e) => {
+    setLogin({
+      ...login,
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleLogin = () => {
     localStorage.setItem('accessToken', 'test');
     navigate('/');
@@ -58,13 +69,25 @@ const LoginPage = () => {
         <s.LoginArea>
           <IconSvg Ico={logo} width={'250px'} display={'block'} margin={'0 auto'} />
           <s.FormArea>
-            <Input width={'100%'} height={'40px'} placeholder={'아이디를 입력해주세요.'} display={'block'} />
             <Input
+              width={'100%'}
+              height={'40px'}
+              placeholder={'아이디를 입력해주세요.'}
+              display={'block'}
+              name={'id'}
+              onChange={handleChangeLogin}
+              value={login.id}
+            />
+            <Input
+              type={'password'}
               width={'100%'}
               height={'40px'}
               placeholder={'비밀번호를 입력해주세요.'}
               display={'block'}
               margin={'10px auto 30px'}
+              name={'pw'}
+              onChange={handleChangeLogin}
+              value={login.pw}
             />
             <Button width={'100%'} height={'40px'} display={'block'} onClick={handleLogin}>
               로 그 인

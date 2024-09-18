@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
-import ComplaintList from '../../components/Complaint/ComplaintList';
 import { ReactComponent as search } from '../../asset/svg/search.svg';
 import IconSvg from '../../components/Common/IconSvg';
 import { Outlet, useLocation } from 'react-router';
@@ -41,15 +40,34 @@ const ComplaintPage = () => {
   usePageTypeHook('complaint');
 
   const location = useLocation();
-  console.log(location);
+  const [value, setValue] = useState('');
+  const handleChangeSearch = (e) => {
+    setValue(e.target.value);
+  };
+
+  const handleEnterSearch = (e) => {
+    if (e.keyCode === 13) {
+      alert(value);
+    }
+  };
+
+  const handleClickSearch = () => {
+    alert(value);
+  };
 
   return (
     <s.Container>
       <Header title={'이 의 제 기'} subTitle={'단속 사항에 대한 문의 내역입니다.'} />
       {location.pathname === '/complaint' && (
         <s.searchArea>
-          <s.searchInput placeholder="작성자를 입력하세요" />
-          <IconSvg Ico={search} width={'20px'} cursor={'pointer'} />
+          <s.searchInput
+            placeholder="작성자를 입력하세요"
+            type="text"
+            onChange={handleChangeSearch}
+            value={value}
+            onKeyDown={handleEnterSearch}
+          />
+          <IconSvg Ico={search} width={'30px'} cursor={'pointer'} onClick={handleClickSearch} />
         </s.searchArea>
       )}
       <s.mainArea>
