@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 const s = {
   Frame: styled.div`
     width: 100%;
-    border: 1px solid red;
   `,
   Tooltip: styled.div`
     width: 50%;
