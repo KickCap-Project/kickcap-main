@@ -57,7 +57,7 @@ const BoardCameraModal = ({ open, toggleModal }) => {
     <ReactModal
       isOpen={open}
       ariaHideApp={false}
-      onRequestClose={toggleModal}
+      onRequestClose={() => toggleModal(false)}
       className="centerBigModal"
       overlayClassName="Overlay"
     >
@@ -71,7 +71,14 @@ const BoardCameraModal = ({ open, toggleModal }) => {
             bold={'700'}
             color={'textBasic'}
           />
-          <Button bold={'700'} children={'닫 기'} height={'40px'} width={'150px'} size={'20px'} />
+          <Button
+            bold={'700'}
+            children={'닫 기'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={() => toggleModal(false)}
+          />
         </s.Header>
         <s.MainArea>
           <s.Img src={test} />
