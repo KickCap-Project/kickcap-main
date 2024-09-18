@@ -9,7 +9,7 @@ import ParkingMap from './ParkingMap';
 const s = {
   Container: styled.div`
     width: 100%;
-    height: 70%;
+    height: 100%;
     background-color: ${(props) => props.theme.bgColor};
     color: ${(props) => props.theme.textBasic2};
   `,
@@ -23,7 +23,7 @@ const s = {
   `,
   MapArea: styled.div`
     width: 80%;
-    height: 500px;
+    height: 65%;
     border: 1px solid red;
     margin: 20px auto;
   `,

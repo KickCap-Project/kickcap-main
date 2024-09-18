@@ -23,13 +23,11 @@ const s = {
   `,
   MapArea: styled.div`
     width: 80%;
-    height: 500px;
-    border: 1px solid red;
+    height: 90%;
     margin: 20px auto;
   `,
   BtnArea: styled.div`
     width: 50%;
-    border: 1px solid red;
     display: flex;
     justify-content: space-around;
     margin: 0 auto;
@@ -69,7 +67,7 @@ const ComplaintSendModal = ({ open, toggleModal }) => {
           <TextArea
             display={'block'}
             width={'100%'}
-            height={'450px'}
+            height={'90%'}
             size={'15px'}
             placeholder={'내용을 입력해주세요.'}
           />

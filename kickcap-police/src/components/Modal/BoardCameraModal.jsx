@@ -58,7 +58,7 @@ const BoardCameraModal = ({ open, toggleModal }) => {
       isOpen={open}
       ariaHideApp={false}
       onRequestClose={toggleModal}
-      className="centerBoardModal"
+      className="centerBigModal"
       overlayClassName="Overlay"
     >
       <s.Container>

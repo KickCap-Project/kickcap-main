@@ -10,7 +10,7 @@ import test from '../../asset/policeLogo.png';
 const s = {
   Container: styled.div`
     width: 100%;
-    height: 70%;
+    height: 100%;
     background-color: ${(props) => props.theme.bgColor};
     color: ${(props) => props.theme.textBasic2};
   `,
@@ -28,7 +28,7 @@ const s = {
     border: 1px solid black;
   `,
   Table: styled.table`
-    width: 90%;
+    width: 80%;
     margin: 0 auto;
   `,
   Thead: styled.thead``,
@@ -42,6 +42,7 @@ const s = {
   `,
   Td: styled.td`
     vertical-align: middle;
+    font-size: 15px;
   `,
   Th: styled.th`
     font-weight: 700;
@@ -50,7 +51,7 @@ const s = {
   `,
   MainArea: styled.div`
     width: 80%;
-    height: 450px;
+    height: 60%;
     margin: 0 auto;
     border: 1px solid blue;
     display: flex;
@@ -58,12 +59,14 @@ const s = {
     /* align-items: center; */
   `,
   Img: styled.img`
-    width: 400px;
-    height: 400px;
+    width: 47%;
+    height: auto;
+    max-width: 380px;
+    max-height: 380px;
   `,
   InfoArea: styled.div`
     width: 50%;
-    height: 450px;
+    height: auto;
     border: 1px solid green;
     display: flex;
     flex-direction: column;
