@@ -6,6 +6,12 @@ import Button from '../Common/Button';
 import Text from '../Common/Text';
 import TextArea from '../Common/TextArea';
 import Input from '../Common/Input';
+import ComplaintInfoModal from '../Modal/ComplaintInfoModal';
+import ComplaintSendModal from './../Modal/ComplaintSendModal';
+import { useModalExitHook } from '../../lib/hook/useModalExitHook';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { modalActions, selectIsComplaintInfo, selectIsComplaintSend } from '../../store/modal';
+import { useNavigate } from 'react-router';
 const s = {
   Container: styled.main`
     width: 100%;
@@ -14,7 +20,6 @@ const s = {
   TableArea: styled.div`
     width: 100%;
     margin: 20px auto;
-    border: 1px solid black;
   `,
   Table: styled.table`
     width: 700px;
@@ -52,12 +57,34 @@ const s = {
     width: 800px;
     display: flex;
     justify-content: space-between;
-    border: 1px solid orange;
     margin: 30px auto;
   `,
 };
 
 const ComplaintDetail = () => {
+  useModalExitHook();
+
+  const dispatch = useAppDispatch();
+  const isInfo = useAppSelector(selectIsComplaintInfo);
+  const isSend = useAppSelector(selectIsComplaintSend);
+  const handleOpenInfoModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsComplaintInfo(isFlag));
+  };
+  const handleOpenSendModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsComplaintSend(isFlag));
+  };
+  const navigate = useNavigate();
+  const handleMoveList = () => {
+    navigate('..');
+  };
+
+  const handleCrackCancel = () => {
+    const name = '대전 유성경찰서';
+    const message = `안녕하세요. ${name} 입니다. 본 사항을 관할 부서에서 확인 결과, 고지서에 문제가 있다고 판단하여 해당 단속 내역은 취소되었음을 알려드립니다.
+    안전한 킥보드 문화를 위해 저희 ${name}가 앞장서서 노력하겠습니다. 감사합니다.`;
+
+    alert(message);
+  };
   return (
     <s.Container>
       <s.TableArea>
@@ -90,7 +117,7 @@ const ComplaintDetail = () => {
           color={'textBasic2'}
           margin={'20px 0 10px 0'}
         />
-        <Input width={'100%'} display={'block'} size={'20px'} height={'50px'} />
+        <Input mode={'read'} width={'100%'} display={'block'} size={'20px'} height={'50px'} />
         <Text
           children={'내용'}
           textalian={'left'}
@@ -100,14 +127,44 @@ const ComplaintDetail = () => {
           color={'textBasic2'}
           margin={'20px 0 10px 0'}
         />
-        <TextArea display={'block'} width={'100%'} height={'290px'} size={'20px'} />
+        <TextArea mode={'read'} display={'block'} width={'100%'} height={'290px'} size={'20px'} />
         <s.BtnArea>
-          <Button bold={'700'} children={'이 전'} height={'40px'} width={'150px'} size={'20px'} />
-          <Button bold={'700'} children={'단속 정보'} height={'40px'} width={'150px'} size={'20px'} />
-          <Button bold={'700'} children={'사유 답변'} height={'40px'} width={'150px'} size={'20px'} />
-          <Button bold={'700'} children={'고지 취소'} height={'40px'} width={'150px'} size={'20px'} />
+          <Button
+            bold={'700'}
+            children={'목록으로'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={handleMoveList}
+          />
+          <Button
+            bold={'700'}
+            children={'단속 정보'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={() => handleOpenInfoModal(true)}
+          />
+          <Button
+            bold={'700'}
+            children={'사유 답변'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={() => handleOpenSendModal(true)}
+          />
+          <Button
+            bold={'700'}
+            children={'고지 취소'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={handleCrackCancel}
+          />
         </s.BtnArea>
       </s.MainArea>
+      <ComplaintInfoModal open={isInfo} toggleModal={handleOpenInfoModal} />
+      <ComplaintSendModal open={isSend} toggleModal={handleOpenSendModal} />
     </s.Container>
   );
 };

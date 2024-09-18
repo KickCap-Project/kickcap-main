@@ -5,6 +5,12 @@ import CrackInfoTable from '../Common/CrackInfoTable';
 import Button from '../Common/Button';
 import Text from '../Common/Text';
 import TextArea from './../Common/TextArea';
+import ReportInfoModal from '../Modal/ReportInfoModal';
+import ReportParkModal from './../Modal/ReportParkModal';
+import { useModalExitHook } from './../../lib/hook/useModalExitHook';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { modalActions, selectIsReportInfo, selectIsReportPark } from '../../store/modal';
+import { useNavigate } from 'react-router';
 const s = {
   Container: styled.main`
     width: 90%;
@@ -13,7 +19,6 @@ const s = {
   TableArea: styled.div`
     width: 100%;
     margin: 20px auto;
-    border: 1px solid black;
   `,
   Table: styled.table`
     width: 90%;
@@ -37,22 +42,23 @@ const s = {
     vertical-align: middle;
   `,
   MainArea: styled.div`
-    width: 80%;
+    width: 90%;
     height: 500px;
     margin: 0 auto;
-    border: 1px solid blue;
     display: flex;
     justify-content: space-between;
     align-items: center;
   `,
   Img: styled.img`
-    width: 450px;
-    height: 450px;
+    width: 50%;
+    height: 100%;
+    max-width: 400px;
+    max-height: 400px;
+    margin: 0 auto;
   `,
   InfoArea: styled.div`
     width: 50%;
-    height: 450px;
-    border: 1px solid green;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -61,12 +67,43 @@ const s = {
     width: 800px;
     display: flex;
     justify-content: space-between;
-    border: 1px solid orange;
     margin: 30px auto;
   `,
 };
 
 const ReportDetail = () => {
+  useModalExitHook();
+
+  const dispatch = useAppDispatch();
+  const isInfo = useAppSelector(selectIsReportInfo);
+  const isPark = useAppSelector(selectIsReportPark);
+  const handleOpenInfoModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsReportInfo(isFlag));
+  };
+  const handleOpenParkModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsReportPark(isFlag));
+  };
+
+  const navigate = useNavigate();
+  const handleMoveList = () => {
+    navigate('..');
+  };
+
+  const handleReportAccess = () => {
+    const message = '산고 대상자에게 단속고지서를 발부되었습니다.';
+    if (window.confirm('승인하시겠습니까?')) {
+      alert('고지서가 발부되었습니다.');
+      navigate('..');
+    }
+  };
+
+  const handleReportReject = () => {
+    const message = '해당 신고는 검토 결과 반려되었습니다.';
+    if (window.confirm('반려하시겠습니까?')) {
+      alert('신고가 반려되었습니다.');
+      navigate('..');
+    }
+  };
   return (
     <s.Container>
       <s.TableArea>
@@ -101,16 +138,53 @@ const ReportDetail = () => {
             color={'textBasic2'}
             margin={'20px 0 10px 0'}
           />
-          <TextArea display={'block'} width={'100%'} height={'100%'} size={'20px'} />
+          <TextArea mode={'read'} display={'block'} width={'100%'} height={'100%'} size={'20px'} />
         </s.InfoArea>
       </s.MainArea>
       <s.BtnArea>
-        <Button bold={'700'} children={'이 전'} height={'40px'} width={'150px'} size={'20px'} />
-        <Button bold={'700'} children={'주차 확인'} height={'40px'} width={'150px'} size={'20px'} />
-        <Button bold={'700'} children={'단속자 정보'} height={'40px'} width={'150px'} size={'20px'} />
-        <Button bold={'700'} children={'반 려'} height={'40px'} width={'150px'} size={'20px'} />
-        <Button bold={'700'} children={'고지서 전송'} height={'40px'} width={'150px'} size={'20px'} />
+        <Button
+          bold={'700'}
+          children={'목록으로'}
+          height={'40px'}
+          width={'150px'}
+          size={'20px'}
+          onClick={handleMoveList}
+        />
+        <Button
+          bold={'700'}
+          children={'주차 확인'}
+          height={'40px'}
+          width={'150px'}
+          size={'20px'}
+          onClick={() => handleOpenParkModal(true)}
+        />
+        <Button
+          bold={'700'}
+          children={'단속자 정보'}
+          height={'40px'}
+          width={'150px'}
+          size={'20px'}
+          onClick={() => handleOpenInfoModal(true)}
+        />
+        <Button
+          bold={'700'}
+          children={'반 려'}
+          height={'40px'}
+          width={'150px'}
+          size={'20px'}
+          onClick={handleReportReject}
+        />
+        <Button
+          bold={'700'}
+          children={'고지서 전송'}
+          height={'40px'}
+          width={'150px'}
+          size={'20px'}
+          onClick={handleReportAccess}
+        />
       </s.BtnArea>
+      <ReportParkModal open={isPark} toggleModal={handleOpenParkModal} />
+      <ReportInfoModal open={isInfo} toggleModal={handleOpenInfoModal} />
     </s.Container>
   );
 };

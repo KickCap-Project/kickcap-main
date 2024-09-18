@@ -24,8 +24,6 @@ const ReportDetailPage = () => {
       <s.mainArea>
         <ReportDetail />
       </s.mainArea>
-      {/* <ReportParkModal open={true} /> */}
-      <ReportInfoModal open={true} />
     </s.Container>
   );
 };

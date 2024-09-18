@@ -33,7 +33,7 @@ const ReportInfoModal = ({ open, toggleModal }) => {
     <ReactModal
       isOpen={open}
       ariaHideApp={false}
-      onRequestClose={toggleModal}
+      onRequestClose={() => toggleModal(false)}
       className="centerSmallModal"
       overlayClassName="Overlay"
     >
@@ -59,6 +59,7 @@ const ReportInfoModal = ({ open, toggleModal }) => {
           size={'20px'}
           display={'block'}
           margin={'0 auto'}
+          onClick={() => toggleModal(false)}
         />
       </s.Container>
     </ReactModal>
