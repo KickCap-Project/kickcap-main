@@ -75,7 +75,7 @@ const s = {
   `,
   Btn: styled.button`
     width: 55px;
-    font-size: 12px;
+    font-size: 10px;
     color: #000;
     background-color: ${(props) => props.theme.AreaColor};
     border-radius: 5px;
