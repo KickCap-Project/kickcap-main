@@ -4,6 +4,8 @@ import LogoSvg from './../asset/img/svg/Logo.svg';
 import NotificationOffSvg from './../asset/img/svg/notificationOff.svg';
 import NotificationOnSvg from './../asset/img/svg/notificationOn.svg';
 import SettingSvg from './../asset/img/svg/setting.svg';
+import { useAppDispatch } from '../lib/hook/useReduxHook';
+import { modalActions } from '../store/modal';
 
 const notification = false;
 
@@ -43,6 +45,10 @@ const s = {
 };
 
 const Header = () => {
+  const dispatch = useAppDispatch();
+  const handleOpenMainModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsMain(isFlag));
+  };
   return (
     <s.HeaderArea>
       <s.Logo src={LogoSvg} />
@@ -52,7 +58,7 @@ const Header = () => {
         ) : (
           <s.ButtonNotification src={NotificationOffSvg} />
         )}
-        <s.ButtonSetting src={SettingSvg} />
+        <s.ButtonSetting src={SettingSvg} onClick={() => handleOpenMainModal(true)} />
       </s.ButtonArea>
     </s.HeaderArea>
   );
