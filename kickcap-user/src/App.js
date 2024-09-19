@@ -13,6 +13,8 @@ import MainPage from './pages/MainPage';
 import ViolationListPage from './pages/violation/ViolationListPage';
 import ViolationDetailPage from './pages/violation/ViolationDetailPage';
 import ViolationEducationPage from './pages/violation/ViolationEducationPage';
+import ViolationObjectionPage from './pages/violation/ViolationObjectionPage';
+
 import SuccessPage from './pages/SuccessPage';
 
 const s = {
@@ -59,7 +61,7 @@ function App() {
       <GlobalStyle />
       <s.Background />
       <s.Container>
-        <ViolationEducationPage />
+        <ViolationObjectionPage />
       </s.Container>
     </ThemeProvider>
   );
