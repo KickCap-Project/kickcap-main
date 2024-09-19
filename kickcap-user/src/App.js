@@ -16,6 +16,7 @@ import ViolationEducationPage from './pages/Violation/ViolationEducationPage';
 import ViolationObjectionPage from './pages/Violation/ViolationObjectionPage';
 
 import ObjectionListPage from './pages/Objection/ObjectionListPage';
+import ObjectionDetailPage from './pages/Objection/ObjectionDetailPage';
 
 import OneClickReportPage from './components/OneClickReport/OneClickReportPage';
 import SuccessPage from './pages/SuccessPage';
@@ -64,7 +65,7 @@ function App() {
       <GlobalStyle />
       <s.Background />
       <s.Container>
-        <ObjectionListPage />
+        <ObjectionDetailPage />
       </s.Container>
     </ThemeProvider>
   );
