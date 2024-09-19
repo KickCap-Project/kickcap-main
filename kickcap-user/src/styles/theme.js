@@ -12,4 +12,5 @@ export const basicTheme = {
   negative: '#FF6E65', // 빨강 및 부정
   WriteInput: '#fff',
   ReadInput: '#F5F7FA',
+  PhoneModalColor: '#f0f0f0', // 전화번호 변경 모달 input 색상
 };
