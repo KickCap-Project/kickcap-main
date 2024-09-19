@@ -26,7 +26,7 @@ public class Report extends BaseEntity {
     @Column(name = "image_src", columnDefinition = "TEXT", nullable = false)
     private String imageSrc;
 
-    @Column(nullable = false)
+    @Column(name = "addr", nullable = false)
     private String address;
 
     @Column(name = "lat",nullable = false)
