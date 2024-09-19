@@ -2,6 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import CrackDownList from '../../components/CrackDown/CrackDownList';
+import { Outlet } from 'react-router';
+import { usePageNavHook } from '../../lib/hook/usePageNavHook';
+import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
 
 const s = {
   Container: styled.div`
@@ -15,15 +18,17 @@ const s = {
   `,
 };
 
-const CrackDownListPage = () => {
+const CrackDownPage = () => {
+  usePageNavHook('crackdown');
+  usePageTypeHook('crackdown');
   return (
     <s.Container>
       <Header title={'단속 리스트'} subTitle={'AI 모델이 탑재된 카메라에  단속된 내역입니다.'} />
       <s.mainArea>
-        <CrackDownList />
+        <Outlet />
       </s.mainArea>
     </s.Container>
   );
 };
 
-export default CrackDownListPage;
+export default CrackDownPage;

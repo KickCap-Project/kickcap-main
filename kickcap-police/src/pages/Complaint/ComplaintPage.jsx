@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
-import ReportList from '../../components/Reported/ReportList';
 import { ReactComponent as search } from '../../asset/svg/search.svg';
 import IconSvg from '../../components/Common/IconSvg';
-
+import { Outlet, useLocation } from 'react-router';
+import { usePageNavHook } from './../../lib/hook/usePageNavHook';
+import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
 const s = {
   Container: styled.div`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-
     overflow-y: auto;
   `,
   mainArea: styled.main``,
@@ -25,7 +25,6 @@ const s = {
     position: relative;
     margin: 0 auto;
     top: -20px;
-    z-index: 100;
   `,
   searchInput: styled.input`
     width: 350px;
@@ -36,19 +35,46 @@ const s = {
   `,
 };
 
-const ReportListPage = () => {
+const ComplaintPage = () => {
+  usePageNavHook('complaint');
+  usePageTypeHook('complaint');
+
+  const location = useLocation();
+  const [value, setValue] = useState('');
+  const handleChangeSearch = (e) => {
+    setValue(e.target.value);
+  };
+
+  const handleEnterSearch = (e) => {
+    if (e.keyCode === 13) {
+      alert(value);
+    }
+  };
+
+  const handleClickSearch = () => {
+    alert(value);
+  };
+
   return (
     <s.Container>
       <Header title={'이 의 제 기'} subTitle={'단속 사항에 대한 문의 내역입니다.'} />
-      <s.searchArea>
-        <s.searchInput placeholder="작성자를 입력하세요" />
-        <IconSvg Ico={search} width={'20px'} cursor={'pointer'} />
-      </s.searchArea>
+      {location.pathname === '/complaint' && (
+        <s.searchArea>
+          <s.searchInput
+            placeholder="작성자를 입력하세요"
+            type="text"
+            onChange={handleChangeSearch}
+            value={value}
+            onKeyDown={handleEnterSearch}
+          />
+          <IconSvg Ico={search} width={'30px'} cursor={'pointer'} onClick={handleClickSearch} />
+        </s.searchArea>
+      )}
       <s.mainArea>
-        <ReportList />
+        <Outlet />
       </s.mainArea>
     </s.Container>
   );
 };
 
-export default ReportListPage;
+export default ComplaintPage;
