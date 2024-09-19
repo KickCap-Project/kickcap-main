@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Header from './../../components/Header';
 import Footer from './../../components/Footer';
 import Button from './../../components/Common/Button';
+import EduVideo from '../../components/violation/EduVideo';
 
 const s = {
   Container: styled.div`
@@ -19,19 +20,26 @@ const s = {
     width: 90%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     white-space: pre-line;
+    overflow: auto;
+    border: 1px solid red;
   `,
   VideoArea: styled.div`
-    margin-bottom: 30px;
+    width: 95%;
+    margin: 20px auto;
+    border: 1px solid red;
   `,
   TextArea: styled.div`
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: -0.075rem;
     text-align: center;
-    margin-bottom: 100px;
+  `,
+  BtnARea: styled.div`
+    width: 90%;
+    border: 1px solid blue;
   `,
 };
 
@@ -44,13 +52,16 @@ const ViolationEducationPage = () => {
     <s.Container>
       <Header title={'나의 단속 내역'} />
       <s.MainArea>
-        <s.VideoArea></s.VideoArea>
+        <s.VideoArea>
+          <EduVideo />
+        </s.VideoArea>
         <s.TextArea>{description}</s.TextArea>
-        <Button type={played ? '' : 'sub'} width={'100%'} height={'30px'}>
+      </s.MainArea>
+      <s.BtnARea>
+        <Button type={played ? '' : 'sub'} width={'100%'} height={'40px'} display={'block'} margin={'20px auto'}>
           납부하기
         </Button>
-      </s.MainArea>
-
+      </s.BtnARea>
       <Footer />
     </s.Container>
   );
