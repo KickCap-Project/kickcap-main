@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import Header from './../../components/Header';
-import Footer from './../../components/Footer';
-import Button from './../../components/Common/Button';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import Button from '../../components/Common/Button';
 
 const s = {
   Container: styled.div`
@@ -29,7 +29,6 @@ const s = {
   TextArea: styled.div`
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: -0.075rem;
     text-align: center;
     margin-bottom: 100px;
   `,
@@ -46,7 +45,7 @@ const ViolationEducationPage = () => {
       <s.MainArea>
         <s.VideoArea></s.VideoArea>
         <s.TextArea>{description}</s.TextArea>
-        <Button type={played ? '' : 'sub'} width={'100%'} height={'30px'}>
+        <Button type={played ? '' : 'sub'} width={'100%'} height={'40px'}>
           납부하기
         </Button>
       </s.MainArea>

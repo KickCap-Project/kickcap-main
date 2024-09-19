@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Header from './../../components/Header';
-import Footer from './../../components/Footer';
-import ViolationEmpty from './../../components/violation/ViolationEmpty';
-import ViolationList from './../../components/violation/ViolationList';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import ViolationEmpty from '../../components/Violation/ViolationEmpty';
+import ViolationList from '../../components/Violation/ViolationList';
 
 const s = {
   Container: styled.div`
