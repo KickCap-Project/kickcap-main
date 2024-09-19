@@ -11,6 +11,10 @@ import MainBtn2 from './../asset/img/svg/mainBtn2.svg';
 import MainBtn3 from './../asset/img/svg/mainBtn3.svg';
 import MainBtn4 from './../asset/img/svg/mainBtn4.svg';
 import ChatbotBtn from './../asset/img/svg/chat.svg';
+import MainPageModal from '../components/Modal/MainPageModal';
+import { modalActions, selectIsMain, selectIsPhone } from './../store/modal';
+import { useAppDispatch, useAppSelector } from './../lib/hook/useReduxHook';
+import PhoneSetModal from '../components/Modal/PhoneSetModal';
 
 const s = {
   Container: styled.div`
@@ -63,6 +67,15 @@ const s = {
 };
 
 const MainPage = () => {
+  const isMain = useAppSelector(selectIsMain);
+  const isPhone = useAppSelector(selectIsPhone);
+  const dispatch = useAppDispatch();
+  const handleOpenMainModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsMain(isFlag));
+  };
+  const handleOpenPhoneModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsPhone(isFlag));
+  };
   const username = '오진영';
   const demerit = 0;
 
@@ -89,6 +102,8 @@ const MainPage = () => {
       </s.MainArea>
 
       <Footer />
+      <PhoneSetModal open={isPhone} toggleModal={handleOpenPhoneModal} />
+      <MainPageModal open={isMain} toggleModal={handleOpenMainModal} />
     </s.Container>
   );
 };
