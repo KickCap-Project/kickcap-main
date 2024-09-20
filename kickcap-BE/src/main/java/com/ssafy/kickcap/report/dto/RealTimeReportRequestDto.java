@@ -17,6 +17,8 @@ public class RealTimeReportRequestDto {
 
     private String description;
 
+    private String kickboardNumber;
+
     private String lat; // float으로 변환 필요
 
     private String lng; // float으로 변환 필요
