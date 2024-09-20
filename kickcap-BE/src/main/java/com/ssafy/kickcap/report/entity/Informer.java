@@ -31,7 +31,7 @@ public class Informer{
     private String kickboardNumber;
 
     @Column(name = "is_sent", nullable = false, length = 1)
-    private String isSent="N";
+    private String isSent;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
