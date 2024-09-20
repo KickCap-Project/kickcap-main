@@ -37,6 +37,9 @@ const ObjectionDetailPage = () => {
     date: '2024-08-03 오후 12:12:12',
     title: '다시 검토해주세요.',
     content: '이 단속 내역은 다시 검토해주세요.',
+    responseContent:
+      '안녕하세요. 대전 유성경찰서 입니다.\n문의해주신 내역은 담당 부서에서 확인 결과,\n언제나 국민을 위해 최선을 다하는 경찰이 되겠습니다.\n감사합니다.',
+    responseDate: '2024. 09. 04',
   };
 
   return (
