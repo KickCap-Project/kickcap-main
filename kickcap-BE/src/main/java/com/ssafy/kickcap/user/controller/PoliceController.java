@@ -52,7 +52,7 @@ public class PoliceController {
         String accessToken = tokenProvider.generatePoliceToken(police, Duration.ofHours(2));
 
         // 7. 응답 반환
-        return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
+        return ResponseEntity.ok(new LoginResponse(police.getName(), accessToken, refreshToken));
     }
 
     @PostMapping("/police/logout")
