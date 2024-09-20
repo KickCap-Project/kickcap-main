@@ -1,15 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import styled from 'styled-components';
 import videData from '../../asset/edu.mp4';
 import '../../styles/VideoCustomCss.css';
 
-const s = {
-  Container: styled.div`
-    width: 100%;
-  `,
-};
-
-const EduVideo = () => {
+const EduVideo = ({ onFinish }) => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -20,6 +13,7 @@ const EduVideo = () => {
   const handlePlayPause = () => {
     if (videoRef.current.paused) {
       videoRef.current.play();
+      videoRef.current.playbackRate = 1.2; // 속도 설정
       setIsPlaying(true);
     } else {
       videoRef.current.pause();
@@ -29,7 +23,7 @@ const EduVideo = () => {
 
   // 비디오 종료 시 알림
   const handleEndVideo = () => {
-    alert('재생 끝');
+    onFinish(true);
   };
 
   // 비디오 현재 시간 업데이트
@@ -122,7 +116,6 @@ const EduVideo = () => {
         id="myVideo"
         src={videData}
         width="50%"
-        muted
         onEnded={handleEndVideo}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}

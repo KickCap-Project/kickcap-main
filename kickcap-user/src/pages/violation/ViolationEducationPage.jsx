@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-
 import Header from './../../components/Header';
 import Footer from './../../components/Footer';
 import Button from './../../components/Common/Button';
@@ -24,12 +23,14 @@ const s = {
     justify-content: center;
     white-space: pre-line;
     overflow: auto;
-    border: 1px solid red;
   `,
   VideoArea: styled.div`
     width: 95%;
-    margin: 20px auto;
-    border: 1px solid red;
+    margin: 0px auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   `,
   TextArea: styled.div`
     font-size: 0.75rem;
@@ -39,7 +40,6 @@ const s = {
   `,
   BtnARea: styled.div`
     width: 90%;
-    border: 1px solid blue;
   `,
 };
 
@@ -53,9 +53,11 @@ const ViolationEducationPage = () => {
       <Header title={'나의 단속 내역'} />
       <s.MainArea>
         <s.VideoArea>
-          <EduVideo />
+          <EduVideo onFinish={setPlayed} />
         </s.VideoArea>
-        <s.TextArea>{description}</s.TextArea>
+        <s.VideoArea>
+          <s.TextArea>{description}</s.TextArea>
+        </s.VideoArea>
       </s.MainArea>
       <s.BtnARea>
         <Button type={played ? '' : 'sub'} width={'100%'} height={'40px'} display={'block'} margin={'20px auto'}>
