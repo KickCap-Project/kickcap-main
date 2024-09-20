@@ -1,6 +1,5 @@
 package com.ssafy.kickcap.cctv.entity;
 
-import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.violationtype.entity.ViolationType;
 import jakarta.persistence.*;

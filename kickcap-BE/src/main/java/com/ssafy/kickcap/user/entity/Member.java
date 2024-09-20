@@ -2,7 +2,6 @@ package com.ssafy.kickcap.user.entity;
 
 import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.cctv.entity.Crackdown;
-import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.notification.entity.Notification;
 import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.report.entity.AccidentReport;

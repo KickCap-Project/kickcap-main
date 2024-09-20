@@ -1,7 +1,6 @@
 package com.ssafy.kickcap.violationtype.entity;
 
 import com.ssafy.kickcap.cctv.entity.Crackdown;
-import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.report.entity.Report;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "violation_type")
-public class ViolationType extends BaseEntity {
+public class ViolationType{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
