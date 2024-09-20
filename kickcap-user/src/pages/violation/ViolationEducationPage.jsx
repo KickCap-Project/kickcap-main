@@ -36,6 +36,7 @@ const s = {
     font-size: 0.75rem;
     font-weight: 600;
     text-align: center;
+    cursor: default;
   `,
   BtnARea: styled.div`
     width: 90%;
