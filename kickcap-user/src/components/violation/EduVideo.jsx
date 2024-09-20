@@ -128,6 +128,7 @@ const EduVideo = ({ onFinish }) => {
           type="range"
           min="0"
           max="100"
+          step="0.1"
           value={(currentTime / duration) * 100 || 0}
           onChange={handleProgressChange}
         />

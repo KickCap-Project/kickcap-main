@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Header from './../../components/Header';
-import Footer from './../../components/Footer';
-import Button from './../../components/Common/Button';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import Button from '../../components/Common/Button';
 import EduVideo from '../../components/Violation/EduVideo';
 
 const s = {
@@ -36,6 +36,7 @@ const s = {
     font-size: 0.75rem;
     font-weight: 600;
     text-align: center;
+    cursor: default;
   `,
   BtnARea: styled.div`
     width: 90%;

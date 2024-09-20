@@ -47,14 +47,6 @@ const ChatPage = () => {
         <s.MessageArea>
           <Chat />
         </s.MessageArea>
-        {/* <s.MessageArea>
-      <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
-      </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-    </s.MessageArea> */}
         <s.SendArea>
           <Input placeholder={'메세지를 입력하세요.'} width={'78%'} height={'40px'} />
           <Button bold={'700'} children={'입력'} size={'15px'} width={'20%'} height={'40px'} display={'block'} />

@@ -5,8 +5,7 @@ const s = {
   Bot: styled.div`
     width: fit-content;
     max-width: 70%;
-    padding: 0 10px 0 10px;
-    height: 40px;
+    padding: 10px;
     border-radius: 10px;
     font-size: 15px;
     font-weight: 500;
@@ -19,8 +18,7 @@ const s = {
   MyChat: styled.div`
     width: fit-content;
     max-width: 70%;
-    padding: 0 10px 0 10px;
-    height: 40px;
+    padding: 10px;
     border-radius: 10px;
     font-size: 15px;
     font-weight: 500;
@@ -45,7 +43,11 @@ const Chat = () => {
   return (
     <>
       <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
+        <s.Bot>
+          무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을
+          도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을
+          도와드릴까요?
+        </s.Bot>
       </s.BotChatArea>
       <s.MyChatArea>
         <s.MyChat>킥보드 법률을 알려줘</s.MyChat>

@@ -18,6 +18,7 @@ const s = {
   Img: styled.img`
     position: absolute;
     left: 5%;
+    cursor: pointer;
   `,
 };
 
