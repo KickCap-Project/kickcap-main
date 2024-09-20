@@ -1,6 +1,5 @@
 package com.ssafy.kickcap.report.entity;
 
-import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.violationtype.entity.ViolationType;
@@ -8,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.ZonedDateTime;
 
@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "report")
-public class Report extends BaseEntity {
+public class Report{
 
     @Id
     @Column(name = "idx")
@@ -47,6 +47,10 @@ public class Report extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "approve_status", nullable = false)
     private ApproveStatus approveStatus;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)

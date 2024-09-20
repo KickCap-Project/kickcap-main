@@ -1,6 +1,5 @@
 package com.ssafy.kickcap.bill.entity;
 
-import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
