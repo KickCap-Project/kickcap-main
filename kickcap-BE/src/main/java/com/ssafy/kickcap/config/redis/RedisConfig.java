@@ -1,4 +1,4 @@
-package com.ssafy.kickcap.report;
+package com.ssafy.kickcap.config.redis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

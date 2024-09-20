@@ -1,15 +1,15 @@
 package com.ssafy.kickcap.user.controller;
 
-import com.ssafy.kickcap.user.dto.LoginResponse;
-import com.ssafy.kickcap.user.dto.OAuthLoginRequest;
-import com.ssafy.kickcap.user.entity.Member;
+//import com.ssafy.kickcap.user.dto.LoginResponse;
+//import com.ssafy.kickcap.user.dto.OAuthLoginRequest;
+//import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.service.DeviceInfoService;
 import com.ssafy.kickcap.user.service.MemberService;
 import com.ssafy.kickcap.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
