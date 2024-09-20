@@ -20,6 +20,7 @@ const s = {
     margin-bottom: 2%;
     color: ${(props) =>
       props.color === isFlagType[0].color || props.color === isFlagType[1].color ? '#000000' : '#FFFFFF'};
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     justify-content: center;

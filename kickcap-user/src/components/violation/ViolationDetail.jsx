@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ViolationType, isFlagType, ViolationDetailType } from './../../lib/data/Violation';
+import { ViolationType, isFlagType, ViolationDetailType } from '../../lib/data/Violation';
 
 const s = {
   TableWrapper: styled.div`
@@ -13,7 +13,7 @@ const s = {
   Table: styled.table`
     width: 90%;
     font-size: 0.6rem;
-    font-bold: 400;
+    font-weight: 400;
     text-align: center;
   `,
   Tr: styled.tr``,

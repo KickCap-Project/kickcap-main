@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Header from './../../components/Header';
 import Footer from './../../components/Footer';
 import Button from './../../components/Common/Button';
-import EduVideo from '../../components/violation/EduVideo';
+import EduVideo from '../../components/Violation/EduVideo';
 
 const s = {
   Container: styled.div`
@@ -35,7 +35,6 @@ const s = {
   TextArea: styled.div`
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: -0.075rem;
     text-align: center;
     cursor: default;
   `,
