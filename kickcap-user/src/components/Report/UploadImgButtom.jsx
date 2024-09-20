@@ -15,7 +15,6 @@ const s = {
     margin-bottom: 1vh;
     padding-top: 4vh;
     padding-bottom: 4vh;
-    border: 1px solid black;
   `,
   ImgContainer: styled.div`
     width: 100%;

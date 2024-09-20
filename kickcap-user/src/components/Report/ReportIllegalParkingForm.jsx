@@ -24,6 +24,12 @@ const s = {
     display: flex;
     justify-content: space-between;
   `,
+  ButtonArea: styled.div`
+    width: 100%;
+    padding-top: 5vh;
+    display: flex;
+    justify-content: center;
+  `,
 };
 
 const ReportIllegalParkingForm = () => {
@@ -69,15 +75,17 @@ const ReportIllegalParkingForm = () => {
         placeholder={'내용을 입력하세요.'}
         margin={'10px'}
       />
-      {image && kickboardNumber && description ? (
-        <Button width={'90%'} height={'40px'} bold={'700'} size={'24px'}>
-          작성 완료
-        </Button>
-      ) : (
-        <Button type={'sub'} width={'90%'} height={'40px'} bold={'700'} size={'24px'}>
-          작성 완료
-        </Button>
-      )}
+      <s.ButtonArea>
+        {image && kickboardNumber && description ? (
+          <Button width={'90%'} height={'40px'} bold={'700'} size={'24px'}>
+            작성 완료
+          </Button>
+        ) : (
+          <Button type={'sub'} width={'90%'} height={'40px'} bold={'700'} size={'24px'}>
+            작성 완료
+          </Button>
+        )}
+      </s.ButtonArea>
     </s.Form>
   );
 };
