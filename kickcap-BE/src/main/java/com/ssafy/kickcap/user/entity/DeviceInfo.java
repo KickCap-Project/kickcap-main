@@ -1,5 +1,5 @@
 package com.ssafy.kickcap.user.entity;
-import com.ssafy.kickcap.common.BaseEntity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,5 @@
 package com.ssafy.kickcap.cctv.entity;
 
-import com.ssafy.kickcap.common.BaseEntity;
-import com.ssafy.kickcap.user.entity.Police;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
