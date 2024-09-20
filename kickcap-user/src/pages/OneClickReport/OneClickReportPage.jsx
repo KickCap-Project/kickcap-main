@@ -54,13 +54,11 @@ const OneClickReportPage = () => {
     <s.Container>
       <Header title="원 클릭 신고" />
       <s.MainArea>
-        <s.Text size={'15px'} color={'black'} font-weight={'600'}>
+        <s.Text size={'15px'} color={'black'}>
           {topText}
         </s.Text>
         <Image src={SOS} margin={'3vh'} onClick={() => onClickSOS()} cursor="pointer" />
-        <s.Text size={'20px'} font-weight={'60'}>
-          {bottomText}
-        </s.Text>
+        <s.Text size={'20px'}>{bottomText}</s.Text>
       </s.MainArea>
       <Footer />
     </s.Container>
