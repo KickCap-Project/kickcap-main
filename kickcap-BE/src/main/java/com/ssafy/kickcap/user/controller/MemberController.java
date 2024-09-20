@@ -1,7 +1,6 @@
 package com.ssafy.kickcap.user.controller;
 
 import com.ssafy.kickcap.user.dto.LoginResponse;
-import com.ssafy.kickcap.user.dto.OAuthLoginRequest;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.service.DeviceInfoService;
 import com.ssafy.kickcap.user.service.MemberService;
@@ -44,16 +43,16 @@ public class MemberController {
 //        // 응답 반환 (액세스 토큰, 리프레시 토큰)
 //        return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
 //    }
-//
-//    // 로그아웃 API
-//    @PostMapping("/member/logout")
-//    public ResponseEntity<String> logout(@RequestBody String fcmToken) {
-//        // FCM 토큰을 기반으로 리프레시 토큰 삭제
-//        deviceInfoService.deleteByFcmToken(fcmToken);
-//
-//        // SecurityContextHolder에서 인증 정보 제거
-//        SecurityContextHolder.clearContext();
-//
-//        return ResponseEntity.ok("Logout successful");
-//    }
+
+    // 로그아웃 API
+    @PostMapping("/member/logout")
+    public ResponseEntity<String> logout(@RequestBody String fcmToken) {
+        // FCM 토큰을 기반으로 리프레시 토큰 삭제
+        deviceInfoService.deleteByFcmToken(fcmToken);
+
+        // SecurityContextHolder에서 인증 정보 제거
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.ok("Logout successful");
+    }
 }

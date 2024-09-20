@@ -1,7 +1,6 @@
 package com.ssafy.kickcap.user.entity;
+
 import com.ssafy.kickcap.bill.entity.Bill;
-import com.ssafy.kickcap.common.BaseEntity;
-import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.report.entity.AccidentReport;
 import com.ssafy.kickcap.report.entity.Report;
 import jakarta.persistence.*;
@@ -9,11 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "police")
 @Builder
-public class Police extends BaseEntity implements UserDetails {
+public class Police implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
@@ -38,6 +38,10 @@ public class Police extends BaseEntity implements UserDetails {
 
     @Column(nullable = false, length = 30, columnDefinition = "TEXT")
     private String password;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
     // Relationships.
     @OneToMany(mappedBy = "police", cascade = CascadeType.ALL)

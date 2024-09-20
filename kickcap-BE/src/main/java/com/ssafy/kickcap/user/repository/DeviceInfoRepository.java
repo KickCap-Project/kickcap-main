@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface DeviceInfoRepository extends JpaRepository<DeviceInfo, Long> {
-    Optional<DeviceInfo> findByUserId(Long userId);
+    Optional<DeviceInfo> findByMemberId(Long memberId);
+    Optional<DeviceInfo> findByPoliceId(Long policeId);
     Optional<DeviceInfo> findByRefreshToken(String refreshToken);
     Optional<DeviceInfo> findByFcmToken(String fcmToken);
     // FCM 토큰을 기반으로 DeviceInfo 엔티티 삭제

@@ -17,8 +17,8 @@ public class PoliceService {
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected police"));
     }
 
-    public Police findByEmail(String email) {
-        return policeRepository.findByEmail(email)
+    public Police findByPoliceId(String policeId) {
+        return policeRepository.findByPoliceId(policeId)
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected police"));
     }
 }

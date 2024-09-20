@@ -58,7 +58,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     // 생성된 리프레시 토큰을 전달받아 데이터베이스에 저장
     private void saveRefreshToken(Long userId, String newRefreshToken, String fcmToken) {
-        deviceInfoRepository.findByUserId(userId)
+        deviceInfoRepository.findByMemberId(userId)
                 .map(entity -> entity.updateRefreshToken(newRefreshToken))
                 .orElseGet(() -> {
                     Member member = memberService.findById(userId);
