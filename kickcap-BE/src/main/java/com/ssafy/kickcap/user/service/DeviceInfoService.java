@@ -1,11 +1,13 @@
 package com.ssafy.kickcap.user.service;
 
+import com.ssafy.kickcap.user.dto.LogoutRequest;
 import com.ssafy.kickcap.user.entity.DeviceInfo;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.repository.DeviceInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -36,7 +38,18 @@ public class DeviceInfoService {
     }
 
     // FCM 토큰으로 DeviceInfo 삭제
-    public void deleteByFcmToken(String fcmToken) {
-        deviceInfoRepository.deleteByFcmToken(fcmToken);
+    @Transactional
+    public void deleteByFcmToken(LogoutRequest logoutRequest) {
+        DeviceInfo deviceInfo = deviceInfoRepository.findByFcmToken(logoutRequest.getFcmToken()).orElseThrow(()->new IllegalArgumentException("Unexpected token"));
+        if (deviceInfo != null) {
+            if(deviceInfo.getPolice()!=null) {
+                deviceInfoRepository.deleteByPolice_IdAndFcmToken(deviceInfo.getPolice().getId(), logoutRequest.getFcmToken());
+            } else {
+                deviceInfoRepository.deleteByMember_IdAndFcmToken(deviceInfo.getMember().getId(), logoutRequest.getFcmToken());
+            }
+        } else {
+            // 해당 FCM 토큰을 가진 엔티티가 없음
+            System.out.println("No device found with the given FCM token");
+        }
     }
 }

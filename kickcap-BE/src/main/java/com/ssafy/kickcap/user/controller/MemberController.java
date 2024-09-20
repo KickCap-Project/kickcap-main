@@ -47,8 +47,6 @@ public class MemberController {
     // 로그아웃 API
     @PostMapping("/member/logout")
     public ResponseEntity<String> logout(@RequestBody String fcmToken) {
-        // FCM 토큰을 기반으로 리프레시 토큰 삭제
-        deviceInfoService.deleteByFcmToken(fcmToken);
 
         // SecurityContextHolder에서 인증 정보 제거
         SecurityContextHolder.clearContext();
