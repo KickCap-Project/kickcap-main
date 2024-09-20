@@ -38,9 +38,11 @@ const s = {
   ButtonNotification: styled.img`
     height: 60%;
     margin-right: 5%;
+    cursor: pointer;
   `,
   ButtonSetting: styled.img`
     height: 60%;
+    cursor: pointer;
   `,
 };
 

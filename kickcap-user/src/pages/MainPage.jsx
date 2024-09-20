@@ -15,6 +15,7 @@ import MainPageModal from '../components/Modal/MainPageModal';
 import { modalActions, selectIsMain, selectIsPhone } from './../store/modal';
 import { useAppDispatch, useAppSelector } from './../lib/hook/useReduxHook';
 import PhoneSetModal from '../components/Modal/PhoneSetModal';
+import Text from '../components/Common/Text';
 
 const s = {
   Container: styled.div`
@@ -30,13 +31,7 @@ const s = {
     justify-content: flex-end;
     align-items: end;
     width: 90%;
-    margin-top: 7%;
-  `,
-  UserInfoText: styled.div`
-    font-size: ${(props) => (props.type === 'demerit' ? '1.25rem' : '1rem')};
-    font-weight: 900;
-    letter-spacing: ${(props) => (props.type === 'demerit' ? '-0.15rem' : '-0.12rem')};
-    margin-right: ${(props) => (props.type === 'demerit' ? '' : '0.4rem')};
+    margin: 20px auto 5px;
   `,
   MainArea: styled.div`
     flex: 1;
@@ -44,15 +39,21 @@ const s = {
     height: 80%;
     position: relative;
   `,
+  MainThum: styled.div`
+    width: 100%;
+    margin-bottom: 4%;
+  `,
   SmallButtonWrapper: styled.div`
     display: flex;
     justify-content: space-between;
   `,
   ChatbotButton: styled.img`
     position: fixed;
-    top: 82%;
-    right: 5%;
-    width: 15%;
+    right: 10px;
+    bottom: 10px;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
 
     @media (min-width: 768px) {
       width: 10%; /* 태블릿 화면에서 아이콘 크기 조정 */
@@ -77,19 +78,26 @@ const MainPage = () => {
     dispatch(modalActions.ChangeIsPhone(isFlag));
   };
   const username = '오진영';
-  const demerit = 0;
+  const demerit = 10;
 
   return (
     <s.Container>
       <HeaderMain />
 
       <s.UserInfoArea>
-        <s.UserInfoText type="name">{username}님 벌점 :</s.UserInfoText>
-        <s.UserInfoText type="demerit">{demerit} 점</s.UserInfoText>
+        <Text
+          children={username + ' 님 벌점 : '}
+          bold={'800'}
+          color={'textBasic2'}
+          size={'20px'}
+          margin={'0 5px 0 0'}
+        />
+        <Text children={+demerit + ' 점'} bold={'800'} color={'textBasic2'} size={'30px'} />
       </s.UserInfoArea>
 
       <s.MainArea>
         <MainButton type="big" title="나의 단속 내역" description="내 단속 내역을 한눈에!" imgSrc={MainBtn1} />
+        <s.MainThum />
         <MainButton type="big" title="원 클릭 신고" description="긴급 신고를 한번에!" imgSrc={MainBtn2} />
 
         <s.SmallButtonWrapper>
