@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 
-import ReportButton from '../../components/ReportButton';
+import ReportButton from '../../components/Report/ReportButton';
 
 import noPark from '../../asset/img/svg/noPark.svg';
 import report from '../../asset/img/svg/report.svg';

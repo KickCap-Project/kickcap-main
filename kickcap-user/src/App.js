@@ -16,6 +16,7 @@ import ViolationEducationPage from './pages/Violation/ViolationEducationPage';
 import ViolationObjectionPage from './pages/Violation/ViolationObjectionPage';
 
 import ReportMainPage from './pages/Report/ReportMainPage';
+import ReportIllegalParkingPage from './pages/Report/ReportIllegalParkingPage';
 
 import ObjectionListPage from './pages/Objection/ObjectionListPage';
 import ObjectionDetailPage from './pages/Objection/ObjectionDetailPage';
@@ -67,7 +68,7 @@ function App() {
       <GlobalStyle />
       <s.Background />
       <s.Container>
-        <ReportMainPage />
+        <ReportIllegalParkingPage />
       </s.Container>
     </ThemeProvider>
   );
