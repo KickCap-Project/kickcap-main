@@ -6,6 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -26,10 +31,19 @@ public class Informer{
     private String kickboardNumber;
 
     @Column(name = "is_sent", nullable = false, length = 1)
-    private String isSent;
+    private String isSent="N";
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "informer_idx", nullable = false)
     private Member member;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+    }
 }

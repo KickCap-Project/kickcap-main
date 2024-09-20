@@ -1,11 +1,13 @@
 package com.ssafy.kickcap.report.controller;
 
+import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
 import com.ssafy.kickcap.report.dto.RealTimeReportRequestDto;
 import com.ssafy.kickcap.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +22,16 @@ public class ReportController {
 
     private final ReportService reportService;
 
+//    @PostMapping("/real-time")
+//    public ResponseEntity<Void> saveRealTimeReport(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody RealTimeReportRequestDto requestDto) {
+//        reportService.saveReportToRedis(customOAuth2User.getId(), requestDto);
+//        return ResponseEntity.status(HttpStatus.CREATED).build();
+//    }
+
     @PostMapping("/real-time")
     public ResponseEntity<Void> saveRealTimeReport(@RequestBody RealTimeReportRequestDto requestDto) {
-        reportService.saveReportToRedis(requestDto);
+        Long memberId = 1L;
+        reportService.saveReportToRedis(memberId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
