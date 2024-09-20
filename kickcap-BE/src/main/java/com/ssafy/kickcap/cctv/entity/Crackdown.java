@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.ZonedDateTime;
 
@@ -15,7 +16,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "crackdown")
-public class Crackdown extends BaseEntity {
+public class Crackdown {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +28,10 @@ public class Crackdown extends BaseEntity {
 
     @Column(name = "crackdown_time", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime crackdownTime;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)

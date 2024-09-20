@@ -43,7 +43,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
     public WebSecurityCustomizer configure() {
         // 정적 리소스만 스프링 시큐리티 사용을 비활성화
         return (web) -> web.ignoring()
-                .requestMatchers(toH2Console())
+//                .requestMatchers(toH2Console())
                 .requestMatchers(new AntPathRequestMatcher("/static/**"));
         // static 하위 경로에 있는 리소스와 h2의 데이터를 확인하는데 사용하는 h2-console 하위 url 대상으로 ignore
     }
