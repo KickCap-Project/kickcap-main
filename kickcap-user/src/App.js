@@ -24,6 +24,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { PrivateRoute, PublicRoute } from './pages/IsLoginPage';
 import NotificationPage from './pages/NotificationPage';
 import ChatPage from './pages/ChatPage';
+import ErrorPage from './pages/ErrorPage';
 
 const s = {
   Background: styled.section`
@@ -96,6 +97,7 @@ function App() {
                 <Route path="detail" element={<ObjectionDetailPage />} />
               </Route>
             </Route>
+            <Route path="*" element={<ErrorPage />} />
             <Route />
           </Routes>
         </BrowserRouter>
