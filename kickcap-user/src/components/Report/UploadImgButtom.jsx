@@ -13,8 +13,8 @@ const s = {
     align-items: center;
     margin-top: 1vh;
     margin-bottom: 1vh;
-    padding-top: 4vh;
-    padding-bottom: 4vh;
+    padding-top: ${(props) => props.paddingY};
+    padding-bottom: ${(props) => props.paddingY};
   `,
   ImgContainer: styled.div`
     width: 100%;
@@ -31,10 +31,10 @@ const s = {
   `,
 };
 
-const UploadImgButton = () => {
+const UploadImgButton = ({ paddingY }) => {
   const description = '킥보드 번호판이 나온 전체 상황 사진을 첨부해주세요.';
   return (
-    <s.Button>
+    <s.Button paddingY={paddingY}>
       <s.ImgContainer>
         <s.ImgBox src={camera_upload} />
       </s.ImgContainer>

@@ -39,7 +39,7 @@ const ReportIllegalParkingForm = () => {
 
   return (
     <s.Form>
-      {image ? <></> : <UploadImgButton />}
+      {image ? <s.ImageArea></s.ImageArea> : <UploadImgButton paddingY={'4vh'} />}
       <s.InputArea>
         <Input
           id={'kickboardNumber'}
