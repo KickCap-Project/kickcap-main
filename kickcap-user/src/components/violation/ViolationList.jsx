@@ -11,29 +11,6 @@ const s = {
     width: 100%;
     background-color: ${(props) => props.theme.bgColor};
   `,
-  Index: styled.div`
-    display: flex;
-    justify-content: center;
-    padding: 3%;
-    gap: 4%;
-  `,
-  IndexContent: styled.div`
-    width: fit-content;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  `,
-  IndexColor: styled.div`
-    width: 25px;
-    height: 15px;
-    background-color: ${(props) => props.color};
-    margin-right: 3px;
-  `,
-  IndexTag: styled.div`
-    white-space: nowrap;
-    font-size: 10px;
-    font-weight: 800;
-  `,
   Card: styled.div`
     background-color: ${(props) => props.color};
     border-radius: 0.5rem;
@@ -46,6 +23,8 @@ const s = {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 2px, rgba(0, 0, 0, 0.3) 0px 3px 3px;
   `,
   CardRow: styled.div`
     display: flex;
@@ -63,15 +42,6 @@ const s = {
   `,
 };
 
-const IndexComponent = ({ color, title }) => {
-  return (
-    <s.IndexContent>
-      <s.IndexColor color={color} />
-      <s.IndexTag>{title}</s.IndexTag>
-    </s.IndexContent>
-  );
-};
-
 const ViolationList = ({ violationList }) => {
   // onClick event handler function
   const onClickCardFunction = (violation) => {
@@ -80,12 +50,6 @@ const ViolationList = ({ violationList }) => {
 
   return (
     <s.Container>
-      <s.Index>
-        {Array.from({ length: 4 }, (_, idx) => (
-          <IndexComponent key={idx} color={isFlagType[idx].color} title={isFlagType[idx].status} />
-        ))}
-      </s.Index>
-
       {violationList.map((violation) => (
         <s.Card
           key={violation.idx}

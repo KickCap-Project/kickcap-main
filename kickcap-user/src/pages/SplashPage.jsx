@@ -11,20 +11,19 @@ const s = {
     background-color: ${(props) => props.theme.bgColor};
   `,
   MainArea: styled.div`
-    width: fit-content;
+    width: 100%;
+    height: 100%;
     margin: 0 auto;
     position: relative;
-    // bottom: 50%;
-    // top: 50%;
-    // transform: translate(0, -50%);
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
   `,
   LoadingLogoImg: styled.img`
-    margin-top: 40%;
     width: 80%;
+    max-width: 400px;
   `,
   LogoImg: styled.img`
     width: 64%;
@@ -37,10 +36,10 @@ const SplashPage = () => {
     <s.Container>
       <s.MainArea>
         <s.LoadingLogoImg src={LoadingLogo} />
-        <s.LogoImg src={Logo} />
+        {/* <s.LogoImg src={Logo} /> */}
 
-        <Text size={'20px'} bold={'800'}>
-          로딩 중 입니다.
+        <Text size={'20px'} bold={'800'} margin={'10px auto'}>
+          로딩 중...
         </Text>
         <Text size={'20px'} bold={'800'}>
           잠시만 기다려 주세요.

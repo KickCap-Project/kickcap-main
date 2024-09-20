@@ -5,6 +5,7 @@ import Header from './../../components/Header';
 import Footer from './../../components/Footer';
 import ViolationEmpty from './../../components/violation/ViolationEmpty';
 import ViolationList from './../../components/violation/ViolationList';
+import { ViolationType, isFlagType } from '../../lib/data/Violation';
 
 const s = {
   Container: styled.div`
@@ -25,11 +26,47 @@ const s = {
     align-items: center;
     margin-bottom: 5%;
   `,
+  Index: styled.div`
+    display: flex;
+    justify-content: center;
+    height: 50px;
+    gap: 4%;
+    width: 100%;
+    cursor: default;
+  `,
+  IndexContent: styled.div`
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `,
+  IndexColor: styled.div`
+    width: 25px;
+    height: 15px;
+    background-color: ${(props) => props.color};
+    margin-right: 3px;
+  `,
+  IndexTag: styled.div`
+    white-space: nowrap;
+    font-size: 10px;
+    font-weight: 800;
+  `,
   MainArea: styled.div`
     flex: 1;
     width: 90%;
     height: 80%;
+    flex-basis: 0;
+    overflow: auto;
   `,
+};
+
+const IndexComponent = ({ color, title }) => {
+  return (
+    <s.IndexContent>
+      <s.IndexColor color={color} />
+      <s.IndexTag>{title}</s.IndexTag>
+    </s.IndexContent>
+  );
 };
 
 const ViolationListPage = () => {
@@ -109,9 +146,16 @@ const ViolationListPage = () => {
           <ViolationEmpty />
         </s.MainAreaEmpty>
       ) : (
-        <s.MainArea>
-          <ViolationList violationList={violationList} />
-        </s.MainArea>
+        <>
+          <s.Index>
+            {Array.from({ length: 4 }, (_, idx) => (
+              <IndexComponent key={idx} color={isFlagType[idx].color} title={isFlagType[idx].status} />
+            ))}
+          </s.Index>
+          <s.MainArea>
+            <ViolationList violationList={violationList} />
+          </s.MainArea>
+        </>
       )}
 
       <Footer />

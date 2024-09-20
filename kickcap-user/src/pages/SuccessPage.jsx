@@ -34,6 +34,7 @@ const s = {
     letter-spacing: -0.2rem;
     color: ${(props) => props.theme.mainColor};
     margin-bottom: 30px;
+    cursor: default;
   `,
   Img: styled.img`
     margin-bottom: 50px;
@@ -45,6 +46,8 @@ const s = {
     letter-spacing: -0.05rem;
     white-space: pre-line;
     margin-bottom: 40px;
+    line-height: 20px;
+    cursor: default;
   `,
 };
 

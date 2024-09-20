@@ -22,12 +22,12 @@ const s = {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
   `,
   BillWrapper: styled.div`
     width: 90%;
     height: fit-content;
     background-color: ${(props) => props.theme.AreaColor};
-    margin-top: 3%;
     border-radius: 1rem;
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.2);
     display: flex;
@@ -35,9 +35,9 @@ const s = {
     align-items: center;
   `,
   ImgWrapper: styled.img`
-    // border: 1px solid black;
-    width: 90%;
-    height: auto;
+    border: 1px solid black;
+    width: 80%;
+    height: 250px;
     margin-top: 0.5rem;
   `,
   ButtonWrapper: styled.div`
