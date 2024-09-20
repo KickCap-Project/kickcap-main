@@ -2,6 +2,7 @@ package com.ssafy.kickcap.user.controller;
 
 import com.ssafy.kickcap.user.dto.LoginRequest;
 import com.ssafy.kickcap.user.dto.LoginResponse;
+import com.ssafy.kickcap.user.dto.LogoutRequest;
 import com.ssafy.kickcap.user.entity.DeviceInfo;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.service.DeviceInfoService;
@@ -56,9 +57,10 @@ public class PoliceController {
     }
 
     @PostMapping("/police/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response, @RequestBody String fcmToken) {
+    public ResponseEntity<String> logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequest) {
+        // TODO: 접속자와 동일한 아이디인지 확인 혹은 접속한 사용자 아이디로 로그아웃하도록 하기
         // FCM 토큰에 해당하는 리프레시 토큰 삭제
-        deviceInfoService.deleteByFcmToken(fcmToken);
+        deviceInfoService.deleteByFcmToken(logoutRequest);
 
         // 로그아웃 로직 (SecurityContext 초기화 등)
         SecurityContextHolder.clearContext();

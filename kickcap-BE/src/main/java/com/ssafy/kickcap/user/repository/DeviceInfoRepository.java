@@ -1,6 +1,5 @@
 package com.ssafy.kickcap.user.repository;
 
-import aj.org.objectweb.asm.commons.Remapper;
 import com.ssafy.kickcap.user.entity.DeviceInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,5 +11,6 @@ public interface DeviceInfoRepository extends JpaRepository<DeviceInfo, Long> {
     Optional<DeviceInfo> findByRefreshToken(String refreshToken);
     Optional<DeviceInfo> findByFcmToken(String fcmToken);
     // FCM 토큰을 기반으로 DeviceInfo 엔티티 삭제
-    void deleteByFcmToken(String fcmToken);
+    void deleteByPolice_IdAndFcmToken(Long id, String fcmToken);
+    void deleteByMember_IdAndFcmToken(Long id, String fcmToken);
 }
