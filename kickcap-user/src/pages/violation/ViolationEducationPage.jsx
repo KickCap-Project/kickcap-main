@@ -35,7 +35,6 @@ const s = {
   TextArea: styled.div`
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: -0.075rem;
     text-align: center;
   `,
   BtnARea: styled.div`
