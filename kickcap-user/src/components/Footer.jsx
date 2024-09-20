@@ -19,7 +19,7 @@ const s = {
 const Footer = () => {
   return (
     <s.FooterArea>
-      <Text size={'15px'} bold={'800'} color="mainColor">
+      <Text size={'15px'} bold={'800'} color="mainColor" margin={'0 auto 5px'}>
         안전한 킥보드 이용
       </Text>
       <Text size={'15px'} bold={'800'} color="mainColor">
