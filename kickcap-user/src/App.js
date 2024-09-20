@@ -65,7 +65,7 @@ function App() {
       <GlobalStyle />
       <s.Background />
       <s.Container>
-        <ObjectionDetailPage />
+        <OneClickReportPage />
       </s.Container>
     </ThemeProvider>
   );
