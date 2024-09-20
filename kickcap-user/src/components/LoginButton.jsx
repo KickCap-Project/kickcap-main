@@ -11,6 +11,7 @@ const s = {
     background-color: ${(props) => props.bgcolor};
     position: relative;
     margin-bottom: 0.6rem;
+    cursor: pointer;
   `,
   Logo: styled.img`
     position: absolute;
