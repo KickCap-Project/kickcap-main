@@ -5,13 +5,16 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "notification")
-public class Notification extends BaseEntity {
+public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
@@ -33,5 +36,9 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NotificationType type;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
 }

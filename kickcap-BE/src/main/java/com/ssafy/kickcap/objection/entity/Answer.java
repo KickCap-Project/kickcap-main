@@ -4,15 +4,17 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "answer")
-public class Answer extends BaseEntity {
+public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
@@ -24,4 +26,8 @@ public class Answer extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 }
