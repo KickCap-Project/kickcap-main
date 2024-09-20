@@ -59,6 +59,8 @@ public class PoliceController {
     @PostMapping("/police/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequest) {
         // TODO: 접속자와 동일한 아이디인지 확인 혹은 접속한 사용자 아이디로 로그아웃하도록 하기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) authentication.getPrincipal();
         // FCM 토큰에 해당하는 리프레시 토큰 삭제
         deviceInfoService.deleteByFcmToken(logoutRequest);
 

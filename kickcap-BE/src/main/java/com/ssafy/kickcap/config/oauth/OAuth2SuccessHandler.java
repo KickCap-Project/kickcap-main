@@ -1,6 +1,7 @@
 package com.ssafy.kickcap.config.oauth;
 
 import com.ssafy.kickcap.config.jwt.TokenProvider;
+import com.ssafy.kickcap.user.dto.LoginResponse;
 import com.ssafy.kickcap.user.entity.DeviceInfo;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.repository.DeviceInfoRepository;
@@ -24,7 +25,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
-    public static final String REDIRECT_PATH = "/kickcap";
 
     private final TokenProvider tokenProvider;
     private final DeviceInfoRepository deviceInfoRepository;
@@ -33,7 +33,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        Member member = memberService.findByEmail((String) oAuth2User.getAttributes().get("email"));
+        String email = (String) oAuth2User.getAttributes().get("email");
+
+        // 이메일을 사용해 Member 엔티티를 가져옴
+        Member member = memberService.findByEmail(email);
 
         // 클라이언트로부터 FCM 토큰을 받아서 처리
         String fcmToken = request.getHeader("Fcm-Token");
@@ -42,7 +45,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 토큰 제공자를 사용해 리프레시 토큰 생성
         // 데이터베이스에 유저 아이디와 함께 저장
         String refreshToken = tokenProvider.generateMemberToken(member, REFRESH_TOKEN_DURATION);
-        saveRefreshToken(member.getId(), refreshToken, fcmToken);
+
+        // FCM 토큰과 리프레시 토큰을 저장
+        saveDeviceInfo(member, fcmToken, refreshToken);
 
         // 액세스 토큰 생성 -> 경로에 액세스 토큰 추가
         // 토큰 제공자를 사용해 액세스 토큰을 만든 뒤 리다이렉트 경로가 담긴 값을 가져와 쿼리 파라미터에 액세스 토큰 추가
@@ -52,26 +57,30 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 인증 프로세스를 진행하면서 인증 관련 데이터 제거
         clearAuthenticationAttributes(request);
 
-        // 리다이렉트 혹은 JSON 응답으로 토큰 전달
-        response.sendRedirect("/token/success?accessToken=" + accessToken + "&refreshToken=" + refreshToken);
+        // 응답을 JSON 형식으로 직접 작성
+        String responseBody = String.format("{\"name\":\"%s\",\"accessToken\":\"%s\",\"refreshToken\":\"%s\"}",
+                member.getName(), accessToken, refreshToken);
+
+        // 응답 헤더 및 본문 설정
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(responseBody);
     }
 
-    // 생성된 리프레시 토큰을 전달받아 데이터베이스에 저장
-    private void saveRefreshToken(Long userId, String newRefreshToken, String fcmToken) {
-        deviceInfoRepository.findByMemberId(userId)
-                .map(entity -> entity.updateRefreshToken(newRefreshToken))
-                .orElseGet(() -> {
-                    Member member = memberService.findById(userId);
-                    return deviceInfoRepository.save(new DeviceInfo(member, fcmToken, newRefreshToken));
-                });
+    // DeviceInfo 저장 메서드
+    private void saveDeviceInfo(Member member, String fcmToken, String refreshToken) {
+        // DeviceInfoRepository를 사용해 기존 FCM 토큰이 있는지 확인 후 저장 또는 업데이트
+        deviceInfoRepository.findByMemberIdAndFcmToken(member.getId(), fcmToken)
+                .map(entity -> entity.updateRefreshToken(refreshToken)) // 이미 존재하는 FCM 토큰이면 리프레시 토큰만 업데이트
+                .orElseGet(() -> deviceInfoRepository.save(new DeviceInfo(member, fcmToken, refreshToken))); // 없으면 새로 저장
     }
 
-    // 액세스 토큰과 리프레시 토큰을 패스에 추가(액세스 토큰과 리프레시 토큰을 쿼리 파라미터로 반환)
-    private String getTargetUrl(String accessToken, String refreshToken) {
-        return UriComponentsBuilder.fromUriString(REDIRECT_PATH)
-                .queryParam("accessToken", accessToken)
-                .queryParam("refreshToken", refreshToken)
-                .build()
-                .toUriString();
-    }
+//    // 액세스 토큰과 리프레시 토큰을 패스에 추가(액세스 토큰과 리프레시 토큰을 쿼리 파라미터로 반환)
+//    private String getTargetUrl(String accessToken, String refreshToken) {
+//        return UriComponentsBuilder.fromUriString(REDIRECT_PATH)
+//                .queryParam("accessToken", accessToken)
+//                .queryParam("refreshToken", refreshToken)
+//                .build()
+//                .toUriString();
+//    }
 }

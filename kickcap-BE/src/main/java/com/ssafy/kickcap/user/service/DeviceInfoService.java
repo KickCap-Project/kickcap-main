@@ -20,6 +20,7 @@ public class DeviceInfoService {
                 .orElseThrow(()->new IllegalArgumentException("Unexpected token"));
     }
 
+    // 경찰 FCM 토큰과 리프레시 토큰 저장
     public void saveOrUpdateDevice(Police police, String refreshToken, String fcmToken) {
         DeviceInfo deviceInfo = (DeviceInfo) deviceInfoRepository.findByFcmToken(fcmToken)
                 .map(existingDevice -> existingDevice.updateRefreshToken(refreshToken))
@@ -29,11 +30,12 @@ public class DeviceInfoService {
         deviceInfoRepository.save(deviceInfo);
     }
 
-    // FCM 토큰과 리프레시 토큰 저장
+    // 일반 시민 FCM 토큰과 리프레시 토큰 저장
     public void saveDevice(Member member, String fcmToken, String refreshToken) {
         DeviceInfo deviceInfo = (DeviceInfo) deviceInfoRepository.findByFcmToken(fcmToken)
                 .map(info -> info.updateRefreshToken(refreshToken))
                 .orElse(new DeviceInfo(member, fcmToken, refreshToken));
+
         deviceInfoRepository.save(deviceInfo);
     }
 

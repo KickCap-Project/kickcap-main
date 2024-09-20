@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,14 +77,28 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Informer> informers = new ArrayList<>();
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+        this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+    }
+
     @Builder
     public Member(String email, String name) {
         this.email = email;
         this.name = name;
+        this.phone = " ";
+        this.demerit = 0;
     }
 
     public Member update(String name) {
         this.name = name;
+        this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
         return this;
     }
 }

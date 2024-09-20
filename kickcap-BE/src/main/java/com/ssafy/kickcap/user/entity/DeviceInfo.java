@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -37,6 +39,11 @@ public class DeviceInfo {
     @JoinColumn(name = "member_idx", nullable = true)
     private Member member;
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+    }
+
     public Object updateRefreshToken(String newRefreshToken) {
         this.refreshToken = newRefreshToken;
         return this;
@@ -45,8 +52,10 @@ public class DeviceInfo {
     public DeviceInfo(Police police, String refreshToken) {
         this.police = police;
         this.refreshToken = refreshToken;
+        this.createdAt = ZonedDateTime.now();  // 수동으로 생성 시간 설정
     }
 
+    // 생성자에서 수동으로 생성 시간 설정
     public DeviceInfo(Member member, String fcmToken, String refreshToken) {
         this.member = member;
         this.fcmToken = fcmToken;
