@@ -28,4 +28,19 @@ public class RealTimeReportRequestDto {
     private String code; // 법정동 코드
 
     private ZonedDateTime reportTime;
+
+    @Override
+    public String toString() {
+        return "RealTimeReportRequestDto{" +
+                "violationType=" + violationType +
+                ", image='" + image + '\'' +
+                ", description='" + description + '\'' +
+                ", kickboardNumber='" + kickboardNumber + '\'' +
+                ", lat='" + lat + '\'' +
+                ", lng='" + lng + '\'' +
+                ", addr='" + addr + '\'' +
+                ", code='" + code + '\'' +
+                ", reportTime=" + reportTime +
+                '}';
+    }
 }
