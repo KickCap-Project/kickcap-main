@@ -32,6 +32,7 @@ const s = {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
   `,
   MainAreaEmpty: styled.div`
     flex: 1;

@@ -5,6 +5,7 @@ import Input from '../Common/Input';
 import Text from '../Common/Text';
 import TextArea from '../Common/TextArea';
 import Button from '../Common/Button';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -26,6 +27,7 @@ const ViolationObjectionForm = () => {
   const [content, setContent] = useState('');
   const [error, setError] = useState('');
 
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -44,6 +46,7 @@ const ViolationObjectionForm = () => {
     console.log(`title: ${title}`);
     console.log(`content: ${content}`);
 
+    navigate('success');
     // axios post 요청 입력
   };
 

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { ViolationType, isFlagType } from '../../lib/data/Violation';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -49,13 +50,18 @@ const ViolationList = ({ violationList }) => {
     console.log(`onClick: ${violation.idx}`);
   };
 
+  const navigate = useNavigate();
+  const handleMovePage = (idx) => {
+    navigate('detail', { state: { idx } });
+  };
+
   return (
     <s.Container>
       {violationList.map((violation) => (
         <s.Card
           key={violation.idx}
           color={isFlagType[violation.isFlag].color}
-          onClick={() => onClickCardFunction(violation)}
+          onClick={() => handleMovePage(violation.idx)}
         >
           <s.CardRow>
             <s.CardRowTitle>위반일시</s.CardRowTitle>
