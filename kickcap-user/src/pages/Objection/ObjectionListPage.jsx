@@ -48,6 +48,8 @@ const s = {
     flex: 1;
     width: 90%;
     height: 80%;
+    overflow: auto;
+    flex-basis: 0;
   `,
 };
 
