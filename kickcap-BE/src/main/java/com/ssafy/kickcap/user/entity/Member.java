@@ -10,6 +10,7 @@ import com.ssafy.kickcap.report.entity.Informer;
 import com.ssafy.kickcap.report.entity.Report;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -69,4 +70,15 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Informer> informers = new ArrayList<>();
+
+    @Builder
+    public Member(String email, String name) {
+        this.email = email;
+        this.name = name;
+    }
+
+    public Member update(String name) {
+        this.name = name;
+        return this;
+    }
 }

@@ -23,10 +23,30 @@ public class DeviceInfo extends BaseEntity {
     private String refreshToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "police_idx")
+    @JoinColumn(name = "police_idx", nullable = true)
     private Police police;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_idx")
+    @JoinColumn(name = "member_idx", nullable = true)
     private Member member;
+
+    public Object updateRefreshToken(String newRefreshToken) {
+        this.refreshToken = newRefreshToken;
+        return this;
+    }
+
+    public DeviceInfo(Police police, String refreshToken) {
+        this.police = police;
+        this.refreshToken = refreshToken;
+    }
+
+    public DeviceInfo(Member member, String fcmToken, String refreshToken) {
+        this.member = member;
+        this.fcmToken = fcmToken;
+        this.refreshToken = refreshToken;
+    }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 }
