@@ -8,6 +8,7 @@ import kakao from './../asset/img/login/kakao.png';
 import naver from './../asset/img/login/naver.png';
 import google from './../asset/img/login/google.png';
 import { useNavigate } from 'react-router';
+import { requestPermission } from '../firebaseCloudMessaging';
 
 const s = {
   Container: styled.div`
@@ -54,6 +55,9 @@ const SplashPage = () => {
     localStorage.setItem('accessToken', 'test');
     navigate('/main');
   };
+
+  const fcmToken = requestPermission();
+
   return (
     <s.Container>
       <s.MainArea>
