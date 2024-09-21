@@ -1,0 +1,11 @@
+opencv-python
+pytesseract
+fastapi
+uvicorn
+easyocr
+opencv-python-headless
+numpy
+matplotlib
+jupyter
+pydantic
+redis
