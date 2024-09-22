@@ -7,6 +7,8 @@ import Logo from './../asset/img/svg/Logo.svg';
 import kakao from './../asset/img/login/kakao.png';
 import naver from './../asset/img/login/naver.png';
 import google from './../asset/img/login/google.png';
+import { useNavigate } from 'react-router';
+import { requestPermission } from '../firebaseCloudMessaging';
 
 const s = {
   Container: styled.div`
@@ -48,13 +50,21 @@ const s = {
 };
 
 const SplashPage = () => {
+  const navigate = useNavigate();
+  const handleLogin = () => {
+    localStorage.setItem('accessToken', 'test');
+    navigate('/main');
+  };
+
+  const fcmToken = requestPermission();
+
   return (
     <s.Container>
       <s.MainArea>
         <s.CharacterLogoImg src={CharacterLogo} />
         <s.LogoImg src={Logo} />
         <s.ButtonArea>
-          <LoginButton title="카카오 로그인" imgSrc={kakao} color="#000000" bgcolor="#FDE500" />
+          <LoginButton title="카카오 로그인" imgSrc={kakao} color="#000000" bgcolor="#FDE500" onClick={handleLogin} />
           <LoginButton title="네이버 로그인" imgSrc={naver} color="#FFFFFF" bgcolor="#03C75A" />
           <LoginButton title="구글 로그인" imgSrc={google} color="#000000" bgcolor="#FFFFFF" />
         </s.ButtonArea>

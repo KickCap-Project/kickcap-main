@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import ObjectionDetailForm from './../../components/Objection/ObjectionDetailForm';
 
 import Header from './../../components/Header';
 import Footer from './../../components/Footer';
+import { useLocation, useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -41,6 +42,16 @@ const ObjectionDetailPage = () => {
       '안녕하세요. 대전 유성경찰서 입니다.\n문의해주신 내역은 담당 부서에서 확인 결과,\n언제나 국민을 위해 최선을 다하는 경찰이 되겠습니다.\n감사합니다.',
     responseDate: '2024. 09. 04',
   };
+
+  const navigate = useNavigate();
+  const id = useLocation().state?.idx || null;
+  console.log(id);
+  useEffect(() => {
+    if (id === null) {
+      navigate('*');
+      return;
+    }
+  }, [id]);
 
   return (
     <s.Container>

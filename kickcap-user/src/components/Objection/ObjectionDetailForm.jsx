@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Input from './../Common/Input';
 import Text from './../Common/Text';
 import TextArea from './../Common/TextArea';
 import Button from './../Common/Button';
+import { useLocation, useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -47,6 +48,7 @@ const s = {
     resize: none;
     padding: 10px;
     white-space: pre-line;
+    outline: none;
   `,
   Response: styled.div`
     width: 100%;
@@ -89,12 +91,17 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
         };
   };
 
+  const navigate = useNavigate();
+
   const onClickButton = (type) => {
     // axios
     switch (type) {
       case 'delete':
         // 경고창 띄운 후 delete 요청
-        console.log('delete');
+        if (window.confirm('정말 삭제하시겠습니까?')) {
+          alert('삭제되었습니다.');
+          navigate('/objection');
+        }
         break;
       case 'modify':
         console.log('modify');

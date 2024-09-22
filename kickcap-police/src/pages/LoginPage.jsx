@@ -7,6 +7,7 @@ import Input from './../components/Common/Input';
 import Button from './../components/Common/Button';
 import Text from './../components/Common/Text';
 import { useNavigate } from 'react-router';
+import { requestPermission } from '../firebaseCloudMessaging';
 
 const s = {
   Container: styled.main`
@@ -47,6 +48,8 @@ const s = {
 };
 
 const LoginPage = () => {
+  const fcmToken = requestPermission();
+
   const navigate = useNavigate();
   const [login, setLogin] = useState({
     id: '',
