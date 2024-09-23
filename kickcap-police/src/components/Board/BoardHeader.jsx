@@ -101,11 +101,14 @@ const BoardHeader = () => {
   };
 
   const handleLogout = async () => {
-    const fcmToken = localStorage.getItem('fcmToken');
+    const fcmToken = sessionStorage.getItem('fcmToken');
     await logout(
       fcmToken,
       (resp) => {
-        localStorage.removeItem('fcmToken');
+        sessionStorage.removeItem('fcmToken');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('police');
         navigate('/');
       },
       (error) => {
