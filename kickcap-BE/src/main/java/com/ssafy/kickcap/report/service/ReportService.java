@@ -11,6 +11,7 @@ import com.ssafy.kickcap.report.repository.InformerRepository;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReportService {
 
     private final RedisTemplate<String, Object> redisTemplate;
@@ -37,7 +39,7 @@ public class ReportService {
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
     }
 
-    private Informer saveInformer(Long memberId, Member accusedMember, String kickboardNumber) {
+    private void saveInformer(Long memberId, Member accusedMember, String kickboardNumber) {
         Member informerMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
@@ -48,7 +50,7 @@ public class ReportService {
                 .kickboardNumber(kickboardNumber)
                 .build();
 
-        return informerRepository.save(informer);
+        informerRepository.save(informer);
     }
 
     public void saveReportToRedis(Long memberId, RealTimeReportRequestDto requestDto) {
@@ -67,8 +69,8 @@ public class ReportService {
 
     public void createRedisData(Long memberId, String kickboardNumber, RealTimeReportRequestDto newReportDto) {
         // Redis key 생성
-        String redisKey = memberId.toString() + kickboardNumber;
-        System.out.println("rediskey: " + redisKey);
+        String redisKey = memberId.toString() +":"+ kickboardNumber;
+        log.info("redisKey: {}", redisKey);
 
         ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
 
@@ -79,9 +81,6 @@ public class ReportService {
         if (existingData != null) {
             // ObjectMapper를 사용하여 LinkedHashMap을 RealTimeReportRequestDto로 변환
             existingReportDto = objectMapper.convertValue(existingData, RealTimeReportRequestDto.class);
-
-            // 변환된 DTO 출력
-            System.out.println("기존 데이터: " + existingReportDto);
         }
 
         // 기존에 Redis에 저장된 데이터가 있는지 확인
@@ -90,7 +89,6 @@ public class ReportService {
             valueOps.set(redisKey, newReportDto, 1, TimeUnit.HOURS); // 1시간 TTL
             // 2분 TTL로 수정 - test 용
 //            valueOps.set(redisKey, newReportDto, 2, TimeUnit.MINUTES);
-            RealTimeReportRequestDto savedReportDto = objectMapper.convertValue(valueOps.get(redisKey), RealTimeReportRequestDto.class);
         }
     }
 }
