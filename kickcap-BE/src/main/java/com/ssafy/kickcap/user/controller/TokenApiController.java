@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/kickcap")
+@RequestMapping("/token")
 @Tag(name = "Token API", description = "토큰 관련 API")
 public class TokenApiController {
     private final TokenService tokenService;
 
-    @PostMapping("/token/refresh")
+    @PostMapping("/refresh")
     @Operation(summary = "액세스 토큰 재발급", description = "토큰 서비스에서 리프레시 토큰을 기반으로 새로운 액세스 토큰을 만들어줍니다.")
     public ResponseEntity<CreateAccessTokenResponse> refreshAccessToken(@RequestBody CreateAccessTokenRequest request) {
         // 토큰 서비스에서 리프레시 토큰을 기반으로 새로운 액세스 토큰 만들어주게하기

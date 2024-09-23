@@ -21,7 +21,7 @@ import java.time.Duration;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/kickcap")
+@RequestMapping("/member")
 @Tag(name = "Member API", description = "시민 사용자 관련 API")
 public class MemberController {
 
@@ -31,7 +31,7 @@ public class MemberController {
 
 
     // OAuth 로그인 후 Access Token, Refresh Token, FCM 토큰 저장하는 API
-    @PostMapping("/member/login")
+    @PostMapping("/login")
     @Operation(summary = "일반 시민 로그인", description = "시민 사용자의 소셜 로그인입니다.")
     public ResponseEntity<?> oauthLogin() {
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -39,7 +39,7 @@ public class MemberController {
 
 
     // 로그아웃 API
-    @PostMapping("/member/logout")
+    @PostMapping("/logout")
     @Operation(summary = "일반 시민 로그아웃", description = "시민 사용자의 로그아웃입니다.")
     public ResponseEntity<String> logout(@RequestBody String fcmToken) {
         // FCM 토큰을 기반으로 리프레시 토큰 삭제

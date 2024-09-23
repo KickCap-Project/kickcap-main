@@ -25,7 +25,7 @@ import java.time.Duration;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/kickcap")
+@RequestMapping("/police")
 @Tag(name = "Police API", description = "경찰 사용자 관련 API")
 public class PoliceController {
 
@@ -34,7 +34,7 @@ public class PoliceController {
     private final DeviceInfoService deviceInfoService;
 
 
-    @PostMapping("/police/login")
+    @PostMapping("/login")
     @Operation(summary = "경찰 로그인", description = "경찰 사용자의 소셜 로그인입니다.")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         // 1. 사용자 인증
@@ -61,7 +61,7 @@ public class PoliceController {
         return ResponseEntity.ok(new LoginResponse(police.getName(), accessToken, refreshToken));
     }
 
-    @PostMapping("/police/logout")
+    @PostMapping("/logout")
     @Operation(summary = "경찰 로그아웃", description = "경찰 사용자의 로그아웃입니다.")
     public ResponseEntity<String> logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequest) {
         // TODO: 접속자와 동일한 아이디인지 확인 혹은 접속한 사용자 아이디로 로그아웃하도록 하기
