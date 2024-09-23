@@ -41,17 +41,28 @@ public class DeviceInfoService {
 
     // FCM 토큰으로 DeviceInfo 삭제
     @Transactional
-    public void deleteByFcmToken(String id, LogoutRequest logoutRequest) {
+    public void deleteByFcmToken(Long id, LogoutRequest logoutRequest) {
         DeviceInfo deviceInfo = deviceInfoRepository.findByFcmToken(logoutRequest.getFcmToken()).orElseThrow(()->new IllegalArgumentException("Unexpected token"));
         if (deviceInfo != null) {
             if(deviceInfo.getPolice()!=null) {
-                deviceInfoRepository.deleteByPolice_IdAndFcmToken(deviceInfo.getPolice().getId(), logoutRequest.getFcmToken());
+                deviceInfoRepository.deleteByPolice_IdAndFcmToken(id, logoutRequest.getFcmToken());
             } else {
-                deviceInfoRepository.deleteByMember_IdAndFcmToken(deviceInfo.getMember().getId(), logoutRequest.getFcmToken());
+                deviceInfoRepository.deleteByMember_IdAndFcmToken(id, logoutRequest.getFcmToken());
             }
         } else {
             // 해당 FCM 토큰을 가진 엔티티가 없음
             System.out.println("No device found with the given FCM token");
+        }
+    }
+    @Transactional
+    public void deleteRefreshToken(Long policeId, LogoutRequest logoutRequest) {
+        DeviceInfo deviceInfo = deviceInfoRepository.findByFcmToken(logoutRequest.getFcmToken())
+                .orElseThrow(() -> new IllegalArgumentException("Unexpected token"));
+
+        if (deviceInfo != null && deviceInfo.getPolice() != null && deviceInfo.getPolice().getId().equals(policeId)) {
+            deviceInfoRepository.updateRefreshTokenToNull(policeId, logoutRequest.getFcmToken());
+        } else {
+            System.out.println("No matching device found or device does not belong to the police user");
         }
     }
 }

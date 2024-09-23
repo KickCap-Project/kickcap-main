@@ -58,8 +58,10 @@ public class TokenProvider {
                     .setSigningKey(jwtProperties.getSecretKey()) // 비밀값으로 복호화
                     .parseClaimsJws(token);
 
+            System.out.println("Token is valid");
             return true;
         } catch (Exception e) { // 복호화 과정에서 에러가 나면 유효하지 않은 토큰
+            System.out.println("Invalid Token: " + e.getMessage());
             return false;
         }
     }
