@@ -41,7 +41,7 @@ public class DeviceInfoService {
 
     // FCM 토큰으로 DeviceInfo 삭제
     @Transactional
-    public void deleteByFcmToken(LogoutRequest logoutRequest) {
+    public void deleteByFcmToken(String id, LogoutRequest logoutRequest) {
         DeviceInfo deviceInfo = deviceInfoRepository.findByFcmToken(logoutRequest.getFcmToken()).orElseThrow(()->new IllegalArgumentException("Unexpected token"));
         if (deviceInfo != null) {
             if(deviceInfo.getPolice()!=null) {

@@ -6,6 +6,5 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class LogoutRequest {
-    private String policeId;
     private String fcmToken;
 }
