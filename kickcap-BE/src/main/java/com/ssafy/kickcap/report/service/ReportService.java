@@ -51,7 +51,6 @@ public class ReportService {
         return informerRepository.save(informer);
     }
 
-
     public void saveReportToRedis(Long memberId, RealTimeReportRequestDto requestDto) {
         // 킥보드 업체에 킥보드 번호로 사용자 데이터 요청 - 촬영 시간이 해당 번호판 사용시간 between 인 것.
         Company userData = fetchUserData(requestDto.getKickboardNumber(), requestDto.getReportTime());
@@ -64,8 +63,6 @@ public class ReportService {
 
         // redis key 만들기 R + memberIdx + 킥보드 번호, ttl : 1시간
         createRedisData(memberId, requestDto.getKickboardNumber(), requestDto);
-//         최종적으로는 스케줄러로 Lua 스크립트 확인 - 1분마다 확인해서 key 수명이 1분 남은거 신고테이블에 저장
-//         이 때 지역 코드랑 dto의 법정동 코드 조회해서 관할 경찰서 번호 찾은다음에 조회해야함.
     }
 
     public void createRedisData(Long memberId, String kickboardNumber, RealTimeReportRequestDto newReportDto) {
@@ -91,10 +88,9 @@ public class ReportService {
         if (existingReportDto == null || newReportDto.getViolationType() < existingReportDto.getViolationType()) {
             // 새로운 데이터의 violationType이 더 낮으면 덮어쓰기
             valueOps.set(redisKey, newReportDto, 1, TimeUnit.HOURS); // 1시간 TTL
-            // 덮어쓰기가 완료된 후 Redis에서 값을 다시 조회하여 출력
+            // 2분 TTL로 수정 - test 용
+//            valueOps.set(redisKey, newReportDto, 2, TimeUnit.MINUTES);
             RealTimeReportRequestDto savedReportDto = objectMapper.convertValue(valueOps.get(redisKey), RealTimeReportRequestDto.class);
-            System.out.println("덮어쓰기 완료된 후 조회한 데이터: " + savedReportDto);
         }
-        // 기존 데이터의 violationType이 더 낮으면 저장하지 않음
     }
 }
