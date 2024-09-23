@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as logo } from '../asset/svg/logo.svg';
 import { ReactComponent as police } from '../asset/svg/police.svg';
@@ -8,6 +8,7 @@ import Button from './../components/Common/Button';
 import Text from './../components/Common/Text';
 import { useNavigate } from 'react-router';
 import { requestPermission } from '../firebaseCloudMessaging';
+import { policeLogin } from './../lib/api/main-api';
 
 const s = {
   Container: styled.main`
@@ -48,13 +49,21 @@ const s = {
 };
 
 const LoginPage = () => {
-  const fcmToken = requestPermission();
-
   const navigate = useNavigate();
   const [login, setLogin] = useState({
-    id: '',
-    pw: '',
+    policeId: '',
+    password: '',
+    fcmToken: '',
   });
+
+  const setFcmToken = async () => {
+    const fcmToken = await requestPermission();
+    localStorage.setItem('fcmToken', fcmToken);
+    setLogin({ ...login, fcmToken });
+  };
+  useEffect(() => {
+    setFcmToken();
+  }, []);
 
   const handleChangeLogin = (e) => {
     setLogin({
@@ -62,9 +71,22 @@ const LoginPage = () => {
       [e.target.name]: e.target.value,
     });
   };
-  const handleLogin = () => {
-    localStorage.setItem('accessToken', 'test');
-    navigate('/');
+  const handleLogin = async () => {
+    // localStorage.setItem('accessToken', 'test');
+    // console.log(login);
+
+    await policeLogin(
+      login,
+      (resp) => {
+        localStorage.setItem('police', resp.data.name);
+        localStorage.setItem('accessToken', resp.data.accessToken);
+        localStorage.setItem('refreshToken', resp.data.refreshToken);
+        navigate('/');
+      },
+      (error) => {
+        alert('아이디, 비밀번호를 확인해주세요.');
+      },
+    );
   };
   return (
     <>
@@ -77,9 +99,9 @@ const LoginPage = () => {
               height={'40px'}
               placeholder={'아이디를 입력해주세요.'}
               display={'block'}
-              name={'id'}
+              name={'policeId'}
               onChange={handleChangeLogin}
-              value={login.id}
+              value={login.policeId}
             />
             <Input
               type={'password'}
@@ -88,9 +110,9 @@ const LoginPage = () => {
               placeholder={'비밀번호를 입력해주세요.'}
               display={'block'}
               margin={'10px auto 30px'}
-              name={'pw'}
+              name={'password'}
               onChange={handleChangeLogin}
-              value={login.pw}
+              value={login.password}
             />
             <Button width={'100%'} height={'40px'} display={'block'} onClick={handleLogin}>
               로 그 인
