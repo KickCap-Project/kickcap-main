@@ -29,11 +29,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         // 가져온 값에서 접두사 제거
         String token = getAccessToken(authorizationHeader);
+
+        System.out.println("Authorization Header: " + authorizationHeader);
+        System.out.println("Token: " + token);
+
         // 가져온 토큰이 유효한지 확인하고, 유효한 떄는 인증 정보 설정
         if (tokenProvider.validToken(token)){
-            Authentication authenticationth = tokenProvider.getAuthentication(token); // 인증 정보를 가져오면 유저 객체가 반환된다.
+            Authentication authentication = tokenProvider.getAuthentication(token); // 인증 정보를 가져오면 유저 객체가 반환된다.
             // 유저 객체에는 유저 이름과 권한 목록과 같은 인증 정보가 포함
-            SecurityContextHolder.getContext().setAuthentication(authenticationth);
+            System.out.println("Authentication: " + authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);

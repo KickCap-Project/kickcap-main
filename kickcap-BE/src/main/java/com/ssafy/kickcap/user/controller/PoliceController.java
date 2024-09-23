@@ -1,5 +1,6 @@
 package com.ssafy.kickcap.user.controller;
 
+import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
 import com.ssafy.kickcap.user.dto.LoginRequest;
 import com.ssafy.kickcap.user.dto.LoginResponse;
 import com.ssafy.kickcap.user.dto.LogoutRequest;
@@ -14,11 +15,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -32,6 +37,7 @@ public class PoliceController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
     private final DeviceInfoService deviceInfoService;
+    private final PoliceService policeService;
 
 
     @PostMapping("/login")
@@ -61,14 +67,18 @@ public class PoliceController {
         return ResponseEntity.ok(new LoginResponse(police.getName(), accessToken, refreshToken));
     }
 
-    @PostMapping("/logout")
+    @DeleteMapping("/logout")
     @Operation(summary = "경찰 로그아웃", description = "경찰 사용자의 로그아웃입니다.")
-    public ResponseEntity<String> logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequest) {
-        // TODO: 접속자와 동일한 아이디인지 확인 혹은 접속한 사용자 아이디로 로그아웃하도록 하기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) authentication.getPrincipal();
+    public ResponseEntity<String> logout(@AuthenticationPrincipal User user, @RequestBody LogoutRequest logoutRequest) {
+        Police police = policeService.findByPoliceId(user.getUsername()); // 서비스에서 경찰 객체를 가져오는 메서드 필요
+        if (police == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user");
+        }
+
+        System.out.println("Police ID: " + police.getId());
+
         // FCM 토큰에 해당하는 리프레시 토큰 삭제
-        deviceInfoService.deleteByFcmToken(logoutRequest);
+        deviceInfoService.deleteRefreshToken(police.getId(), logoutRequest);
 
         // 로그아웃 로직 (SecurityContext 초기화 등)
         SecurityContextHolder.clearContext();

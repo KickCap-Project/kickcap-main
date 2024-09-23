@@ -23,8 +23,12 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -53,21 +57,31 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-            // 공통 설정
+                .cors(withDefaults())
             .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화 -> csrf 공격 방지하기 위해서는 활성화하는 게 좋지만 실습의 편리를 위해 지금은 비활
-
+//                .csrf(csrf -> csrf
+//                        .ignoringRequestMatchers(
+//                                "/police/login",
+//                                "/members/login",
+//                                "/tokens/refresh"
+//                        )  // 특정 경로에서 CSRF 비활성화
+//                )
             // JWT 필터 추가 (일반 로그인 처리)
             .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             
             // URL 접근 권한 설정
             .authorizeRequests(auth -> auth // 특정 경로에 대한 인증, 인가 액세스 설정
                 .requestMatchers( // 특정 요청과 일치하는 url에 대한 액세스 설정
-                        new AntPathRequestMatcher("/kickcap/police/login"),
-                        new AntPathRequestMatcher("/kickcap/login"),
-                        new AntPathRequestMatcher("/token/refresh")
+                        new AntPathRequestMatcher("/police/login"),
+                        new AntPathRequestMatcher("/members/login"),
+                        new AntPathRequestMatcher("/tokens/refresh"),
+                        new AntPathRequestMatcher("/police/logout"),
+                        new AntPathRequestMatcher("/members/logout")
                 ).permitAll()  // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
+                .requestMatchers(
+                        new AntPathRequestMatcher("/api/**")
+                ).authenticated()
                 .anyRequest().permitAll())
                 // anyRequest()은 위에서 성정한 url 이외의 요청에 대해서 설정
                 // authenticated()은 별도의 인가는 필요하지 않지만 인증이 성공된 상태여야 접근 가능
@@ -94,6 +108,21 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                 .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher("/api/**")))
             .build();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000");  // 허용할 Origin 설정
+        configuration.addAllowedOrigin("https://j11b102.p.ssafy.io");
+        configuration.addAllowedOrigin("https://www.bardisue.store");
+        configuration.addAllowedMethod("*");  // 모든 메서드 허용 (GET, POST, PUT 등)
+        configuration.addAllowedHeader("*");  // 모든 헤더 허용
+        configuration.setAllowCredentials(true);  // 쿠키 및 인증 정보 허용
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 대해 CORS 설정 적용
+        return source;
+    }
+
 
     // 인증 관리자 관련 설정
     // 사용자 정보를 가져올 서비스를 재정의하거나 인증 방법, 예를 들어 LDAP, JDBC 기반 인증 등을 설정할 때 사용
