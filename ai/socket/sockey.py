@@ -88,6 +88,7 @@ async def video_stream(request):
                                     _, image_encoded = cv2.imencode('.jpg', roi)
                                     # 인코딩된 이미지를 업로드
                                     upload_image(image_encoded, roi_filename)
+                                    # TODO: OCR API에 자른 이미지, type, 시간(밀리초)로 보내줌
 
                                 if class_name == "Scooter_Two":
                                     # Draw rectangle on the full image
@@ -108,6 +109,8 @@ async def video_stream(request):
                                     _, image_encoded = cv2.imencode('.jpg', roi)
                                     # 인코딩된 이미지를 업로드
                                     upload_image(image_encoded, roi_filename)
+
+                                    # TODO: OCR API에 자른 이미지, type, 시간(밀리초)로 보내줌
 
                     # Convert the annotated frame to JPEG format
                     _, buffer = cv2.imencode('.jpg', annotated_frame)
