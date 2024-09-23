@@ -30,9 +30,9 @@ const s = {
   `,
 };
 
-const LoginButton = ({ title, imgSrc, color, bgcolor }) => {
+const LoginButton = ({ title, imgSrc, color, bgcolor, onClick }) => {
   return (
-    <s.LoginBtn color={color} bgcolor={bgcolor}>
+    <s.LoginBtn color={color} bgcolor={bgcolor} onClick={onClick}>
       <s.Logo src={imgSrc} />
       <s.Text>{title}</s.Text>
     </s.LoginBtn>

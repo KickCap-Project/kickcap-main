@@ -6,6 +6,7 @@ import NotificationOnSvg from './../asset/img/svg/notificationOn.svg';
 import SettingSvg from './../asset/img/svg/setting.svg';
 import { useAppDispatch } from '../lib/hook/useReduxHook';
 import { modalActions } from '../store/modal';
+import { useNavigate } from 'react-router';
 
 const notification = false;
 
@@ -51,14 +52,18 @@ const Header = () => {
   const handleOpenMainModal = (isFlag) => {
     dispatch(modalActions.ChangeIsMain(isFlag));
   };
+  const navigate = useNavigate();
+  const handleMovePage = (path) => {
+    navigate(path);
+  };
   return (
     <s.HeaderArea>
       <s.Logo src={LogoSvg} />
       <s.ButtonArea>
         {notification ? (
-          <s.ButtonNotification src={NotificationOnSvg} />
+          <s.ButtonNotification src={NotificationOnSvg} onClick={() => handleMovePage('notification')} />
         ) : (
-          <s.ButtonNotification src={NotificationOffSvg} />
+          <s.ButtonNotification src={NotificationOffSvg} onClick={() => handleMovePage('notification')} />
         )}
         <s.ButtonSetting src={SettingSvg} onClick={() => handleOpenMainModal(true)} />
       </s.ButtonArea>

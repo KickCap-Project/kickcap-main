@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import OKsvg from './../asset/img/svg/ok.svg';
 import Button from './../components/Common/Button';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -67,6 +68,11 @@ const SuccessPage = ({ message }) => {
     },
   };
 
+  const navigate = useNavigate();
+  const handleMovePage = (path) => {
+    navigate(path);
+  };
+
   return (
     <s.Container>
       <s.MainArea>
@@ -75,7 +81,7 @@ const SuccessPage = ({ message }) => {
           <s.Img src={OKsvg} />
           <s.Description>{SuccessMessage[message].description}</s.Description>
 
-          <Button width={'100%'} height={'40px'} size={'1rem'} bold={'700'}>
+          <Button width={'100%'} height={'40px'} size={'1rem'} bold={'700'} onClick={() => handleMovePage('/main')}>
             메인으로
           </Button>
         </s.Wrapper>

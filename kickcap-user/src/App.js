@@ -22,8 +22,13 @@ import ReportMisusePage from './pages/Report/ReportMisusePage';
 import ObjectionListPage from './pages/Objection/ObjectionListPage';
 import ObjectionDetailPage from './pages/Objection/ObjectionDetailPage';
 
-import OneClickReportPage from './components/OneClickReport/OneClickReportPage';
+import OneClickReportPage from './pages/OneClickReport/OneClickReportPage';
 import SuccessPage from './pages/SuccessPage';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { PrivateRoute, PublicRoute } from './pages/IsLoginPage';
+import NotificationPage from './pages/NotificationPage';
+import ChatPage from './pages/ChatPage';
+import ErrorPage from './pages/ErrorPage';
 
 const s = {
   Background: styled.section`
@@ -69,7 +74,47 @@ function App() {
       <GlobalStyle />
       <s.Background />
       <s.Container>
-        <ReportMisusePage />
+        <BrowserRouter>
+          <Routes>
+            <Route element={<PublicRoute />}>
+              <Route path="/" element={<SplashPage />} />
+              <Route path="/login" element={<LoginPage />} />
+            </Route>
+            <Route element={<PrivateRoute />}>
+              <Route path="/main">
+                <Route index element={<MainPage />} />
+                <Route path="notification" element={<NotificationPage />} />
+                <Route path="chat" element={<ChatPage />} />
+              </Route>
+              <Route path="/violation">
+                <Route index element={<ViolationListPage />} />
+                <Route path="detail" element={<ViolationDetailPage />} />
+                <Route path="objection">
+                  <Route index element={<ViolationObjectionPage />} />
+                  <Route path="success" element={<SuccessPage message="objection" />} />
+                </Route>
+              </Route>
+              <Route path="/sos" element={<OneClickReportPage />} />
+              <Route path="/report">
+                <Route index element={<ReportMainPage />} />
+                <Route path="parking">
+                  <Route index element={<ReportIllegalParkingPage />} />
+                  <Route path="success" element={<SuccessPage message="report" />} />
+                </Route>
+                <Route path="real-time">
+                  <Route index element={<ReportMisusePage />} />
+                  <Route path="success" element={<SuccessPage message="report" />} />
+                </Route>
+              </Route>
+              <Route path="/objection">
+                <Route index element={<ObjectionListPage />} />
+                <Route path="detail" element={<ObjectionDetailPage />} />
+              </Route>
+            </Route>
+            <Route path="*" element={<ErrorPage />} />
+            <Route />
+          </Routes>
+        </BrowserRouter>
       </s.Container>
     </ThemeProvider>
   );

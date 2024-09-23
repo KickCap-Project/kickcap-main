@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import Button from '../../components/Common/Button';
@@ -6,6 +6,7 @@ import Button from '../../components/Common/Button';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ViolationDetail from '../../components/Violation/ViolationDetail';
+import { useLocation, useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -66,11 +67,21 @@ const ViolationDetailPage = () => {
     isReq: 0,
   };
 
+  const navigate = useNavigate();
+  const id = useLocation().state?.idx || null;
+
+  useEffect(() => {
+    if (id === null) {
+      navigate('*');
+      return;
+    }
+  }, [id]);
+
   const objectionEventHandler = () => {
-    console.log(1234);
+    navigate('../objection', { state: { id } });
   };
   const paymentEventHandler = () => {
-    console.log(4321);
+    navigate('', { state: { id } });
   };
 
   return (
