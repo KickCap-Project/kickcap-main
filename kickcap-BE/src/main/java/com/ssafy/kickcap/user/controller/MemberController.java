@@ -21,7 +21,7 @@ import java.time.Duration;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/members")
 @Tag(name = "Member API", description = "시민 사용자 관련 API")
 public class MemberController {
 

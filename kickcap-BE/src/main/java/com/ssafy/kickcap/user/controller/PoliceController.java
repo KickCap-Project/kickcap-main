@@ -1,5 +1,6 @@
 package com.ssafy.kickcap.user.controller;
 
+import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
 import com.ssafy.kickcap.user.dto.LoginRequest;
 import com.ssafy.kickcap.user.dto.LoginResponse;
 import com.ssafy.kickcap.user.dto.LogoutRequest;
@@ -18,7 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -63,12 +66,11 @@ public class PoliceController {
 
     @PostMapping("/logout")
     @Operation(summary = "경찰 로그아웃", description = "경찰 사용자의 로그아웃입니다.")
-    public ResponseEntity<String> logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequest) {
+    public ResponseEntity<String> logout(@AuthenticationPrincipal Police principal, @RequestBody LogoutRequest logoutRequest) {
         // TODO: 접속자와 동일한 아이디인지 확인 혹은 접속한 사용자 아이디로 로그아웃하도록 하기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) authentication.getPrincipal();
+
         // FCM 토큰에 해당하는 리프레시 토큰 삭제
-        deviceInfoService.deleteByFcmToken(logoutRequest);
+        deviceInfoService.deleteByFcmToken(principal.getPoliceId(), logoutRequest);
 
         // 로그아웃 로직 (SecurityContext 초기화 등)
         SecurityContextHolder.clearContext();
