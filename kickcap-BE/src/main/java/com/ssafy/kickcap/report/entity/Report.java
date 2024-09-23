@@ -1,22 +1,22 @@
 package com.ssafy.kickcap.report.entity;
 
-import com.ssafy.kickcap.common.BaseEntity;
-import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.entity.Member;
+import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.violationtype.entity.ViolationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "report")
-public class Report extends BaseEntity {
+public class Report{
 
     @Id
     @Column(name = "idx")
@@ -26,7 +26,7 @@ public class Report extends BaseEntity {
     @Column(name = "image_src", columnDefinition = "TEXT", nullable = false)
     private String imageSrc;
 
-    @Column(nullable = false)
+    @Column(name = "addr", nullable = false)
     private String address;
 
     @Column(name = "lat",nullable = false)
@@ -38,8 +38,8 @@ public class Report extends BaseEntity {
     @Column(name = "kickboard_number", nullable = false, length = 10)
     private String kickboardNumber;
 
-    @Column(name = "report_time", nullable = false)
-    private LocalDateTime reportTime;
+    @Column(name = "report_time", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime reportTime;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -47,6 +47,10 @@ public class Report extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "approve_status", nullable = false)
     private ApproveStatus approveStatus;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)

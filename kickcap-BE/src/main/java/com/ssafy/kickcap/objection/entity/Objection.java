@@ -1,15 +1,14 @@
 package com.ssafy.kickcap.objection.entity;
 
 import com.ssafy.kickcap.bill.entity.Bill;
-import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -17,7 +16,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "objection")
-public class Objection extends BaseEntity {
+public class Objection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
@@ -31,6 +30,10 @@ public class Objection extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")

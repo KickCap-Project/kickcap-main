@@ -2,7 +2,6 @@ package com.ssafy.kickcap.user.entity;
 
 import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.cctv.entity.Crackdown;
-import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.notification.entity.Notification;
 import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.report.entity.AccidentReport;
@@ -10,10 +9,14 @@ import com.ssafy.kickcap.report.entity.Informer;
 import com.ssafy.kickcap.report.entity.Report;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +26,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "member")
-public class Member extends BaseEntity {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
@@ -40,6 +43,10 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false)
     private int demerit;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
@@ -69,4 +76,29 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Informer> informers = new ArrayList<>();
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+        this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+    }
+
+    @Builder
+    public Member(String email, String name) {
+        this.email = email;
+        this.name = name;
+        this.phone = " ";
+        this.demerit = 0;
+    }
+
+    public Member update(String name) {
+        this.name = name;
+        this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+        return this;
+    }
 }

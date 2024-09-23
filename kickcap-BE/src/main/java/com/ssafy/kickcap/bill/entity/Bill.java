@@ -1,15 +1,15 @@
 package com.ssafy.kickcap.bill.entity;
 
-import com.ssafy.kickcap.common.BaseEntity;
 import com.ssafy.kickcap.objection.entity.Objection;
-import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.entity.Member;
+import com.ssafy.kickcap.user.entity.Police;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "bill")
-public class Bill extends BaseEntity {
+public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
@@ -33,8 +33,8 @@ public class Bill extends BaseEntity {
     @Column(name = "total_bill", nullable = false)
     private int totalBill;
 
-    @Column(nullable = false)
-    private LocalDateTime deadline;
+    @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime deadline;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "paid_status", nullable = false)
@@ -42,6 +42,10 @@ public class Bill extends BaseEntity {
 
     @Column(name = "is_obj", nullable = false, length = 1)
     private String isObjection;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,17 +1,20 @@
 package com.ssafy.kickcap.notification.entity;
-import com.ssafy.kickcap.common.BaseEntity;
+
 import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "notification")
-public class Notification extends BaseEntity {
+public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
@@ -28,10 +31,14 @@ public class Notification extends BaseEntity {
     private String content;
 
     @Column(nullable = false, length = 1)
-    private boolean isRead;
+    private String isRead;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NotificationType type;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime createdAt;
 
 }
