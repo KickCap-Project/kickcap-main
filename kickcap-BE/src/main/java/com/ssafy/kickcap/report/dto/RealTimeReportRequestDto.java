@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RealTimeReportRequestDto {
 
-    private int violationType;
+    private Long violationType;
 
     private String image;
 
