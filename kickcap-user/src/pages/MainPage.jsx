@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from './../lib/hook/useReduxHook';
 import PhoneSetModal from '../components/Modal/PhoneSetModal';
 import Text from '../components/Common/Text';
 import { useNavigate } from 'react-router';
+import InfoModal from '../components/Modal/InfoModal';
 
 const s = {
   Container: styled.div`
@@ -142,6 +143,7 @@ const MainPage = () => {
       <Footer />
       <PhoneSetModal open={isPhone} toggleModal={handleOpenPhoneModal} />
       <MainPageModal open={isMain} toggleModal={handleOpenMainModal} />
+      <InfoModal open={true} />
     </s.Container>
   );
 };
