@@ -12,7 +12,7 @@ import MainBtn3 from './../asset/img/svg/mainBtn3.svg';
 import MainBtn4 from './../asset/img/svg/mainBtn4.svg';
 import ChatbotBtn from './../asset/img/svg/chat.svg';
 import MainPageModal from '../components/Modal/MainPageModal';
-import { modalActions, selectIsMain, selectIsPhone } from './../store/modal';
+import { modalActions, selectIsInfo, selectIsMain, selectIsPhone } from './../store/modal';
 import { useAppDispatch, useAppSelector } from './../lib/hook/useReduxHook';
 import PhoneSetModal from '../components/Modal/PhoneSetModal';
 import Text from '../components/Common/Text';
@@ -72,12 +72,16 @@ const s = {
 const MainPage = () => {
   const isMain = useAppSelector(selectIsMain);
   const isPhone = useAppSelector(selectIsPhone);
+  const isInfo = useAppSelector(selectIsInfo);
   const dispatch = useAppDispatch();
   const handleOpenMainModal = (isFlag) => {
     dispatch(modalActions.ChangeIsMain(isFlag));
   };
   const handleOpenPhoneModal = (isFlag) => {
     dispatch(modalActions.ChangeIsPhone(isFlag));
+  };
+  const handleOpenInfoModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsInfo(isFlag));
   };
 
   const navigate = useNavigate();
@@ -143,7 +147,7 @@ const MainPage = () => {
       <Footer />
       <PhoneSetModal open={isPhone} toggleModal={handleOpenPhoneModal} />
       <MainPageModal open={isMain} toggleModal={handleOpenMainModal} />
-      <InfoModal open={true} />
+      <InfoModal open={isInfo} toggleModal={handleOpenInfoModal} />
     </s.Container>
   );
 };
