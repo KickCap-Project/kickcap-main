@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
 
 import Button from '../Common/Button';
 import Input from '../Common/Input';
@@ -12,7 +11,7 @@ import UploadImgButton from '../../components/Report/UploadImgButtom';
 import ReportGetPositionModal from '../Modal/ReportGetPositionModal';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { selectIsMap, modalActions } from '../../store/modal';
-import { useDispatch } from 'react-redux';
+import { selectLatitude, selectLongitude, selectAddress, selectCode } from '../../store/location';
 
 const s = {
   Form: styled.form`
@@ -72,11 +71,9 @@ const ReportMisuseForm = () => {
   const violationTypeIdx = [3, 1, 2, 5];
 
   const [image, setImage] = useState('');
-  const [kickboardNumber, setKickboardNumber] = useState("'");
-  const [location, setLocation] = useState('');
+  const [kickboardNumber, setKickboardNumber] = useState('');
   const [violations, setViolations] = useState(() => {
     const initialState = {};
-
     violationTypeIdx.forEach((idx) => {
       initialState[ViolationType[idx].type] = false;
     });
@@ -85,7 +82,12 @@ const ReportMisuseForm = () => {
   const [description, setDescription] = useState('');
 
   const isMap = useAppSelector(selectIsMap);
+  const latitude = useAppSelector(selectLatitude) || null;
+  const longitude = useAppSelector(selectLongitude) || null;
+  const address = useAppSelector(selectAddress) || '';
+  const code = useAppSelector(selectCode) || '';
   const dispatch = useAppDispatch();
+
   const handleOpenMapModal = (isFlag) => {
     dispatch(modalActions.ChangeIsMap(isFlag));
   };
@@ -128,8 +130,8 @@ const ReportMisuseForm = () => {
             bold={'500'}
             size={'15px'}
             InputColor="AreaColor"
-            placeholder={location ? location : '클릭하여 위치정보를 입력해주세요.'}
-            value={location}
+            placeholder={address ? address : '클릭하여 위치정보를 입력해주세요.'}
+            value={address}
           />
         </s.LocationArea>
       </s.InputArea>
@@ -152,7 +154,7 @@ const ReportMisuseForm = () => {
         margin={'10px'}
       />
       <s.ButtonArea>
-        {image && kickboardNumber && description ? (
+        {image && kickboardNumber && address && latitude && longitude && code && description ? (
           <Button width={'90%'} height={'40px'} bold={'700'} size={'24px'}>
             작성 완료
           </Button>
