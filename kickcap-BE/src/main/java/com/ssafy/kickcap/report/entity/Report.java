@@ -5,6 +5,7 @@ import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.violationtype.entity.ViolationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,6 +18,7 @@ import java.time.ZonedDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "report")
 public class Report{
 
@@ -72,4 +74,22 @@ public class Report{
     @JoinColumn(name = "violation_type", nullable = false)
     private ViolationType violationType;
 
+    @Override
+    public String toString() {
+        return "Report{" +
+                "id=" + id +
+                ", imageSrc='" + imageSrc + '\'' +
+                ", address='" + address + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", kickboardNumber='" + kickboardNumber + '\'' +
+                ", reportTime=" + reportTime +
+                ", description='" + description + '\'' +
+                ", approveStatus=" + approveStatus +
+                ", createdAt=" + createdAt +
+                ", member=" + member +
+                ", police=" + police +
+                ", violationType=" + violationType +
+                '}';
+    }
 }

@@ -9,16 +9,12 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig {
-
-    private final ReportMessageListener reportMessageListener;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() { // RedisConnectionFactory 추가
@@ -41,21 +37,6 @@ public class RedisConfig {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
-    }
-
-    // Redis 메시지 리스너 컨테이너 설정
-    @Bean
-    public RedisMessageListenerContainer redisContainer() {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(redisConnectionFactory());
-        container.addMessageListener(listenerAdapter(), topic()); // 리스너 어댑터와 토픽 설정
-        return container;
-    }
-
-    // 리스너 어댑터 설정
-    @Bean
-    public MessageListenerAdapter listenerAdapter() {
-        return new MessageListenerAdapter(reportMessageListener, "onMessage");
     }
 
     // Redis 구독 채널 설정
