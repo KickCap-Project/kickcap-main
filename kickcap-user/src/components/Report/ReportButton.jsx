@@ -11,6 +11,7 @@ const s = {
     position: relative;
     background-color: ${(props) => props.theme.AreaColor};
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
   `,
   Title: styled.div`
     font-size: 1.5rem;
