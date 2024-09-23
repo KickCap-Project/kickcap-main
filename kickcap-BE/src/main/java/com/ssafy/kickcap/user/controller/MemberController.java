@@ -19,7 +19,7 @@ import java.time.Duration;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/kickcap")
+@RequestMapping("/member")
 public class MemberController {
 
     private final TokenProvider tokenProvider;
@@ -27,14 +27,14 @@ public class MemberController {
     private final MemberService memberService;
 
     // OAuth 로그인 후 Access Token, Refresh Token, FCM 토큰 저장하는 API
-    @PostMapping("/member/login")
+    @PostMapping("/login")
     public ResponseEntity<?> oauthLogin() {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
     // 로그아웃 API
-    @PostMapping("/member/logout")
+    @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestBody String fcmToken) {
         // FCM 토큰을 기반으로 리프레시 토큰 삭제
 //        deviceInfoService.deleteByFcmToken(fcmToken);

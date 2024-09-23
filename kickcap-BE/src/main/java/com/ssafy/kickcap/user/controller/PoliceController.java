@@ -22,7 +22,7 @@ import java.time.Duration;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/kickcap")
+@RequestMapping("/police")
 public class PoliceController {
 
     private final PoliceService policeService;
@@ -30,7 +30,7 @@ public class PoliceController {
     private final AuthenticationManager authenticationManager;
     private final DeviceInfoService deviceInfoService;
 
-    @PostMapping("/police/login")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         // 1. 사용자 인증
         Authentication authentication = authenticationManager.authenticate(
@@ -56,7 +56,7 @@ public class PoliceController {
         return ResponseEntity.ok(new LoginResponse(police.getName(), accessToken, refreshToken));
     }
 
-    @PostMapping("/police/logout")
+    @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequest) {
         // TODO: 접속자와 동일한 아이디인지 확인 혹은 접속한 사용자 아이디로 로그아웃하도록 하기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
