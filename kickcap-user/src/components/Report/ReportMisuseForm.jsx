@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 import Button from '../Common/Button';
 import Input from '../Common/Input';
@@ -61,6 +62,7 @@ const s = {
   ButtonArea: styled.div`
     width: 100%;
     padding-top: 5vh;
+    padding-bottom: 5vh;
     display: flex;
     justify-content: center;
   `,
@@ -85,7 +87,6 @@ const ReportMisuseForm = () => {
   const isMap = useAppSelector(selectIsMap);
   const dispatch = useAppDispatch();
   const handleOpenMapModal = (isFlag) => {
-    console.log(1234);
     dispatch(modalActions.ChangeIsMap(isFlag));
   };
 
@@ -127,7 +128,8 @@ const ReportMisuseForm = () => {
             bold={'500'}
             size={'15px'}
             InputColor="AreaColor"
-            placeholder={'클릭하여 위치정보를 입력해주세요.'}
+            placeholder={location ? location : '클릭하여 위치정보를 입력해주세요.'}
+            value={location}
           />
         </s.LocationArea>
       </s.InputArea>

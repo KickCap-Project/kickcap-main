@@ -27,6 +27,7 @@ const s = {
   ButtonArea: styled.div`
     width: 100%;
     padding-top: 5vh;
+    padding-bottom: 5vh;
     display: flex;
     justify-content: center;
   `,
