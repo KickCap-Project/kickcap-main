@@ -3,9 +3,11 @@ import { persistReducer } from 'redux-persist';
 import persistStore from 'redux-persist/es/persistStore';
 import storageSession from 'redux-persist/lib/storage/session';
 import modalReducer from './modal';
+import locationReducer from './location';
 
 const reducers = combineReducers({
   modal: modalReducer,
+  location: locationReducer,
 });
 
 const persistConfig = {

@@ -51,7 +51,7 @@ const ReportGetPositionModal = ({ open, toggleModal }) => {
 
   const handleSetLocationAndClose = async () => {
     try {
-      const { addr, loc: selectedLoc } = await handleSetLocation();
+      await handleSetLocation();
       toggleModal(false);
     } catch (error) {
       console.log(`Error: ${error}`);

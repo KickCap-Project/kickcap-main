@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import { setLocation } from '../../store/location';
+import { useAppDispatch } from './useReduxHook';
 
 const { kakao } = window;
 
@@ -7,17 +9,27 @@ const useReportMap = (loc) => {
   const mapInstanceRef = useRef(null);
   const markerRef = useRef(null);
 
+  const dispatch = useAppDispatch();
+
   const handleSetLocation = () => {
     return new Promise((resolve, reject) => {
       const center = mapInstanceRef.current.getCenter();
 
       if (kakao && kakao.maps.services) {
         const geocoder = new kakao.maps.services.Geocoder();
+        const getLat = center.getLat();
+        const getLng = center.getLng();
 
-        const callback = (result, status) => {
+        let locationData = {
+          latitude: getLat,
+          longitude: getLng,
+          address: '',
+          code: '',
+        };
+
+        // 1. 주소 가져오기
+        const callbackAddr = (result, status) => {
           if (status === kakao.maps.services.Status.OK) {
-            const selectedLoc = { lat: center.getLat(), lng: center.getLng() };
-            console.log(result[0]);
             const addr = result[0].address?.address_name;
             const road_addr = result[0].road_address?.address_name;
 
@@ -26,15 +38,39 @@ const useReportMap = (loc) => {
               return reject('No valid address found.');
             }
 
-            resolve(road_addr ? { addr: road_addr, loc: selectedLoc } : { addr: addr, loc: selectedLoc });
+            locationData.address = road_addr ? road_addr : addr;
+
+            // 2. 법정동 가져오기
+            geocoder.coord2RegionCode(getLng, getLat, callbackRegionCode);
           } else {
-            console.log(`Callback Error: ${status}`);
-            reject(`Callback Error: ${status}`);
+            console.log(`주소 조회 오류: ${status}`);
+            reject(`주소 조회 오류: ${status}`);
           }
         };
-        geocoder.coord2Address(center.getLng(), center.getLat(), callback);
+
+        // 2. 법정동 코드 가져오기
+        const callbackRegionCode = (result, status) => {
+          if (status === kakao.maps.services.Status.OK) {
+            result.forEach((region) => {
+              if (region.region_type === 'B') {
+                locationData.code = region.code;
+              }
+            });
+
+            console.log(locationData);
+
+            dispatch(setLocation(locationData));
+            resolve();
+          } else {
+            console.log(`법정동 코드 조회 오류: ${status}`);
+            reject(`법정동 코드 조회 오류: ${status}`);
+          }
+        };
+
+        geocoder.coord2Address(getLng, getLat, callbackAddr);
       } else {
         console.log(`Kakao Maps services가 로드되지 않았습니다.`);
+        reject(`Kakao Maps services가 로드되지 않았습니다.`);
       }
     });
   };
@@ -43,7 +79,7 @@ const useReportMap = (loc) => {
     if (mapRef.current) {
       const options = {
         center: new kakao.maps.LatLng(loc.lat, loc.lng),
-        level: 1,
+        level: 3,
       };
       const mapInstance = new kakao.maps.Map(mapRef.current, options);
       mapInstanceRef.current = mapInstance;
