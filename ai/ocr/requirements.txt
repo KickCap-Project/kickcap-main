@@ -11,3 +11,10 @@ pydantic
 redis
 psycopg2
 python-dotenv
+requests
+ultralytics
+onnxruntime-gpu
+onnx
+pytz
+aiohttp
+aiohttp-cors

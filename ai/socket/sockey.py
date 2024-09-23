@@ -6,9 +6,22 @@ import aiohttp
 from ultralytics import YOLO
 import os
 import datetime  # datetime module added
+import requests
 
 # Load the YOLO model. Ultralytics will download the model if it doesn't exist.
-model = YOLO('best.pt')  # yolov8n.pt is a smaller, lightweight version
+# model = YOLO('runs/detect/train5/weights/best.pt')  # yolov8n.pt is a smaller, lightweight version
+model = YOLO('best.pt')
+
+
+# 파일을 서버로 업로드하는 함수
+def upload_image(image_buffer, file_name):
+    url = "https://j11b102.p.ssafy.io/image/upload/camera"  # Postman에서 사용한 URL
+    # 메모리 버퍼를 바이너리로 전송
+    files = {'image': (f'{file_name}', image_buffer.tobytes(), 'image/jpeg')}
+    response = requests.post(url, files=files)  # POST 요청 보내기
+    print(response.status_code)  # 응답 코드 출력
+    print(response.text)  # 서버 응답 내용 출력
+
 
 async def video_stream(request):
     ws = web.WebSocketResponse()
@@ -60,24 +73,41 @@ async def video_stream(request):
                                     cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (255, 255, 0), 3)
                                     current_time_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
                                     full_image_filename = f'./Scooter_No_Helmet/{current_time_str}_1.jpg'
-                                    cv2.imwrite(full_image_filename, annotated_frame)
+                                    # cv2.imwrite(full_image_filename, annotated_frame)
+                                    # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+                                    _, image_encoded = cv2.imencode('.jpg', annotated_frame)
+                                    # 인코딩된 이미지를 업로드
+                                    upload_image(image_encoded, full_image_filename)
 
                                     # Extract and save the region of interest (ROI) as a separate image
                                     roi = image[y1:y2, x1:x2]
                                     roi_filename = f'./Scooter_No_Helmet/{current_time_str}_2.jpg'
-                                    cv2.imwrite(roi_filename, roi)
+                                    # cv2.imwrite(roi_filename, roi)
+
+                                    # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+                                    _, image_encoded = cv2.imencode('.jpg', roi)
+                                    # 인코딩된 이미지를 업로드
+                                    upload_image(image_encoded, roi_filename)
 
                                 if class_name == "Scooter_Two":
                                     # Draw rectangle on the full image
                                     cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (255, 255, 255), 3)
                                     current_time_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
                                     full_image_filename = f'./Scooter_Two/{current_time_str}_1.jpg'
-                                    cv2.imwrite(full_image_filename, annotated_frame)
+                                    # cv2.imwrite(full_image_filename, annotated_frame)
+                                    # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+                                    _, image_encoded = cv2.imencode('.jpg', annotated_frame)
+                                    # 인코딩된 이미지를 업로드
+                                    upload_image(image_encoded, full_image_filename)
 
                                     # Extract and save the region of interest (ROI) as a separate image
                                     roi = image[y1:y2, x1:x2]
                                     roi_filename = f'./Scooter_Two/{current_time_str}_2.jpg'
-                                    cv2.imwrite(roi_filename, roi)
+                                    # cv2.imwrite(roi_filename, roi)
+                                    # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+                                    _, image_encoded = cv2.imencode('.jpg', roi)
+                                    # 인코딩된 이미지를 업로드
+                                    upload_image(image_encoded, roi_filename)
 
                     # Convert the annotated frame to JPEG format
                     _, buffer = cv2.imencode('.jpg', annotated_frame)

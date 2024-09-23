@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+import requests
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import cv2
 import numpy as np
@@ -6,6 +7,7 @@ import os
 import easyocr
 import re
 import redis
+import pytz
 from datetime import datetime, timedelta
 
 """
@@ -15,9 +17,9 @@ uvicorn license_plate_api:app --reload
 POST: http://localhost:8000/ocr
 (JSON)
 {
-    "camera_name": "camera1",
+    "camera_idx": 1,
     "file_path": "C://Users//roista//Desktop//SSAFY//OCR//image2//license_plate_18.jpg",
-    "division": 1,
+    "type": 1,
     "time": "20230101123045000"
 }
 
@@ -32,6 +34,8 @@ POST: http://localhost:8000/ocr
 
 app = FastAPI()
 
+KST = pytz.timezone('Asia/Seoul')
+
 # OCR을 위한 Reader 객체 생성 (영어 지원)
 reader = easyocr.Reader(['en'])
 
@@ -39,28 +43,41 @@ reader = easyocr.Reader(['en'])
 redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
 
-class OCRRequest(BaseModel):
-    camera_name: str
-    file_path: str
-    division: int
+# 파일을 서버로 업로드하는 함수
+def upload_image(image_buffer, file_name):
+    url = "https://j11b102.p.ssafy.io/image/upload/result"  # Postman에서 사용한 URL
+    # 메모리 버퍼를 바이너리로 전송
+    files = {'image': (f'{file_name}', image_buffer.tobytes(), 'image/jpeg')}
+    response = requests.post(url, files=files)  # POST 요청 보내기
+    print(response.text)  # 서버 응답 내용 출력
+    return f'{url}/{response.text}'
+
+
+class OCRRequests(BaseModel):
+    camera_idx: int
+    file_name: str
+    type: int
     time: str
 
 
-@app.post("/ocr")
-def ocr_endpoint(request: OCRRequest):
-    # Redis에서 기존에 처리된 요청인지 확인
-    key = f"{request.camera_name}_{request.division}_{request.time}"
 
-    # TODO: 처리 결과는 출력하지 않도록 수정 필요
-    if redis_client.exists(key):
-        return {'result': 'duplicate', 'message': '이미 처리된 요청입니다.'}
+@app.post("/ocr")
+def ocr_endpoint(request: OCRRequests):
+    # Redis에서 기존에 처리된 요청인지 확인
+
+    path = f'https://j11b102.p.ssafy.io/image/camera/{request.file_name}'
+    req = requests.get(path)
+    print(req.status_code)
 
     # 1. 이미지 읽기 및 그레이스케일 변환
-    img = cv2.imread(request.file_path)
+    # img = cv2.imread(file_path)
 
-    # TODO: 결과 값을 404와 같이 코드로 반환
+    # 이미지 데이터를 numpy 배열로 변환
+    image_array = np.frombuffer(req.content, np.uint8)
+    img = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+
     if img is None:
-        return {'result': 'fail', 'message': '이미지를 찾을 수 없습니다.'}
+        raise HTTPException(status_code=404, detail="Image Not Found")
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -242,14 +259,9 @@ def ocr_endpoint(request: OCRRequest):
 
     # 결과 저장 및 OCR 수행
     result_text = ''
-    preprocessed_image_path = ''
+    ocr_img_src = ''
+    image_encoded = ''
     for i, plate_img in enumerate(plate_imgs):
-        # 전처리 결과 이미지 저장
-        file_name = f'{request.camera_name}_{request.division}_{request.time}_{i}'
-        preprocessed_image_path = f'preprocessed/{file_name}.jpg'
-        os.makedirs(os.path.dirname(preprocessed_image_path), exist_ok=True)
-
-
         # OCR 수행
         result = reader.readtext(plate_img)
 
@@ -260,43 +272,46 @@ def ocr_endpoint(request: OCRRequest):
             text = re.sub(r'[^A-Za-z0-9]', '', text)
             # 영어 1자와 숫자 4개로 구성된 경우에만 통과
             # if re.fullmatch(r'[A-Za-z]{1}[0-9]{4}', text):
-            #     result_text = text
-            #     break
-            result_text = text
-            if result_text:
-                cv2.imwrite(preprocessed_image_path, plate_img)
+            if re.fullmatch(r'[0-9]{4}', text):
+                result_text = text
                 break
 
         if result_text:
-            cv2.imwrite(preprocessed_image_path, plate_img)
+            # cv2.imwrite(preprocessed_image_path, plate_img)
+            # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+            _, image_encoded = cv2.imencode('.jpg', plate_img)
             break
 
-    # TODO: 처리 결과는 출력하지 않도록 수정 필요
     if result_text:
+        # 현재 시간 (한국 시간)
+        now_kst = datetime.now(KST)
+
         # TTL 설정을 위한 만료 시간 계산
-        expire_time = datetime.now() + timedelta(minutes=1)
-        ttl_seconds = (expire_time - datetime.now()).total_seconds()
-        ttl_seconds = max(0, int(ttl_seconds))  # 음수일 경우 0으로 설정
+        expire_time = now_kst + timedelta(minutes=1)
+        expire_seconds = int((expire_time - now_kst).total_seconds())
 
         # Redis에 키 저장 및 TTL 설정
-        redis_key = f"{request.camera_name}_{result_text}"
-        print(redis_key)
-        redis_client.setex(redis_key, ttl_seconds, 'processed')
+        key = f"{request.camera_idx}_{request.type}_{result_text}"
 
+        print(key)
+        if redis_client.exists(key):
+            raise HTTPException(status_code=200, detail="Duplicate License Plate")
+
+        # TODO: DB에 데이터를 저장하는 코드 추가
+
+        redis_client.setex(key, expire_seconds, 'processed')
+
+        # 인코딩된 이미지를 업로드
+        ocr_img_src = upload_image(image_encoded, 'image')
         return {
-            'camera_name': request.camera_name,
-            'file_path': request.file_path,
-            'preprocessed_image_path': preprocessed_image_path,
-            'division': request.division,
-            'time': request.time,
+            'cctv_idx': request.camera_idx,
+            'accused_idx': '1',
+            'type': request.type,
+            'image_src': path,
+            'ocr_img_src': ocr_img_src,
+            'crackdown_time': request.time,
+            'created_at': now_kst,
             'result': result_text
         }
     else:
-        return {
-            'camera_name': request.camera_name,
-            'file_path': request.file_path,
-            'preprocessed_image_path': '',
-            'division': request.division,
-            'time': request.time,
-            'result': 'fail'
-        }
+        raise HTTPException(status_code=404, detail="OCR Not Found")
