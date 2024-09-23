@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Text from './../components/Common/Text';
 
 import LoadingLogo from './../asset/img/splashLogo.gif';
 import Logo from './../asset/img/svg/Logo.svg';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -32,12 +33,16 @@ const s = {
 };
 
 const SplashPage = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    setTimeout(() => {
+      navigate('/login');
+    }, 2000);
+  }, []);
   return (
     <s.Container>
       <s.MainArea>
         <s.LoadingLogoImg src={LoadingLogo} />
-        {/* <s.LogoImg src={Logo} /> */}
-
         <Text size={'20px'} bold={'800'} margin={'10px auto'}>
           로딩 중...
         </Text>

@@ -6,6 +6,7 @@ import Footer from '../../components/Footer';
 import ViolationEmpty from '../../components/Violation/ViolationEmpty';
 import ViolationList from '../../components/Violation/ViolationList';
 import { ViolationType, isFlagType } from '../../lib/data/Violation';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`

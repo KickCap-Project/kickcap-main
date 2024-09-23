@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Text from './Common/Text';
 import BackSvg from './../asset/img/svg/back.svg';
+import { useNavigate } from 'react-router';
 
 const s = {
   HeaderArea: styled.div`
@@ -23,9 +24,10 @@ const s = {
 };
 
 const Header = ({ title }) => {
+  const navigate = useNavigate();
   return (
     <s.HeaderArea>
-      <s.Img src={BackSvg} />
+      <s.Img src={BackSvg} onClick={() => navigate(-1)} />
       <Text size={20} bold={'800'}>
         {title}
       </Text>

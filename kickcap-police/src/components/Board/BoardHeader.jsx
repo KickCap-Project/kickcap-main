@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import IconSvg from '../Common/IconSvg';
 import { useNavigate } from 'react-router';
 import Button from './../Common/Button';
+import { logout } from '../../lib/api/main-api';
 
 const s = {
   fixedArea: styled.div`
@@ -87,6 +88,7 @@ const s = {
 
 const BoardHeader = () => {
   const navigate = useNavigate();
+  const policeName = localStorage.getItem('police');
   const type = useAppSelector(selectNav);
   const dispatch = useAppDispatch();
   const handleClickIcon = (mode) => {
@@ -98,9 +100,21 @@ const BoardHeader = () => {
     return type === mode ? '#0054A6' : undefined;
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    navigate('/');
+  const handleLogout = async () => {
+    const fcmToken = sessionStorage.getItem('fcmToken');
+    await logout(
+      fcmToken,
+      (resp) => {
+        sessionStorage.removeItem('fcmToken');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('police');
+        navigate('/');
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
   };
   return (
     <>
@@ -109,7 +123,7 @@ const BoardHeader = () => {
           <s.TitleArea>
             <IconSvg Ico={logo} width={'30px'} margin={'0 10px 0 0'} />
             <s.Title>
-              킥보드 자동화 단속 플랫폼<s.nameArea>(대전 유성경찰서)</s.nameArea>
+              킥보드 자동화 단속 플랫폼<s.nameArea>({policeName})</s.nameArea>
               <s.Btn onClick={handleLogout}>로그아웃</s.Btn>
             </s.Title>
           </s.TitleArea>

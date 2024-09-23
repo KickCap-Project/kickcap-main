@@ -12,10 +12,12 @@ import MainBtn3 from './../asset/img/svg/mainBtn3.svg';
 import MainBtn4 from './../asset/img/svg/mainBtn4.svg';
 import ChatbotBtn from './../asset/img/svg/chat.svg';
 import MainPageModal from '../components/Modal/MainPageModal';
-import { modalActions, selectIsMain, selectIsPhone } from './../store/modal';
+import { modalActions, selectIsInfo, selectIsMain, selectIsPhone } from './../store/modal';
 import { useAppDispatch, useAppSelector } from './../lib/hook/useReduxHook';
 import PhoneSetModal from '../components/Modal/PhoneSetModal';
 import Text from '../components/Common/Text';
+import { useNavigate } from 'react-router';
+import InfoModal from '../components/Modal/InfoModal';
 
 const s = {
   Container: styled.div`
@@ -70,12 +72,21 @@ const s = {
 const MainPage = () => {
   const isMain = useAppSelector(selectIsMain);
   const isPhone = useAppSelector(selectIsPhone);
+  const isInfo = useAppSelector(selectIsInfo);
   const dispatch = useAppDispatch();
   const handleOpenMainModal = (isFlag) => {
     dispatch(modalActions.ChangeIsMain(isFlag));
   };
   const handleOpenPhoneModal = (isFlag) => {
     dispatch(modalActions.ChangeIsPhone(isFlag));
+  };
+  const handleOpenInfoModal = (isFlag) => {
+    dispatch(modalActions.ChangeIsInfo(isFlag));
+  };
+
+  const navigate = useNavigate();
+  const handleMovePage = (path) => {
+    navigate(path);
   };
   const username = '오진영';
   const demerit = 10;
@@ -96,22 +107,47 @@ const MainPage = () => {
       </s.UserInfoArea>
 
       <s.MainArea>
-        <MainButton type="big" title="나의 단속 내역" description="내 단속 내역을 한눈에!" imgSrc={MainBtn1} />
+        <MainButton
+          type="big"
+          title="나의 단속 내역"
+          description="내 단속 내역을 한눈에!"
+          imgSrc={MainBtn1}
+          onClick={() => handleMovePage('/violation')}
+        />
         <s.MainThum />
-        <MainButton type="big" title="원 클릭 신고" description="긴급 신고를 한번에!" imgSrc={MainBtn2} />
+        <MainButton
+          type="big"
+          title="원 클릭 신고"
+          description="긴급 신고를 한번에!"
+          imgSrc={MainBtn2}
+          onClick={() => handleMovePage('/sos')}
+        />
 
         <s.SmallButtonWrapper>
-          <MainButton type="small" title="제보하기" description="잡아주세요!" imgSrc={MainBtn3} />
-          <MainButton type="small" title="이의 내역" description="검토해주세요!" imgSrc={MainBtn4} />
+          <MainButton
+            type="small"
+            title="제보하기"
+            description="잡아주세요!"
+            imgSrc={MainBtn3}
+            onClick={() => handleMovePage('/report')}
+          />
+          <MainButton
+            type="small"
+            title="이의 내역"
+            description="검토해주세요!"
+            imgSrc={MainBtn4}
+            onClick={() => handleMovePage('/objection')}
+          />
         </s.SmallButtonWrapper>
 
         <Carousel />
-        <s.ChatbotButton src={ChatbotBtn} />
+        <s.ChatbotButton src={ChatbotBtn} onClick={() => handleMovePage('chat')} />
       </s.MainArea>
 
       <Footer />
       <PhoneSetModal open={isPhone} toggleModal={handleOpenPhoneModal} />
       <MainPageModal open={isMain} toggleModal={handleOpenMainModal} />
+      <InfoModal open={isInfo} toggleModal={handleOpenInfoModal} />
     </s.Container>
   );
 };

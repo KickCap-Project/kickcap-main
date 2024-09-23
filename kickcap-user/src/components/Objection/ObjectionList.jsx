@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 
 const s = {
@@ -19,6 +20,7 @@ const s = {
     display: flex;
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
+    cursor: pointer;
   `,
   CardColumn: styled.div`
     display: flex;
@@ -48,10 +50,16 @@ const ObjectionList = ({ objectionList }) => {
     // navigate
   };
 
+  const navigate = useNavigate();
+  const handleMovePage = (idx) => {
+    navigate('detail', { state: { idx } });
+    // console.log(idx);
+  };
+
   return (
     <s.Container>
       {objectionList.map((objection) => (
-        <s.Card key={objection.idx} onClick={() => onClickCardFunction(objection)}>
+        <s.Card key={objection.idx} onClick={() => handleMovePage(objection.idx)}>
           <s.CardColumn type="title">
             <s.CardTitle margin={TEXTLINE_MARGIN}>접수 날짜</s.CardTitle>
             <s.CardTitle>제 목</s.CardTitle>

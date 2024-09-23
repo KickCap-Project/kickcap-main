@@ -37,9 +37,9 @@ const s = {
   `,
 };
 
-const MainButton = ({ type, title, description, imgSrc }) => {
+const MainButton = ({ type, title, description, imgSrc, onClick }) => {
   return (
-    <s.Button type={type}>
+    <s.Button type={type} onClick={onClick}>
       <s.Img src={imgSrc} type={type} />
       <s.Title type={type}>{title}</s.Title>
       <s.Description type={type}>{description}</s.Description>

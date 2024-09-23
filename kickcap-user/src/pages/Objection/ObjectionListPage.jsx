@@ -32,6 +32,7 @@ const s = {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
   `,
   MainAreaEmpty: styled.div`
     flex: 1;
@@ -47,6 +48,8 @@ const s = {
     flex: 1;
     width: 90%;
     height: 80%;
+    overflow: auto;
+    flex-basis: 0;
   `,
 };
 
