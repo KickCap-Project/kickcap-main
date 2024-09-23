@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -17,6 +19,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
@@ -34,6 +37,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = (String) oAuth2User.getAttributes().get("email");
+        System.out.println("여기다!!!!!!!!!!!1 : " + email);
 
         // 이메일을 사용해 Member 엔티티를 가져옴
         Member member = memberService.findByEmail(email);
@@ -67,12 +71,36 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.getWriter().write(responseBody);
     }
 
+
     // DeviceInfo 저장 메서드
     private void saveDeviceInfo(Member member, String fcmToken, String refreshToken) {
         // DeviceInfoRepository를 사용해 기존 FCM 토큰이 있는지 확인 후 저장 또는 업데이트
         deviceInfoRepository.findByMemberIdAndFcmToken(member.getId(), fcmToken)
                 .map(entity -> entity.updateRefreshToken(refreshToken)) // 이미 존재하는 FCM 토큰이면 리프레시 토큰만 업데이트
                 .orElseGet(() -> deviceInfoRepository.save(new DeviceInfo(member, fcmToken, refreshToken))); // 없으면 새로 저장
+    }
+
+    private String getEmailByRegistrationId(OAuth2User oAuth2User, OAuth2UserRequest userRequest) {
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        String email;
+
+        if ("google".equals(registrationId)) {
+            email = (String) attributes.get("email");
+        } else if ("kakao".equals(registrationId)) {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            email = (String) kakaoAccount.get("email");
+        } else if ("naver".equals(registrationId)) {
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+            email = (String) response.get("email");
+        } else {
+            email = null;
+        }
+
+        if (email == null) {
+            throw new OAuth2AuthenticationException("Email not found from OAuth2 provider");
+        }
+        return email;
     }
 
 //    // 액세스 토큰과 리프레시 토큰을 패스에 추가(액세스 토큰과 리프레시 토큰을 쿼리 파라미터로 반환)

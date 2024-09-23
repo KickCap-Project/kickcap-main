@@ -8,9 +8,12 @@ import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.service.DeviceInfoService;
 import com.ssafy.kickcap.user.service.PoliceService;
 import com.ssafy.kickcap.config.jwt.TokenProvider;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,14 +26,16 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/kickcap")
+@Tag(name = "Police API", description = "경찰 사용자 관련 API")
 public class PoliceController {
 
-    private final PoliceService policeService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
     private final DeviceInfoService deviceInfoService;
 
+
     @PostMapping("/police/login")
+    @Operation(summary = "경찰 로그인", description = "경찰 사용자의 소셜 로그인입니다.")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         // 1. 사용자 인증
         Authentication authentication = authenticationManager.authenticate(
@@ -57,6 +62,7 @@ public class PoliceController {
     }
 
     @PostMapping("/police/logout")
+    @Operation(summary = "경찰 로그아웃", description = "경찰 사용자의 로그아웃입니다.")
     public ResponseEntity<String> logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequest) {
         // TODO: 접속자와 동일한 아이디인지 확인 혹은 접속한 사용자 아이디로 로그아웃하도록 하기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
