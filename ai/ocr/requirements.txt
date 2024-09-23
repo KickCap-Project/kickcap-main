@@ -9,3 +9,5 @@ matplotlib
 jupyter
 pydantic
 redis
+psycopg2
+python-dotenv
