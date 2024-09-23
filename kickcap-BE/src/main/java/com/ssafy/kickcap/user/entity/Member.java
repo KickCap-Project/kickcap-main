@@ -89,9 +89,9 @@ public class Member {
     }
 
     @Builder
-    public Member(String email, String name) {
+    public Member(String email) {
         this.email = email;
-        this.name = name;
+        this.name = " ";
         this.phone = " ";
         this.demerit = 0;
     }
