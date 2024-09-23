@@ -58,10 +58,14 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(withDefaults())
-//            .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화 -> csrf 공격 방지하기 위해서는 활성화하는 게 좋지만 실습의 편리를 위해 지금은 비활
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/police/login", "/members/login", "/tokens/refresh")  // 특정 경로에서 CSRF 비활성화
-                )
+            .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화 -> csrf 공격 방지하기 위해서는 활성화하는 게 좋지만 실습의 편리를 위해 지금은 비활
+//                .csrf(csrf -> csrf
+//                        .ignoringRequestMatchers(
+//                                "/police/login",
+//                                "/members/login",
+//                                "/tokens/refresh"
+//                        )  // 특정 경로에서 CSRF 비활성화
+//                )
             // JWT 필터 추가 (일반 로그인 처리)
             .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             
@@ -70,10 +74,14 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                 .requestMatchers( // 특정 요청과 일치하는 url에 대한 액세스 설정
                         new AntPathRequestMatcher("/police/login"),
                         new AntPathRequestMatcher("/members/login"),
-                        new AntPathRequestMatcher("/tokens/refresh")
+                        new AntPathRequestMatcher("/tokens/refresh"),
+                        new AntPathRequestMatcher("/police/logout"),
+                        new AntPathRequestMatcher("/members/logout")
                 ).permitAll()  // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
+                .requestMatchers(
+                        new AntPathRequestMatcher("/api/**")
+                ).authenticated()
                 .anyRequest().permitAll())
                 // anyRequest()은 위에서 성정한 url 이외의 요청에 대해서 설정
                 // authenticated()은 별도의 인가는 필요하지 않지만 인증이 성공된 상태여야 접근 가능

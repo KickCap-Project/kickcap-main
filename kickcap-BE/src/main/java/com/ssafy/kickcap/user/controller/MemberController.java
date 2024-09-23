@@ -3,7 +3,9 @@ package com.ssafy.kickcap.user.controller;
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
 import com.ssafy.kickcap.user.dto.LoginRequest;
 import com.ssafy.kickcap.user.dto.LoginResponse;
+import com.ssafy.kickcap.user.dto.LogoutRequest;
 import com.ssafy.kickcap.user.entity.Member;
+import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.service.DeviceInfoService;
 import com.ssafy.kickcap.user.service.MemberService;
 import com.ssafy.kickcap.config.jwt.TokenProvider;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -41,13 +44,15 @@ public class MemberController {
     // 로그아웃 API
     @PostMapping("/logout")
     @Operation(summary = "일반 시민 로그아웃", description = "시민 사용자의 로그아웃입니다.")
-    public ResponseEntity<String> logout(@RequestBody String fcmToken) {
-        // FCM 토큰을 기반으로 리프레시 토큰 삭제
-//        deviceInfoService.deleteByFcmToken(fcmToken);
+    public ResponseEntity<String> logout(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody LogoutRequest logoutRequest) {
 
-        // SecurityContextHolder에서 인증 정보 제거
+        Long id = principal.getId(); // 현재 인증된 사용자의 이메일 가져오기
+
+        // FCM 토큰에 해당하는 리프레시 토큰 삭제
+        deviceInfoService.deleteRefreshToken(id, logoutRequest);
+
+        // 로그아웃 로직 (SecurityContext 초기화 등)
         SecurityContextHolder.clearContext();
-
         return ResponseEntity.ok("Logout successful");
     }
 }
