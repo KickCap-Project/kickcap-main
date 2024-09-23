@@ -15,6 +15,10 @@ import ViolationDetailPage from './pages/Violation/ViolationDetailPage';
 import ViolationEducationPage from './pages/Violation/ViolationEducationPage';
 import ViolationObjectionPage from './pages/Violation/ViolationObjectionPage';
 
+import ReportMainPage from './pages/Report/ReportMainPage';
+import ReportIllegalParkingPage from './pages/Report/ReportIllegalParkingPage';
+import ReportMisusePage from './pages/Report/ReportMisusePage';
+
 import ObjectionListPage from './pages/Objection/ObjectionListPage';
 import ObjectionDetailPage from './pages/Objection/ObjectionDetailPage';
 
@@ -91,7 +95,17 @@ function App() {
                 </Route>
               </Route>
               <Route path="/sos" element={<OneClickReportPage />} />
-              <Route path="/report" />
+              <Route path="/report">
+                <Route index element={<ReportMainPage />} />
+                <Route path="parking">
+                  <Route index element={<ReportIllegalParkingPage />} />
+                  <Route path="success" element={<SuccessPage message="report" />} />
+                </Route>
+                <Route path="real-time">
+                  <Route index element={<ReportMisusePage />} />
+                  <Route path="success" element={<SuccessPage message="report" />} />
+                </Route>
+              </Route>
               <Route path="/objection">
                 <Route index element={<ObjectionListPage />} />
                 <Route path="detail" element={<ObjectionDetailPage />} />
