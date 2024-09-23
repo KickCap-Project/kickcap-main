@@ -62,10 +62,11 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
             // URL 접근 권한 설정
             .authorizeRequests(auth -> auth // 특정 경로에 대한 인증, 인가 액세스 설정
                 .requestMatchers( // 특정 요청과 일치하는 url에 대한 액세스 설정
-                        new AntPathRequestMatcher("/kickcap/police-login"),
+                        new AntPathRequestMatcher("/kickcap/police/login"),
                         new AntPathRequestMatcher("/kickcap/login"),
                         new AntPathRequestMatcher("/token/refresh")
                 ).permitAll()  // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
+                .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
                 .anyRequest().permitAll())
                 // anyRequest()은 위에서 성정한 url 이외의 요청에 대해서 설정
@@ -73,16 +74,17 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
 
             // OAuth2 로그인 설정 (소셜 로그인 처리)
             .oauth2Login(oauth2 -> oauth2
-                .loginPage("/login")
+                .loginPage("/index.html")
                     // Authorization 요청과 관련된 상태 저장
                 .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(oAuth2UserCustomService))
                     // 인증 성공 시 실행할 핸들러
+                    .failureUrl("/login?error=true") // 로그인 실패 시 리디렉션할 URL 설정
+                    .defaultSuccessUrl("/home", true) // 로그인 성공 시 리디렉션할 기본 URL 설정
                     .successHandler(oAuth2SuccessHandler()))
-                // OAuth2에 필요한 정보를 세션이 아닌 쿠키에 저장해서 쓸 수 있도록 인증 요청과 관련된 상태를 저장할 저장소와
                 // 인증 성공 시 실행할 핸들러도 설정
 
                 .logout(logout -> logout // 로그아웃 설정
-                        .logoutSuccessUrl("/login") // 로그아웃 완료되었을 떄 이동할 경로 설정
+                        .logoutSuccessUrl("/index.html") // 로그아웃 완료되었을 떄 이동할 경로 설정
                         .invalidateHttpSession(true) // 로그아웃 이후에 세션에서 전체 삭제할지 여부 설정
                 )
 
@@ -96,8 +98,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
     // 인증 관리자 관련 설정
     // 사용자 정보를 가져올 서비스를 재정의하거나 인증 방법, 예를 들어 LDAP, JDBC 기반 인증 등을 설정할 때 사용
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http,
-                                                       BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailsService) throws Exception {
+    public AuthenticationManager authenticationManager(BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailsService) throws Exception {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userService); // 사용자 정보를 가져올 서비스 설정
         // 반드시 UserDetailsService를 상속받은 클래스여야만 함
