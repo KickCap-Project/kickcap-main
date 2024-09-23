@@ -29,6 +29,7 @@ import { PrivateRoute, PublicRoute } from './pages/IsLoginPage';
 import NotificationPage from './pages/NotificationPage';
 import ChatPage from './pages/ChatPage';
 import ErrorPage from './pages/ErrorPage';
+import SocialLoginPage from './pages/SocialLoginPage';
 
 const s = {
   Background: styled.section`
@@ -79,6 +80,7 @@ function App() {
             <Route element={<PublicRoute />}>
               <Route path="/" element={<SplashPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/social" element={<SocialLoginPage />} />
             </Route>
             <Route element={<PrivateRoute />}>
               <Route path="/main">
