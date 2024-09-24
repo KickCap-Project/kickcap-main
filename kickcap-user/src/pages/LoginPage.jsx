@@ -57,11 +57,15 @@ const LoginPage = () => {
   };
 
   const handleClickKaKao = () => {
-    window.location.href = 'https://j11b102.p.ssafy.io/api/oauth2/authorization/kakao';
+    window.location.href = 'https://www.arraylist.xyz/oauth2/authorization/kakao';
+  };
+
+  const handleClickNaver = () => {
+    window.location.href = 'https://www.arraylist.xyz/oauth2/authorization/naver';
   };
 
   const handleClickGoogle = () => {
-    window.location.href = 'https://j11b102.p.ssafy.io/api/oauth2/authorization/google';
+    window.location.href = 'https://www.arraylist.xyz/oauth2/authorization/google';
   };
 
   // const setFcmToken = async () => {
@@ -86,7 +90,13 @@ const LoginPage = () => {
             bgcolor="#FDE500"
             onClick={handleClickKaKao}
           />
-          <LoginButton title="네이버 로그인" imgSrc={naver} color="#FFFFFF" bgcolor="#03C75A" onClick={handleLogin} />
+          <LoginButton
+            title="네이버 로그인"
+            imgSrc={naver}
+            color="#FFFFFF"
+            bgcolor="#03C75A"
+            onClick={handleClickNaver}
+          />
           <LoginButton
             title="구글 로그인"
             imgSrc={google}
