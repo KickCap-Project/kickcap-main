@@ -89,12 +89,12 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
 
             // OAuth2 로그인 설정 (소셜 로그인 처리)
             .oauth2Login(oauth2 -> oauth2
-                .loginPage("/login")
+                    .loginPage("https://www.bardisue.store/login") // OAuth2 로그인 페이지 URL 설정
                     // Authorization 요청과 관련된 상태 저장
                 .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(oAuth2UserCustomService))
                     // 인증 성공 시 실행할 핸들러
-                    .failureUrl("/login?error=true") // 로그인 실패 시 리디렉션할 URL 설정
-                    .defaultSuccessUrl("/social", true) // 로그인 성공 시 리디렉션할 기본 URL 설정
+                    .failureUrl("https://www.bardisue.store/login?error=true") // 로그인 실패 시 리디렉션할 URL 설정
+                    .defaultSuccessUrl("https://www.bardisue.store/social", true) // 로그인 성공 시 리디렉션할 URL 설정
                     .successHandler(oAuth2SuccessHandler()))
                 // 인증 성공 시 실행할 핸들러도 설정
 
