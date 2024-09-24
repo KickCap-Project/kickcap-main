@@ -1,5 +1,7 @@
 package com.ssafy.kickcap.user.service;
 
+import com.ssafy.kickcap.user.dto.RegisterDto;
+import com.ssafy.kickcap.user.dto.TokenRequest;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,4 +20,12 @@ public class MemberService {
         return memberRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
     }
+
+    public void updateNameAndPhone(Long userId, RegisterDto registerDto) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
+        member.update(registerDto.getName(), registerDto.getPhone());
+        memberRepository.save(member);
+    }
+
 }
