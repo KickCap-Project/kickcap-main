@@ -41,7 +41,9 @@ public class MemberController {
     @PostMapping("/fcm")
     @Operation(summary = "토큰 전송", description = "시민 사용자의 fcm 토큰과 refresh 토큰 전송")
     public ResponseEntity<?> saveTokens(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody TokenRequest tokenRequest) {
-        Member member = memberService.findByEmail(principal.getAttribute("email"));
+
+        Member member = memberService.findById(principal.getId());
+
         deviceInfoService.saveFcmAndRefresh(member, tokenRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
