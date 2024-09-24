@@ -89,17 +89,17 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
 
             // OAuth2 로그인 설정 (소셜 로그인 처리)
             .oauth2Login(oauth2 -> oauth2
-                .loginPage("/index.html")
+                .loginPage("/login")
                     // Authorization 요청과 관련된 상태 저장
                 .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(oAuth2UserCustomService))
                     // 인증 성공 시 실행할 핸들러
                     .failureUrl("/login?error=true") // 로그인 실패 시 리디렉션할 URL 설정
-                    .defaultSuccessUrl("/home", true) // 로그인 성공 시 리디렉션할 기본 URL 설정
+                    .defaultSuccessUrl("/social", true) // 로그인 성공 시 리디렉션할 기본 URL 설정
                     .successHandler(oAuth2SuccessHandler()))
                 // 인증 성공 시 실행할 핸들러도 설정
 
                 .logout(logout -> logout // 로그아웃 설정
-                        .logoutSuccessUrl("/index.html") // 로그아웃 완료되었을 떄 이동할 경로 설정
+                        .logoutSuccessUrl("/login") // 로그아웃 완료되었을 떄 이동할 경로 설정
                         .invalidateHttpSession(true) // 로그아웃 이후에 세션에서 전체 삭제할지 여부 설정
                 )
 

@@ -96,8 +96,9 @@ public class Member {
         this.demerit = 0;
     }
 
-    public Member update(String name) {
+    public Member update(String name, String Phone) {
         this.name = name;
+        this.phone = Phone;
         this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
         return this;
     }

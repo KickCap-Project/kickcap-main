@@ -1,9 +1,7 @@
 package com.ssafy.kickcap.user.controller;
 
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
-import com.ssafy.kickcap.user.dto.LoginRequest;
-import com.ssafy.kickcap.user.dto.LoginResponse;
-import com.ssafy.kickcap.user.dto.LogoutRequest;
+import com.ssafy.kickcap.user.dto.*;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.service.DeviceInfoService;
@@ -40,7 +38,21 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/fcm")
+    @Operation(summary = "토큰 전송", description = "시민 사용자의 fcm 토큰과 refresh 토큰 전송")
+    public ResponseEntity<?> saveTokens(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody TokenRequest tokenRequest) {
+        Member member = memberService.findByEmail(principal.getAttribute("email"));
+        deviceInfoService.saveFcmAndRefresh(member, tokenRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @PutMapping("/register")
+    @Operation(summary = "일반 시민 추가 정보 입력", description = "시민 사용자 휴대폰 번호와 이름을 입력받아 저장합니다.")
+    public ResponseEntity<?> registerMember(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody RegisterDto registerDto) {
+        Long id = principal.getId();
+        memberService.updateNameAndPhone(id, registerDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(registerDto);
+    }
 
     // 로그아웃 API
     @PostMapping("/logout")
