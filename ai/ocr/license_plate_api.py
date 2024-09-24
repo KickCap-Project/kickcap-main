@@ -1,9 +1,7 @@
 import requests
-from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import cv2
 import numpy as np
-import os
 import easyocr
 import re
 import redis
@@ -11,6 +9,11 @@ import pytz
 from datetime import datetime, timedelta
 import psycopg2
 from dotenv import load_dotenv
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.responses import JSONResponse
+import shutil
+import os
+from fastapi.middleware.cors import CORSMiddleware  # CORS 미들웨어 임포트
 
 """
 실행 명령어:
@@ -36,6 +39,20 @@ POST: http://localhost:8000/ocr
 
 app = FastAPI()
 
+# CORS 설정 추가
+origins = [
+    "http://localhost:3000",  # React 앱이 실행되는 도메인
+    # 필요에 따라 다른 도메인을 추가할 수 있습니다.
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # 허용할 출처 목록
+    allow_credentials=True,
+    allow_methods=["*"],  # 허용할 HTTP 메서드
+    allow_headers=["*"],  # 허용할 HTTP 헤더
+)
+
 KST = pytz.timezone('Asia/Seoul')
 
 # OCR을 위한 Reader 객체 생성 (영어 지원)
@@ -56,10 +73,10 @@ db_port = os.getenv("DB_PORT")
 
 
 # 파일을 서버로 업로드하는 함수
-def upload_image(image_buffer, file_name):
-    url = "https://j11b102.p.ssafy.io/image/upload/result"  # Postman에서 사용한 URL
+def upload_image(image_buffer, file_name, type):
+    url = f"https://j11b102.p.ssafy.io/image/upload/{type}"  # Postman에서 사용한 URL
     # 메모리 버퍼를 바이너리로 전송
-    files = {'image': (f'{file_name}', image_buffer.tobytes(), 'image/jpeg')}
+    files = {'image': (f'{file_name}.jpg', image_buffer.tobytes(), 'image/jpeg')}
     response = requests.post(url, files=files)  # POST 요청 보내기
     print(response.text)  # 서버 응답 내용 출력
     return f'{url}/{response.text}'
@@ -117,6 +134,28 @@ def gcooter_insert(request: GcooterRequests):
             # print("PostgreSQL 연결이 닫혔습니다.")
 
     raise HTTPException(status_code=200, detail="Inserting Data Into the Database")
+
+
+@app.post("/image")
+async def capture_image(image: UploadFile = File(...)):
+    try:
+        # 업로드된 파일을 읽어들입니다.
+        image_bytes = await image.read()
+        # 바이트 데이터를 NumPy 배열로 변환합니다.
+        np_arr = np.frombuffer(image_bytes, np.uint8)
+        # 이미지 디코딩 (이미지를 OpenCV 형식으로 변환)
+        img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        if img is None:
+            raise Exception("이미지 디코딩 실패")
+        # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+        success, image_encoded = cv2.imencode('.jpg', img)
+        if not success:
+            raise Exception("이미지 인코딩 실패")
+        # 인코딩된 이미지를 업로드
+        upload_result = upload_image(image_encoded, image.filename, 'camera')
+        return {"message": "이미지 업로드 성공", "image_src": upload_result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"이미지 처리 중 오류 발생: {str(e)}")
 
 
 @app.post("/ocr")
@@ -424,7 +463,8 @@ def ocr_endpoint(request: OCRRequests):
         redis_client.setex(key, expire_seconds, 'processed')
 
         # 인코딩된 이미지를 업로드
-        ocr_img_src = upload_image(image_encoded, 'image')
+        ocr_img_src = upload_image(image_encoded, 'image', 'result')
+        ocr_img_src = ocr_img_src.replace('/upload', '')
         return {
             'cctv_idx': request.camera_idx,
             'accused_idx': accused_idx[0],
