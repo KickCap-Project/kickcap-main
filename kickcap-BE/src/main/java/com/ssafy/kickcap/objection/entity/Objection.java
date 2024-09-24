@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -38,6 +40,17 @@ public class Objection {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+        this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+    }
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
