@@ -61,17 +61,17 @@ const LoginPage = () => {
   };
 
   const handleClickGoogle = () => {
-    window.location.href = 'https://www.bardisue.store/login/oauth2/code/google';
+    window.location.href = 'https://j11b102.p.ssafy.io/api/oauth2/authorization/google';
   };
 
-  const setFcmToken = async () => {
-    const fcmToken = await requestPermission();
-    sessionStorage.setItem('fcmToken', fcmToken);
-  };
+  // const setFcmToken = async () => {
+  //   const fcmToken = await requestPermission();
+  //   sessionStorage.setItem('fcmToken', fcmToken);
+  // };
 
-  useEffect(() => {
-    setFcmToken();
-  }, []);
+  // useEffect(() => {
+  //   setFcmToken();
+  // }, []);
 
   return (
     <s.Container>
