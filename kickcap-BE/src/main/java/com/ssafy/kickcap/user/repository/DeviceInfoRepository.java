@@ -14,6 +14,7 @@ public interface DeviceInfoRepository extends JpaRepository<DeviceInfo, Long>{
     Optional<DeviceInfo> findByPoliceId(Long policeId);
     Optional<DeviceInfo> findByRefreshToken(String refreshToken);
     Optional<DeviceInfo> findByFcmToken(String fcmToken);
+    Optional<DeviceInfo> findByMember_IdAndFcmToken(Long member_id, String fcmToken);
 
     // FCM 토큰을 기반으로 DeviceInfo 엔티티 삭제
     void deleteByPolice_IdAndFcmToken(Long id, String fcmToken);

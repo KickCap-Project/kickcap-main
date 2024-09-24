@@ -70,7 +70,7 @@ public class DeviceInfoService {
     public void saveFcmAndRefresh(Member member, TokenRequest tokenRequest) {
         String fcmToken = tokenRequest.getFcmToken();
         String refreshToken = tokenRequest.getRefreshToken();
-        DeviceInfo deviceInfo = (DeviceInfo) deviceInfoRepository.findByFcmToken(fcmToken)
+        DeviceInfo deviceInfo = (DeviceInfo) deviceInfoRepository.findByMember_IdAndFcmToken(member.getId(), fcmToken)
                 .map(info -> info.updateRefreshToken(refreshToken))
                 .orElse(new DeviceInfo(member, fcmToken, refreshToken));
 
