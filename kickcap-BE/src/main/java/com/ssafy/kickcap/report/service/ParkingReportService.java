@@ -5,35 +5,35 @@ import com.ssafy.kickcap.company.entity.Company;
 import com.ssafy.kickcap.company.repository.CompanyRepository;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
-import com.ssafy.kickcap.report.dto.RealTimeReportRequestDto;
+import com.ssafy.kickcap.region.repository.RegionCodeRepository;
+import com.ssafy.kickcap.report.dto.ParkingReportRequestDto;
+import com.ssafy.kickcap.report.dto.RedisRequestDto;
 import com.ssafy.kickcap.report.entity.Informer;
 import com.ssafy.kickcap.report.repository.InformerRepository;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.repository.MemberRepository;
+import com.ssafy.kickcap.user.repository.PoliceRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class ReportService {
+public class ParkingReportService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final CompanyRepository companyRepository;
     private final MemberRepository memberRepository;
     private final InformerRepository informerRepository;
-    private final ObjectMapper objectMapper;
 
-    public Company fetchUserData(String kickboardNumber, ZonedDateTime reportTime) {
-        return companyRepository.findByKickboardNumberAndReportTime(kickboardNumber, reportTime)
+    public Company fetchUserData(String kickboardNumber) {
+        return companyRepository.findByKickboardNumber(kickboardNumber)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
     }
+
     public Member findMember(String name, String phone) {
         return memberRepository.findMemberByNameAndPhone(name, phone)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
@@ -53,9 +53,9 @@ public class ReportService {
         informerRepository.save(informer);
     }
 
-    public void saveReportToRedis(Long memberId, RealTimeReportRequestDto requestDto) {
-        // 킥보드 업체에 킥보드 번호로 사용자 데이터 요청 - 촬영 시간이 해당 번호판 사용시간 between 인 것.
-        Company userData = fetchUserData(requestDto.getKickboardNumber(), requestDto.getReportTime());
+    public void saveParkingReportToRedis(Long memberId, ParkingReportRequestDto requestDto) {
+        // 킥보드 업체에 킥보드 번호로 사용자 데이터 요청 - 해당 킥보드를 가장 최근에 사용한 데이터 조회
+        Company userData = fetchUserData(requestDto.getKickboardNumber());
 
         // member 테이블에 이름과 번호가 같은 유저 찾기
         Member member = findMember(userData.getName(), userData.getPhone());
@@ -63,32 +63,40 @@ public class ReportService {
         // 신고자 테이블에 신고자 데이터 저장
         saveInformer(memberId, member, requestDto.getKickboardNumber());
 
-        // redis key 만들기 R + memberIdx + 킥보드 번호, ttl : 1시간
-        createRedisData(memberId, requestDto.getKickboardNumber(), requestDto);
+        // RedisRequestDto 만들기 (Redis에 value로 저장하기 위해서)
+        RedisRequestDto redisDto = RedisRequestDto.builder()
+                .violationType(requestDto.getViolationType())
+                .image(requestDto.getImage())
+                .description(requestDto.getDescription())
+                .kickboardNumber(requestDto.getKickboardNumber())
+                .reportTime(requestDto.getReportTime())
+                .addr(userData.getAddress())
+                .lat(String.valueOf(userData.getLatitude()))
+                .lng(String.valueOf(userData.getLongitude()))
+                .code(userData.getCode())
+                .build();
+
+        System.out.println(redisDto.toString());
+
+        // redis key 만들기 P + memberIdx + 킥보드 번호 + lat + lng , ttl : 24시간
+        createRedisData(memberId, redisDto);
     }
 
-    public void createRedisData(Long memberId, String kickboardNumber, RealTimeReportRequestDto newReportDto) {
+    public void createRedisData(Long memberId, RedisRequestDto redisDto) {
         // Redis key 생성
-        String redisKey = memberId.toString() +":"+ kickboardNumber;
-        log.info("redisKey: {}", redisKey);
+        String redisKey = "P:" + memberId.toString() +":"+ redisDto.getKickboardNumber()+":" + redisDto.getLat() + ":"
+                + redisDto.getLng();
 
+        System.out.println("redisKey : " + redisKey);
         ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
 
-        // Redis에서 데이터를 가져온 후, LinkedHashMap을 RealTimeReportRequestDto로 변환
+        // 기존에 Redis에 저장된 키가 있는지 확인
         Object existingData = valueOps.get(redisKey);
-        RealTimeReportRequestDto existingReportDto = null;
 
-        if (existingData != null) {
-            // ObjectMapper를 사용하여 LinkedHashMap을 RealTimeReportRequestDto로 변환
-            existingReportDto = objectMapper.convertValue(existingData, RealTimeReportRequestDto.class);
-        }
-
-        // 기존에 Redis에 저장된 데이터가 있는지 확인
-        if (existingReportDto == null || newReportDto.getViolationType() < existingReportDto.getViolationType()) {
-            // 새로운 데이터의 violationType이 더 낮으면 덮어쓰기
-            valueOps.set(redisKey, newReportDto, 1, TimeUnit.HOURS); // 1시간 TTL
+        if (existingData == null) {
+            valueOps.set(redisKey, redisDto, 24, TimeUnit.HOURS); // 1시간 TTL
             // 2분 TTL로 수정 - test 용
-//            valueOps.set(redisKey, newReportDto, 2, TimeUnit.MINUTES);
+//            valueOps.set(redisKey, redisDto, 2, TimeUnit.MINUTES);
         }
     }
 }

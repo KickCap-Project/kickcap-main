@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.region.repository.RegionCodeRepository;
-import com.ssafy.kickcap.report.dto.RealTimeReportRequestDto;
+import com.ssafy.kickcap.report.dto.RedisRequestDto;
 import com.ssafy.kickcap.report.entity.ApproveStatus;
 import com.ssafy.kickcap.report.entity.Report;
 import com.ssafy.kickcap.report.repository.ReportRepository;
@@ -33,28 +33,40 @@ public class ReportMessageListener {
 
     public void onMessage(String message) {
         // 해당 키에 대한 DB 작업 처리
-        System.out.println("onMessage 시작");
         handleDatabaseOperations(message);
     }
 
     private void handleDatabaseOperations(String key) {
         // Redis에서 해당 키를 사용하여 DB 작업 수행
-        System.out.println("handleDatabaseOperations 시작");
         System.out.println("key : " + key);
 
         ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
         // Redis에서 DTO 가져오기
         Object data = valueOps.get(key);
-        RealTimeReportRequestDto reportDto = objectMapper.convertValue(data, RealTimeReportRequestDto.class);
+
+        RedisRequestDto reportDto = objectMapper.convertValue(data, RedisRequestDto.class);
         System.out.println("reportDto: " + reportDto);
 
         Long stationIdx = findStationIdByCode(reportDto.getCode());
         Police police = policeRepository.findById(stationIdx).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        // ':'를 기준으로 split하여 앞의 숫자 부분을 memberId로 추출
+        // 불법 주차 key 는 P:1:G2457:37.560577:127.000946 이런 형식
+        // 실시간 신고 key는 1:G2457 이런 형식
+        // ':'를 기준으로 split
         String[] keyParts = key.split(":");
-        Long memberId = Long.parseLong(keyParts[0]); // "123"을 memberId로 변환
-        System.out.println("memberId: " + memberId); // 출력: 123
+
+        long memberId;
+
+        // 만약 키의 첫번째 값이 P라면 불법주차
+        if (keyParts[0].equals("P")) {
+            memberId = Long.parseLong(keyParts[1]);
+//            System.out.println("parking memberId : " + memberId);
+        }
+        else {
+            memberId = Long.parseLong(keyParts[0]); // "123"을 memberId로 변환
+//            System.out.println("realtime memberId: " + memberId); // 출력: 123
+        }
+
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
         ViolationType violationType = violationTypeRepository.findById(reportDto.getViolationType()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
@@ -76,11 +88,9 @@ public class ReportMessageListener {
 
         // Report 엔티티 저장
         reportRepository.save(report);
-        System.out.println("Report 저장 완료: " + report);
 
         // Redis에서 키 삭제
         redisTemplate.delete(key);
-        System.out.println("Redis에서 키 삭제 완료: " + key);
     }
 
     // 지역 코드와 법정동 코드로 경찰서 ID 찾기

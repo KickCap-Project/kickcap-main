@@ -73,23 +73,4 @@ public class Report{
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "violation_type", nullable = false)
     private ViolationType violationType;
-
-    @Override
-    public String toString() {
-        return "Report{" +
-                "id=" + id +
-                ", imageSrc='" + imageSrc + '\'' +
-                ", address='" + address + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", kickboardNumber='" + kickboardNumber + '\'' +
-                ", reportTime=" + reportTime +
-                ", description='" + description + '\'' +
-                ", approveStatus=" + approveStatus +
-                ", createdAt=" + createdAt +
-                ", member=" + member +
-                ", police=" + police +
-                ", violationType=" + violationType +
-                '}';
-    }
 }
