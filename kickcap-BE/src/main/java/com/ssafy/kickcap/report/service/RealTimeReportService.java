@@ -5,7 +5,7 @@ import com.ssafy.kickcap.company.entity.Company;
 import com.ssafy.kickcap.company.repository.CompanyRepository;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
-import com.ssafy.kickcap.report.dto.RealTimeReportRequestDto;
+import com.ssafy.kickcap.report.dto.RedisRequestDto;
 import com.ssafy.kickcap.report.entity.Informer;
 import com.ssafy.kickcap.report.repository.InformerRepository;
 import com.ssafy.kickcap.user.entity.Member;
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ReportService {
+public class RealTimeReportService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final CompanyRepository companyRepository;
@@ -53,7 +53,7 @@ public class ReportService {
         informerRepository.save(informer);
     }
 
-    public void saveReportToRedis(Long memberId, RealTimeReportRequestDto requestDto) {
+    public void saveReportToRedis(Long memberId, RedisRequestDto requestDto) {
         // 킥보드 업체에 킥보드 번호로 사용자 데이터 요청 - 촬영 시간이 해당 번호판 사용시간 between 인 것.
         Company userData = fetchUserData(requestDto.getKickboardNumber(), requestDto.getReportTime());
 
@@ -67,23 +67,23 @@ public class ReportService {
         createRedisData(memberId, requestDto.getKickboardNumber(), requestDto);
     }
 
-    public void createRedisData(Long memberId, String kickboardNumber, RealTimeReportRequestDto newReportDto) {
+    public void createRedisData(Long memberId, String kickboardNumber, RedisRequestDto newReportDto) {
         // Redis key 생성
         String redisKey = memberId.toString() +":"+ kickboardNumber;
-        log.info("redisKey: {}", redisKey);
+        System.out.println("redisKey : " + redisKey);
 
         ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
 
-        // Redis에서 데이터를 가져온 후, LinkedHashMap을 RealTimeReportRequestDto로 변환
+        // Redis에서 데이터가 있는지 확인
         Object existingData = valueOps.get(redisKey);
-        RealTimeReportRequestDto existingReportDto = null;
+        RedisRequestDto existingReportDto = null;
 
         if (existingData != null) {
-            // ObjectMapper를 사용하여 LinkedHashMap을 RealTimeReportRequestDto로 변환
-            existingReportDto = objectMapper.convertValue(existingData, RealTimeReportRequestDto.class);
+            // ObjectMapper를 사용하여 LinkedHashMap을 RedisRequestDto로 변환 - 이유: dto 안의 변수 값을 비교해야해서
+            existingReportDto = objectMapper.convertValue(existingData, RedisRequestDto.class);
         }
 
-        // 기존에 Redis에 저장된 데이터가 있는지 확인
+        // 기존에 Redis에 저장된 데이터가 없거나 단속 유형이 낮은거
         if (existingReportDto == null || newReportDto.getViolationType() < existingReportDto.getViolationType()) {
             // 새로운 데이터의 violationType이 더 낮으면 덮어쓰기
             valueOps.set(redisKey, newReportDto, 1, TimeUnit.HOURS); // 1시간 TTL
