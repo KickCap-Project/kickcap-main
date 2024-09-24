@@ -3,6 +3,7 @@ package com.ssafy.kickcap.config.redis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -16,9 +17,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 public class RedisConfig {
 
+    @Value("${spring.data.redis.host}")
+    private String redisHost;
+
+    @Value("${spring.data.redis.port}")
+    private int redisPort;
+    
     @Bean
     public RedisConnectionFactory redisConnectionFactory() { // RedisConnectionFactory 추가
-        return new LettuceConnectionFactory(); // LettuceConnectionFactory 사용
+        return new LettuceConnectionFactory(redisHost, redisPort); // LettuceConnectionFactory 사용
     }
 
     @Bean
