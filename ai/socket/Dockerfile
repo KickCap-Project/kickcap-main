@@ -6,6 +6,8 @@ RUN apt-get update && \
     apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
+    libpq-dev \
+    build-essential\
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
