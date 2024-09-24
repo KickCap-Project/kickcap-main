@@ -310,9 +310,9 @@ def ocr_endpoint(request: OCRRequests):
             print(redis_client.ttl(key))
             raise HTTPException(status_code=200, detail=f"Duplicate License Plate {redis_client.ttl(key)}")
 
-        # TODO: DB에 데이터를 저장하는 코드 추가
         # 데이터베이스 연결
         crackdown_time = ''
+        accused_idx = ''
         try:
             connection = psycopg2.connect(
                 dbname=db_name,
@@ -325,33 +325,42 @@ def ocr_endpoint(request: OCRRequests):
 
             crackdown_time = KST.localize(datetime.strptime(request.time, "%Y%m%d%H%M%S%f"))
 
-
+            # 킥보드를 이용한 사람을 업체를 통해 찾음
             select_query = '''
             SELECT name, phone
             FROM gcooter
             WHERE %s BETWEEN start_time AND end_time;
             '''
 
-            # 쿼리 실행
             cursor.execute(select_query, (now_kst, ))
-
-            # 결과 가져오기
             results = cursor.fetchall()
-
             if not results:
                 raise HTTPException(status_code=404, detail="Gcooter Not Found")
-            # 결과 출력
-            print(results)
+            # print(results)
+
+            # 킥보드를 이용한 member를 찾음
+            select_query = '''
+            SELECT idx
+            FROM member
+            WHERE name = %s AND phone = %s;
+            '''
+            name, phone = results[0]
+            cursor.execute(select_query, (name, phone, ))
+            results = cursor.fetchall()
+            if not results:
+                raise HTTPException(status_code=404, detail="Memeber Not Found")
+            accused_idx = results[0]
+            # print(results)
 
             # # CCTV 신고에 데이터 추가
-            # insert_query = '''
-            # INSERT INTO crackdown (cctv_idx, accused_idx, violation_type, image_src, crackdown_time, created_at) VALUES (%s, %s, %s, %s, %s, %s)
-            # '''
-            #
-            # data = (request.camera_idx, 1, request.type, path, crackdown_time, now_kst)
-            # cursor.execute(insert_query, data)
-            # connection.commit()
-            # print("데이터 삽입 성공!")
+            insert_query = '''
+            INSERT INTO crackdown (cctv_idx, accused_idx, violation_type, image_src, crackdown_time, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            '''
+            data = (request.camera_idx, accused_idx[0], request.type, path, crackdown_time, now_kst)
+            cursor.execute(insert_query, data)
+            connection.commit()
+            # print("DB에 저장 완료")
 
         except HTTPException as http_exc:
             raise http_exc  # HTTPException을 그대로 재발생시켜 FastAPI가 처리하도록 합니다.
@@ -364,7 +373,7 @@ def ocr_endpoint(request: OCRRequests):
             if connection:
                 cursor.close()
                 connection.close()
-                print("PostgreSQL 연결이 닫혔습니다.")
+                # print("PostgreSQL 연결이 닫혔습니다.")
 
         redis_client.setex(key, expire_seconds, 'processed')
 
@@ -372,7 +381,7 @@ def ocr_endpoint(request: OCRRequests):
         ocr_img_src = upload_image(image_encoded, 'image')
         return {
             'cctv_idx': request.camera_idx,
-            'accused_idx': '1',
+            'accused_idx': accused_idx[0],
             'type': request.type,
             'image_src': path,
             'ocr_img_src': ocr_img_src,
