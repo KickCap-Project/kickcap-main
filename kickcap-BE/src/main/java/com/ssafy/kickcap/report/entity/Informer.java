@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class Informer{
     private String kickboardNumber;
 
     @Column(name = "is_sent", nullable = false, length = 1)
+    @ColumnDefault(value = "'N'")
     private String isSent;
 
     @CreatedDate

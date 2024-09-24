@@ -79,7 +79,7 @@ public class ParkingReportService {
         System.out.println(redisDto.toString());
 
         // redis key 만들기 P + memberIdx + 킥보드 번호 + lat + lng , ttl : 24시간
-        createRedisData(memberId, redisDto);
+        createRedisData(member.getId(), redisDto);
     }
 
     public void createRedisData(Long memberId, RedisRequestDto redisDto) {
