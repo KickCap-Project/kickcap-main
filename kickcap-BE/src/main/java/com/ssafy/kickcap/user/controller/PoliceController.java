@@ -70,7 +70,10 @@ public class PoliceController {
     @PostMapping("/logout")
     @Operation(summary = "경찰 로그아웃", description = "경찰 사용자의 로그아웃입니다.")
     public ResponseEntity<String> logout(@AuthenticationPrincipal User user, @RequestBody LogoutRequest logoutRequest) {
-        Police police = policeService.findByPoliceId(user.getUsername()); // 서비스에서 경찰 객체를 가져오는 메서드 필요
+        // 서비스에서 경찰 객체를 가져오는 메서드 필요
+        Police police = policeService.findByPoliceId(user.getUsername());
+        // user.getUsername()으로 police_id를 가져와서 경찰 찾음
+
         if (police == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user");
         }
