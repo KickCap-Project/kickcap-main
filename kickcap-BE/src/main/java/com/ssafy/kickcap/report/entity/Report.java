@@ -70,7 +70,7 @@ public class Report{
     @JoinColumn(name = "police_idx", nullable = false)
     private Police police;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "violation_type", nullable = false)
     private ViolationType violationType;
 }

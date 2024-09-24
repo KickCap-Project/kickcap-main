@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -29,10 +32,10 @@ public class ViolationType{
     private int score;
 
     // Relationships
-    @OneToOne(mappedBy = "violationType")
-    private Report report;
+    @OneToMany(mappedBy = "violationType")
+    private List<Report> reports = new ArrayList<>();
 
-    @OneToOne(mappedBy = "violationType")
-    private Crackdown crackdown;
+    @OneToMany(mappedBy = "violationType")
+    private List<Crackdown> crackdowns = new ArrayList<>();
 
 }
