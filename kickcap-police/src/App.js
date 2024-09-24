@@ -37,6 +37,7 @@ import ErrorPage from './pages/ErrorPage';
 import CameraMap from './components/Board/CameraMap';
 import ResponsiveWrapper from './lib/hook/useWindowSizeHook';
 import SizeGuidePage from './pages/SizeGuidePage';
+import SplashPage from './pages/SplashPage';
 
 const s = {
   Container: styled.div`
@@ -62,7 +63,8 @@ function App() {
                 </ResponsiveWrapper>
               }
             >
-              <Route path="/" element={<LoginPage />} />
+              <Route path="/" element={<SplashPage />} />
+              <Route path="/login" element={<LoginPage />} />
             </Route>
             <Route
               element={

@@ -88,7 +88,7 @@ const s = {
 
 const BoardHeader = () => {
   const navigate = useNavigate();
-  const policeName = localStorage.getItem('police');
+  const policeName = sessionStorage.getItem('police');
   const type = useAppSelector(selectNav);
   const dispatch = useAppDispatch();
   const handleClickIcon = (mode) => {
