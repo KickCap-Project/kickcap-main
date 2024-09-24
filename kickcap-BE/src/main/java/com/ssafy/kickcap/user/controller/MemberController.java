@@ -40,6 +40,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PutMapping("/register")
 
     // 로그아웃 API
     @PostMapping("/logout")
