@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectReportNav } from '../../store/page';
 import { useNavigate } from 'react-router';
+import Button from './../Common/Button';
+import Input from './../Common/Input';
 
 const s = {
   Container: styled.div`
@@ -57,6 +59,25 @@ const s = {
     font-weight: 700;
     color: ${(props) => props.theme.mainColor};
     vertical-align: middle;
+  `,
+  PageFooter: styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+  `,
+  Label: styled.label`
+    font-weight: 700;
+    font-size: 20px;
+    cursor: pointer;
+  `,
+  BtnArea: styled.div`
+    width: fit-content;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   `,
   pageArea: styled.div`
     width: 500px;
@@ -166,7 +187,22 @@ const ReportList = () => {
           </s.Tbody>
         </s.Table>
       </s.TableArea>
-      <s.pageArea></s.pageArea>
+      <s.PageFooter>
+        <s.BtnArea></s.BtnArea>
+        <s.pageArea></s.pageArea>
+        <s.BtnArea>
+          <Input
+            type={'checkBox'}
+            bold={'700'}
+            size={'20px'}
+            margin={'0 5px'}
+            id={'ok'}
+            width={'20px'}
+            height={'20px'}
+          />
+          <s.Label htmlFor="ok">완료 건 조회</s.Label>
+        </s.BtnArea>
+      </s.PageFooter>
     </s.Container>
   );
 };
