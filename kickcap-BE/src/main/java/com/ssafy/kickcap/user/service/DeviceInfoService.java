@@ -1,6 +1,7 @@
 package com.ssafy.kickcap.user.service;
 
 import com.ssafy.kickcap.user.dto.LogoutRequest;
+import com.ssafy.kickcap.user.dto.TokenRequest;
 import com.ssafy.kickcap.user.entity.DeviceInfo;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
@@ -64,5 +65,15 @@ public class DeviceInfoService {
         } else {
             System.out.println("No matching device found or device does not belong to the police user");
         }
+    }
+
+    public void saveFcmAndRefresh(Member member, TokenRequest tokenRequest) {
+        String fcmToken = tokenRequest.getFcmToken();
+        String refreshToken = tokenRequest.getRefreshToken();
+        DeviceInfo deviceInfo = (DeviceInfo) deviceInfoRepository.findByFcmToken(fcmToken)
+                .map(info -> info.updateRefreshToken(refreshToken))
+                .orElse(new DeviceInfo(member, fcmToken, refreshToken));
+
+        deviceInfoRepository.save(deviceInfo);
     }
 }
