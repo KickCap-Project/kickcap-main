@@ -71,6 +71,52 @@ class OCRRequests(BaseModel):
     type: int
     time: str
 
+class GcooterRequests(BaseModel):
+    kickboard_number: str
+    phone: str
+    name: str
+    minute: int
+
+@app.post("/insert")
+def gcooter_insert(request: GcooterRequests):
+    lat = 36.355409
+    lng = 127.298400
+    code = '3020011300'
+    addr = '대전광역시 유성구 덕명동 122-1 유성연수원'
+
+    try:
+        connection = psycopg2.connect(
+            dbname=db_name,
+            user=db_user,
+            password=db_password,
+            host=db_host,
+            port=db_port
+        )
+        cursor = connection.cursor()
+
+        # SQL 쿼리에서 NOW()와 INTERVAL을 직접 사용
+        insert_query = f'''
+        INSERT INTO gcooter (lat, lng, start_time, end_time, code, addr, kickboard_number, phone, name)
+        VALUES (%s, %s, NOW(), NOW() + INTERVAL '{request.minute} minutes', %s, %s, %s, %s, %s)
+        '''
+
+        # SQL 함수인 NOW()와 INTERVAL은 직접 쿼리에 넣고 나머지는 파라미터로 전달
+        data = (lat, lng, code, addr, request.kickboard_number, request.phone, request.name)
+
+        cursor.execute(insert_query, data)
+        connection.commit()
+
+    except Exception as error:
+        print(f"에러 발생: {error}")
+        raise HTTPException(status_code=500, detail="DataBase Error")  # 데이터베이스 예외 처리
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            # print("PostgreSQL 연결이 닫혔습니다.")
+
+    raise HTTPException(status_code=200, detail="Inserting Data Into the Database")
 
 
 @app.post("/ocr")
