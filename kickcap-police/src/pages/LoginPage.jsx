@@ -50,20 +50,21 @@ const s = {
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const fcmToken = sessionStorage.getItem('fcmToken');
   const [login, setLogin] = useState({
     policeId: '',
     password: '',
-    fcmToken: '',
+    fcmToken,
   });
 
-  const setFcmToken = async () => {
-    const fcmToken = await requestPermission();
-    sessionStorage.setItem('fcmToken', fcmToken);
-    setLogin({ ...login, fcmToken });
-  };
-  useEffect(() => {
-    setFcmToken();
-  }, []);
+  // const setFcmToken = async () => {
+  //   const fcmToken = await requestPermission();
+  //   sessionStorage.setItem('fcmToken', fcmToken);
+  //   setLogin({ ...login, fcmToken });
+  // };
+  // useEffect(() => {
+  //   setFcmToken();
+  // }, []);
 
   const handleChangeLogin = (e) => {
     setLogin({

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Text from '../components/Common/Text';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { socialLogin } from '../lib/api/main-api';
 const s = {
   Container: styled.section`
@@ -22,20 +22,25 @@ const s = {
 
 const SocialLoginPage = () => {
   const navigate = useNavigate();
-
-  const code = new URL(window.location.href).searchParams.get('code');
-  // useEffect(() => {
-  //   socialLogin(
-  //     (resp) => {
-  //       localStorage.setItem('accessToken', resp.data.accessToken);
-  //       localStorage.setItem('refreshToken', resp.data.refreshToken);
-  //       navigate('/main');
-  //     },
-  //     (error) => {
-  //       alert('잠시 후 다시 시도해주세요.');
-  //     },
-  //   );
-  // }, []);
+  const params = useParams();
+  // const code = new URL(window.location.href).searchParams.get('code');
+  useEffect(() => {
+    const accessToken = new URL(window.location.href).searchParams.get('accessToken');
+    const refreshToken = new URL(window.location.href).searchParams.get('refreshToken');
+    sessionStorage.setItem('accessToken', accessToken);
+    sessionStorage.setItem('refreshToken', refreshToken);
+    const fcmToken = sessionStorage.getItem('fcmToken');
+    socialLogin(
+      { fcmToken, refreshToken },
+      (resp) => {
+        navigate('/main');
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+        // navigate('/login');
+      },
+    );
+  }, []);
   return (
     <s.Container>
       <s.MainArea>

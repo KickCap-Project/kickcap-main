@@ -5,6 +5,7 @@ import Text from './../components/Common/Text';
 import LoadingLogo from './../asset/img/splashLogo.gif';
 import Logo from './../asset/img/svg/Logo.svg';
 import { useNavigate } from 'react-router';
+import { requestPermission } from '../firebaseCloudMessaging';
 
 const s = {
   Container: styled.div`
@@ -34,10 +35,14 @@ const s = {
 
 const SplashPage = () => {
   const navigate = useNavigate();
+
+  const setFcmToken = async () => {
+    const fcmToken = await requestPermission();
+    sessionStorage.setItem('fcmToken', fcmToken);
+    navigate('/login');
+  };
   useEffect(() => {
-    setTimeout(() => {
-      navigate('/login');
-    }, 2000);
+    setFcmToken();
   }, []);
   return (
     <s.Container>

@@ -4,7 +4,7 @@ const local = localAxios();
 
 export const socialLogin = async (param, success, fail) => {
   // 소셜로그인
-  await local.post(``, param).then(success).catch(fail);
+  await local.post(`/members/fcm`, param).then(success).catch(fail);
 };
 
 export const logout = async (fcmToken, success, fail) => {
