@@ -10,6 +10,7 @@ import cam2 from '../../asset/cam2.png';
 import cam3 from '../../asset/cam3.png';
 import cam4 from '../../asset/cam4.png';
 import { useLocation, useNavigate, useParams } from 'react-router';
+import { markerData } from '../../lib/data/BoardData.js';
 
 const s = {
   Container: styled.div`
@@ -37,6 +38,39 @@ const CameraMap = ({ point }) => {
     const options = { center: new kakao.maps.LatLng(data.lat, data.lng) };
     const kakaoMap = new kakao.maps.Map(container, options);
     setMap(kakaoMap);
+
+    // 마커 이미지 설정
+    const noparkImg = new kakao.maps.MarkerImage(nopark, new kakao.maps.Size(40, 40));
+    const helmetImg = new kakao.maps.MarkerImage(helmet, new kakao.maps.Size(40, 40));
+    const peopleImg = new kakao.maps.MarkerImage(people, new kakao.maps.Size(40, 40));
+    const roadImg = new kakao.maps.MarkerImage(road, new kakao.maps.Size(40, 40));
+    const sidewalkImg = new kakao.maps.MarkerImage(sidewalk, new kakao.maps.Size(40, 40));
+    const cam1Img = new kakao.maps.MarkerImage(cam1, new kakao.maps.Size(40, 40));
+    const cam2Img = new kakao.maps.MarkerImage(cam2, new kakao.maps.Size(40, 40));
+    const cam3Img = new kakao.maps.MarkerImage(cam3, new kakao.maps.Size(40, 40));
+    const cam4Img = new kakao.maps.MarkerImage(cam4, new kakao.maps.Size(40, 40));
+
+    {
+      markerData.map((data, index) => console.log(data));
+    }
+
+    // // 불법주차 마커 추가
+    // new kakao.maps.Marker({
+    //   position: new kakao.maps.LatLng(kickBoard.lat, kickBoard.lng),
+    //   map: kakaoMap,
+    //   title: kickBoard.title,
+    //   image: kickImg,
+    // });
+
+    // // 주차장 마커 추가
+    // Park.forEach((lot) => {
+    //   new kakao.maps.Marker({
+    //     position: new kakao.maps.LatLng(lot.lat, lot.lng),
+    //     map: kakaoMap,
+    //     title: lot.title,
+    //     image: parkImg,
+    //   });
+    // });
   }, [data]);
 
   return <s.Container id="map"></s.Container>;

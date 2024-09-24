@@ -1,4 +1,4 @@
-export const dummy = {
+export const markerData = {
   camera: [
     {
       lat: 36.36223362315709,
