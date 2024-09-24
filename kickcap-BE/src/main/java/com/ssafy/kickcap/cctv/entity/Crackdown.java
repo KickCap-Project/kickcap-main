@@ -48,7 +48,7 @@ public class Crackdown {
     @JoinColumn(name = "accused_idx", nullable = false)
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "violation_type", nullable = false)
     private ViolationType violationType;
 }
