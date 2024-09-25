@@ -1,6 +1,7 @@
 package com.ssafy.kickcap.user.service;
 
 import com.ssafy.kickcap.user.dto.LogoutRequest;
+import com.ssafy.kickcap.user.dto.SocialLoginResponse;
 import com.ssafy.kickcap.user.dto.TokenRequest;
 import com.ssafy.kickcap.user.entity.DeviceInfo;
 import com.ssafy.kickcap.user.entity.Member;
@@ -67,7 +68,7 @@ public class DeviceInfoService {
         }
     }
 
-    public void saveFcmAndRefresh(Member member, TokenRequest tokenRequest) {
+    public SocialLoginResponse saveFcmAndRefresh(Member member, TokenRequest tokenRequest) {
         String fcmToken = tokenRequest.getFcmToken();
         String refreshToken = tokenRequest.getRefreshToken();
         DeviceInfo deviceInfo = (DeviceInfo) deviceInfoRepository.findByMember_IdAndFcmToken(member.getId(), fcmToken)
@@ -75,5 +76,6 @@ public class DeviceInfoService {
                 .orElse(new DeviceInfo(member, fcmToken, refreshToken));
 
         deviceInfoRepository.save(deviceInfo);
+        return SocialLoginResponse.builder().name(member.getName()).demerit(member.getDemerit()).phone(member.getPhone()).build();
     }
 }
