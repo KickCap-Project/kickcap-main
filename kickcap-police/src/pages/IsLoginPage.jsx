@@ -1,5 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAppDispatch } from '../lib/hook/useReduxHook';
+import { pageActions } from '../store/page';
 
 export const PrivateRoute = () => {
   const checkLogin = !!sessionStorage.getItem('accessToken');
@@ -11,7 +13,9 @@ export const PrivateRoute = () => {
 };
 
 export const PublicRoute = () => {
-  sessionStorage.removeItem('persist:redux-state');
+  // sessionStorage.removeItem('persist:redux-state');
+  const dispatch = useAppDispatch();
+  dispatch(pageActions.changeboardType('park'));
   const checkLogin = !!sessionStorage.getItem('accessToken');
   const location = useLocation();
   if (checkLogin && location.pathname === '/') {
