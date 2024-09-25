@@ -129,6 +129,7 @@ const VideoStream = () => {
         video: {
           width: { ideal: 1920 },
           height: { ideal: 1080 },
+          facingMode: "environment",
         },
       })
       .then((stream) => {
