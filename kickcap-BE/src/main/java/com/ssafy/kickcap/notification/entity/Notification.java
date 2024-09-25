@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ public class Notification {
     private String content;
 
     @Column(nullable = false, length = 1)
+    @ColumnDefault(value = "'N'")
     private String isRead;
 
     @Enumerated(EnumType.STRING)
