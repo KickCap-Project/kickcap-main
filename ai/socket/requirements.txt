@@ -2,5 +2,4 @@ aiohttp
 aiohttp-cors
 opencv-python-headless
 numpy
-ultralytics
 python-dotenv
