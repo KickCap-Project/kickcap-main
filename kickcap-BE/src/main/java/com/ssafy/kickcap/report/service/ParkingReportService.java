@@ -1,18 +1,15 @@
 package com.ssafy.kickcap.report.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.kickcap.company.entity.Company;
 import com.ssafy.kickcap.company.repository.CompanyRepository;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
-import com.ssafy.kickcap.region.repository.RegionCodeRepository;
 import com.ssafy.kickcap.report.dto.ParkingReportRequestDto;
 import com.ssafy.kickcap.report.dto.RedisRequestDto;
 import com.ssafy.kickcap.report.entity.Informer;
 import com.ssafy.kickcap.report.repository.InformerRepository;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.repository.MemberRepository;
-import com.ssafy.kickcap.user.repository.PoliceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -35,11 +32,13 @@ public class ParkingReportService {
     }
 
     public Member findMember(String name, String phone) {
+        System.out.println("findMember 시작");
         return memberRepository.findMemberByNameAndPhone(name, phone)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
     }
 
     private void saveInformer(Long memberId, Member accusedMember, String kickboardNumber) {
+        System.out.println("saveInformer 시작");
         Member informerMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
@@ -76,8 +75,6 @@ public class ParkingReportService {
                 .code(userData.getCode())
                 .build();
 
-        System.out.println(redisDto.toString());
-
         // redis key 만들기 P + memberIdx + 킥보드 번호 + lat + lng , ttl : 24시간
         createRedisData(member.getId(), redisDto);
     }
@@ -92,11 +89,14 @@ public class ParkingReportService {
 
         // 기존에 Redis에 저장된 키가 있는지 확인
         Object existingData = valueOps.get(redisKey);
+        if (existingData != null) {
+            System.out.println("이미 있는 키");
+        }
 
         if (existingData == null) {
             valueOps.set(redisKey, redisDto, 24, TimeUnit.HOURS); // 1시간 TTL
             // 2분 TTL로 수정 - test 용
-//            valueOps.set(redisKey, redisDto, 2, TimeUnit.MINUTES);
+//            valueOps.set(redisKey, redisDto, 1, TimeUnit.MINUTES);
         }
     }
 }

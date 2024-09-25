@@ -76,8 +76,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                         new AntPathRequestMatcher("/members/login"),
                         new AntPathRequestMatcher("/tokens/refresh"),
                         new AntPathRequestMatcher("/police/logout"),
-                        new AntPathRequestMatcher("/members/logout"),
-                        new AntPathRequestMatcher("/reports/**")  // 잠시 사용중 - 현진
+                        new AntPathRequestMatcher("/members/logout")
                 ).permitAll()  // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .requestMatchers(
