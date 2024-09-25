@@ -2,11 +2,34 @@ import React, { useRef, useEffect, useState } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
+const INSERT_API_ENDPONT = 'http://localhost:8000/insert';
+const IMAGE_API_ENDPONT = 'http://localhost:8000/image';
+const OCR_API_ENDPONT = 'http://localhost:8000/ocr'
+
 const VideoStream = () => {
   const videoRef = useRef(null);
   const socketRef = useRef(null);
   const [annotatedImage, setAnnotatedImage] = useState(null);
   const [labelResult, setLabelResult] = useState('');
+  // kickboard_number를 상태로 관리 (초기값을 빈 문자열로 설정)
+  const [kickboardNumber, setKickboardNumber] = useState('G0387');
+  const [inputName, setName] = useState('김종원');
+  const [inputPhone, setPhone] = useState('01011112222');
+  const [inputMinute, setMinute] = useState('1');
+
+  // 입력 값이 변경될 때 상태 업데이트
+  const handleInputNumberChange = (e) => {
+    setKickboardNumber(e.target.value);
+  };
+  const handleInputNameChange = (e) => {
+    setName(e.target.value)
+  };
+  const handleInputPhoneChange = (e) => {
+    setPhone(e.target.value)
+  };
+  const handleInputMinuteChange = (e) => {
+    setMinute(e.target.value)
+  };
 
   const getCurrentTimeString = () => {
     const now = new Date();
@@ -33,43 +56,44 @@ const VideoStream = () => {
       context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(
         (blob) => {
-          // UUID로 파일 이름 생성
-          const fileName = uuidv4() + '.jpg';
           // FormData 준비
           const formData = new FormData();
-          formData.append('image', blob, fileName);
-
+          formData.append('image', blob, uuidv4() + '.jpg');
+      
           // /image 엔드포인트로 이미지 전송
           axios
-            .post('http://localhost:8000/image', formData, {
+            .post(IMAGE_API_ENDPONT, formData, {
               headers: {
                 'Content-Type': 'multipart/form-data',
               },
             })
             .then((response) => {
               console.log('/image로 이미지 전송 성공');
-              console.log(response)
-
+              console.log(response);
+      
+              // 서버에서 반환된 파일 이름 사용 (예: response.data.file_name)
+              const fileName = response.data.image_src
+      
               // /ocr 엔드포인트에 보낼 데이터 준비
               const ocrData = {
                 camera_idx: 1,
-                file_name: fileName,
+                file_name: fileName, // 응답에서 가져온 파일 이름을 사용
                 type: 3,
                 time: getCurrentTimeString(),
               };
-
+      
               // /ocr 엔드포인트로 데이터 전송
-              // axios
-              //   .post('http://localhost:8000/ocr', ocrData)
-              //   .then((response) => {
-              //     if (response.status === 200) {
-              //       // 결과를 라벨에 표시
-              //       setLabelResult(response.data.result);
-              //     }
-              //   })
-              //   .catch((error) => {
-              //     console.error('OCR 요청 중 오류 발생:', error);
-              //   });
+              axios
+                .post(OCR_API_ENDPONT, ocrData)
+                .then((response) => {
+                  if (response.status === 200) {
+                    // 결과를 라벨에 표시
+                    setLabelResult(response.data.result);
+                  }
+                })
+                .catch((error) => {
+                  console.error('OCR 요청 중 오류 발생:', error.response.data.detail);
+                });
             })
             .catch((error) => {
               console.error('/image로 이미지 전송 중 오류 발생:', error);
@@ -80,9 +104,19 @@ const VideoStream = () => {
     }
   };
 
-  const handleInsert = () => {
-    // Insert 버튼에 대한 기능을 여기에 구현하세요
-    console.log('Insert 버튼 클릭됨');
+  const handleInsert = async () => {
+    try {
+      const response = await axios.post(INSERT_API_ENDPONT, {
+        kickboard_number: kickboardNumber,
+        phone: inputPhone,
+        name: inputName,
+        minute: inputMinute
+      });
+  
+      console.log('Response:', response);
+    } catch (error) {
+      console.error('Error:', error.response.data.detail);
+    }
   };
 
   useEffect(() => {
@@ -191,9 +225,38 @@ const VideoStream = () => {
         )}
       </div>
       <div>
-        <button onClick={handleInsert}>Insert</button>
-        <button onClick={handleCapture}>Capture</button>
-        <button onClick={() => setLabelResult('')}>Clear</button>
+        <div>
+          <label>name: </label>
+          <input 
+            value={inputName} 
+            onChange={handleInputNameChange} 
+          />
+        </div>
+        <div>
+          <label>phone: </label>
+          <input 
+            value={inputPhone} 
+            onChange={handleInputPhoneChange} 
+          />
+        </div>
+        <div>
+          <label>유지 시간(분): </label>
+          <input 
+            value={inputMinute} 
+            onChange={handleInputMinuteChange} 
+          />
+        </div>
+        <div>
+          <label>킥보드 번호: </label>
+          <input 
+            value={kickboardNumber} 
+            onChange={handleInputNumberChange} 
+          />
+        </div>
+        
+        <button onClick={handleInsert} style={{ width: '150px', height: '50px' }}>Insert</button>
+        <button onClick={handleCapture} style={{ width: '150px', height: '50px' }}>Capture</button> 
+        <button onClick={() => setLabelResult('')} style={{ width: '150px', height: '50px' }}>Clear</button> 
         <p>{labelResult}</p>
       </div>
     </div>
