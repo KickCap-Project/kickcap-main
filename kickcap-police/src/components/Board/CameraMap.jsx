@@ -12,22 +12,79 @@ import cam3 from '../../asset/cam3.png';
 import cam4 from '../../asset/cam4.png';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { markerData } from '../../lib/data/BoardData.js';
+import BoardCameraModal from '../Modal/BoardCameraModal.jsx';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook.js';
+import { modalActions, selectIsCamera } from '../../store/modal.js';
+import { pageActions, selectBoardNav } from '../../store/page.js';
 
 const s = {
   Container: styled.div`
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+  `,
+  NavArea: styled.div`
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: space-between;
+  `,
+  mapArea: styled.div`
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    position: relative;
+  `,
+  TypeText: styled.div`
+    width: fit-content;
+    text-align: center;
+    font-weight: 700;
+    font-size: ${(props) => props.size || '15px'};
+    color: ${(props) => props.color || props.theme.textBasic};
+    cursor: pointer;
+  `,
+  selectArea: styled.select`
+    width: 100px;
+    height: 30px;
+    /* border: 1px solid red; */
+    position: absolute;
+    z-index: 100;
+    margin: 10px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+  `,
+  selectValue: styled.option`
+    cursor: pointer;
   `,
 };
 const { kakao } = window;
 
 const CameraMap = ({ point }) => {
+  const isCamera = useAppSelector(selectIsCamera);
+  const [cameraIdx, setCameraIdx] = useState();
+  const dispatch = useAppDispatch();
+  const handleOpenCamera = (isFlag) => {
+    dispatch(modalActions.ChangeIsCamera(isFlag));
+  };
+
   const location = useParams();
   const navigate = useNavigate();
   const data = useLocation().state?.data || null; //data 미존재시 => 직접 url입력상황이면 에러페이지 이동하는ㄴ거 하기
-  console.log(location);
-  console.log(data);
+  // console.log(location);
+  // console.log(data);
   const [map, setMap] = useState(null);
+  const [markerType, setMarkerType] = useState(4); // 추가된 상태
+  const [timeType, setTimeType] = useState(0);
+  const [markers, setMarkers] = useState([]);
+
+  const handleChangeTimeType = (e) => {
+    setTimeType(e.target.value);
+  };
 
   //처음 지도 그리기
   useEffect(() => {
@@ -36,7 +93,7 @@ const CameraMap = ({ point }) => {
       return;
     }
     const container = document.getElementById('map');
-    const options = { center: new kakao.maps.LatLng(data.lat, data.lng) };
+    const options = { center: new kakao.maps.LatLng(data.lat, data.lng), level: 5 };
     const kakaoMap = new kakao.maps.Map(container, options);
     setMap(kakaoMap);
 
@@ -52,6 +109,15 @@ const CameraMap = ({ point }) => {
     const cam3Img = new kakao.maps.MarkerImage(cam3, new kakao.maps.Size(40, 40));
     const cam4Img = new kakao.maps.MarkerImage(cam4, new kakao.maps.Size(40, 40));
 
+    // 기존 마커 제거
+    markers.forEach((marker) => {
+      marker.setMap(null);
+    });
+
+    let center = kakaoMap.getCenter();
+
+    const newMarkers = [];
+
     markerData.camera.map((data, index) => {
       const marker = new kakao.maps.Marker({
         position: new kakao.maps.LatLng(data.lat, data.lng),
@@ -62,12 +128,15 @@ const CameraMap = ({ point }) => {
 
       // 클릭 이벤트 추가
       kakao.maps.event.addListener(marker, 'click', () => {
-        console.log(`Marker ${data.idx} clicked!`);
+        setCameraIdx(data.idx);
+        handleOpenCamera(true);
       });
+
+      newMarkers.push(marker);
     });
 
     markerData.point.map((data, index) => {
-      markerData.point.map((data, index) => {
+      if (markerType === data.type && timeType == data.timeIndex) {
         const marker = new kakao.maps.Marker({
           position: new kakao.maps.LatLng(data.lat, data.lng),
           map: kakaoMap,
@@ -89,11 +158,78 @@ const CameraMap = ({ point }) => {
         kakao.maps.event.addListener(marker, 'click', () => {
           alert(`Point Type ${data.type} clicked!`);
         });
-      });
-    });
-  }, [data]);
 
-  return <s.Container id="map"></s.Container>;
+        newMarkers.push(marker);
+      }
+    });
+
+    // 새 마커 설정
+    setMarkers(newMarkers);
+  }, [data, markerType, timeType]);
+
+  const type = useAppSelector(selectBoardNav);
+  const handleClickIcon = (mode) => {
+    dispatch(pageActions.changeboardType(mode));
+    setMarkerType(
+      mode === 'park'
+        ? 4
+        : mode === 'helmet'
+        ? 3
+        : mode === 'peoples'
+        ? 1
+        : mode === 'sideWalk'
+        ? 2
+        : mode === 'road'
+        ? 5
+        : 6,
+    ); // 마커 타입 설정
+  };
+  console.log(markerType);
+  console.log(timeType);
+
+  const getColor = (mode) => {
+    return type === mode ? '#0054A6' : undefined;
+  };
+
+  return (
+    <>
+      <s.Container>
+        <s.NavArea>
+          <s.TypeText onClick={() => handleClickIcon('park')} color={getColor('park')}>
+            불법 주차
+          </s.TypeText>
+          <s.TypeText onClick={() => handleClickIcon('helmet')} color={getColor('helmet')}>
+            안전모 미착용
+          </s.TypeText>
+          <s.TypeText onClick={() => handleClickIcon('peoples')} color={getColor('peoples')}>
+            다인 승차
+          </s.TypeText>
+          <s.TypeText onClick={() => handleClickIcon('sideWalk')} color={getColor('sideWalk')}>
+            보도 주행
+          </s.TypeText>
+          <s.TypeText onClick={() => handleClickIcon('road')} color={getColor('road')}>
+            지정차로 위반
+          </s.TypeText>
+          <s.TypeText onClick={() => handleClickIcon('accident')} color={getColor('accident')}>
+            사고발생
+          </s.TypeText>
+        </s.NavArea>
+        <s.mapArea id="map">
+          <s.selectArea value={timeType} onChange={handleChangeTimeType}>
+            <s.selectValue value={0}>0 ~ 2시</s.selectValue>
+            <s.selectValue value={1}>3 ~ 5시</s.selectValue>
+            <s.selectValue value={2}>6 ~ 8시</s.selectValue>
+            <s.selectValue value={3}>9 ~ 11시</s.selectValue>
+            <s.selectValue value={4}>12 ~ 15시</s.selectValue>
+            <s.selectValue value={5}>15 ~ 18시</s.selectValue>
+            <s.selectValue value={6}>18 ~ 20시</s.selectValue>
+            <s.selectValue value={7}>21 ~ 23시</s.selectValue>
+          </s.selectArea>
+        </s.mapArea>
+      </s.Container>
+      <BoardCameraModal open={isCamera} toggleModal={handleOpenCamera} idx={cameraIdx} />
+    </>
+  );
 };
 
 export default CameraMap;
