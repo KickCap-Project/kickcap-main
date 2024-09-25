@@ -87,4 +87,13 @@ public class ReportController {
         return ResponseEntity.ok(reportList); 
     }
 
+    @PostMapping("/{reportId}/approve")
+    @Operation(summary = "신고 승인", description = "해당 신고를 경찰이 승인합니다. 자동으로 고지서가 발부됩니다.")
+    public ResponseEntity<Void> approveReport(@AuthenticationPrincipal User user, @PathVariable Long reportId) {
+        Police police = policeService.findByPoliceId(user.getUsername());
+
+        reportService.approveReport(police, reportId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }
