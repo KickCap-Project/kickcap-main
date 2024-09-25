@@ -21,7 +21,9 @@ async def video_stream(request):
     frame_interval = 0.3
     last_frame_time = datetime.datetime.now()
 
-    async with ClientSession() as session:
+    session = ClientSession()  # ClientSession 생성
+
+    try:
         while True:
             try:
                 # 웹소켓으로부터 프레임 데이터 수신
@@ -39,8 +41,9 @@ async def video_stream(request):
                         # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
                         _, image_encoded = cv2.imencode('.jpg', image)
                         # FastAPI 엔드포인트로 이미지 전송
-                        files = {'image_file': image_encoded.tobytes()}
-                        async with session.post(API_ENDPOINT, data=files) as resp:
+                        data = image_encoded.tobytes()
+                        headers = {'Content-Type': 'application/octet-stream'}
+                        async with session.post(API_ENDPOINT, data=data, headers=headers) as resp:
                             if resp.status == 200:
                                 # 응답으로 받은 주석 처리된 이미지 수신
                                 annotated_image_bytes = await resp.read()
@@ -54,7 +57,12 @@ async def video_stream(request):
             except (aiohttp.WSServerHandshakeError, aiohttp.ClientError) as e:
                 print(f"Error: {e}")
                 break
-    print("Client disconnected")
+            except asyncio.CancelledError:
+                break
+    finally:
+        # 세션 종료
+        await session.close()
+        print("Client disconnected")
     return ws
 
 app = web.Application()
