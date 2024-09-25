@@ -8,6 +8,8 @@ import Image from './../Common/Image';
 import Text from './../Common/Text';
 import { useAppDispatch } from '../../lib/hook/useReduxHook';
 import { modalActions } from '../../store/modal';
+import { logout } from '../../lib/api/main-api';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -37,10 +39,26 @@ const s = {
 };
 
 const MainPageModal = ({ open, toggleModal }) => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const handleOpenPhoneModal = (isFlag) => {
     toggleModal(false);
     dispatch(modalActions.ChangeIsPhone(isFlag));
+  };
+
+  const handleLogout = async () => {
+    const fcmToken = sessionStorage.getItem('fcmToken');
+    await logout(
+      fcmToken,
+      (resp) => {
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        navigate('/login');
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
   };
   return (
     <ReactModal
@@ -67,7 +85,7 @@ const MainPageModal = ({ open, toggleModal }) => {
               cursor={'pointer'}
             />
           </s.Svg>
-          <s.Svg>
+          <s.Svg onClick={handleLogout}>
             <Image src={logoutImg} width="100%" />
             <Text
               children={'로그아웃'}

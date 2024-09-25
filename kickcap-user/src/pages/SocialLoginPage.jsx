@@ -29,7 +29,7 @@ const SocialLoginPage = () => {
     const refreshToken = new URL(window.location.href).searchParams.get('refreshToken');
     sessionStorage.setItem('accessToken', accessToken);
     sessionStorage.setItem('refreshToken', refreshToken);
-    const fcmToken = "sessionStorage.getItem('fcmToken')";
+    const fcmToken = sessionStorage.getItem('fcmToken');
     socialLogin(
       { fcmToken, refreshToken },
       (resp) => {

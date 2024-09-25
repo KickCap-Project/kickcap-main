@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import LodingLogo from '../asset/img/splashLogo.gif';
+import logo from '../asset/svg/logo.svg';
 import Text from './../components/Common/Text';
+import { requestPermission } from '../firebaseCloudMessaging';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -21,14 +23,24 @@ const s = {
   `,
   Img: styled.img`
     width: 100%;
+    margin: 20px auto;
   `,
 };
 
 const SplashPage = () => {
+  const navigate = useNavigate();
+  const setFcmToken = async () => {
+    const fcmToken = await requestPermission();
+    sessionStorage.setItem('fcmToken', fcmToken);
+    navigate('/login');
+  };
+  useEffect(() => {
+    setFcmToken();
+  }, []);
   return (
     <s.Container>
       <s.MainArea>
-        <s.Img src={LodingLogo} />
+        <s.Img src={logo} />
         <Text size={'20px'} bold={'800'}>
           로딩 중 입니다.
         </Text>
