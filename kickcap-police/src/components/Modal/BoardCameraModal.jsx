@@ -52,7 +52,7 @@ const s = {
   `,
 };
 
-const BoardCameraModal = ({ open, toggleModal }) => {
+const BoardCameraModal = ({ open, toggleModal, idx }) => {
   return (
     <ReactModal
       isOpen={open}
@@ -64,7 +64,7 @@ const BoardCameraModal = ({ open, toggleModal }) => {
       <s.Container>
         <s.Header>
           <Text
-            children={'대전 유성구 학하북로 75-21'}
+            children={`카메라주소 ` + idx}
             textalian={'center'}
             display={'block'}
             size={'25px'}
