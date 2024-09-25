@@ -5,6 +5,7 @@ import helmet from '../../asset/helmet.png';
 import people from '../../asset/people.png';
 import road from '../../asset/road.png';
 import sidewalk from '../../asset/sidewalk.png';
+import accident from '../../asset/accident.png';
 import cam1 from '../../asset/cam1.png';
 import cam2 from '../../asset/cam2.png';
 import cam3 from '../../asset/cam3.png';
@@ -45,32 +46,51 @@ const CameraMap = ({ point }) => {
     const peopleImg = new kakao.maps.MarkerImage(people, new kakao.maps.Size(40, 40));
     const roadImg = new kakao.maps.MarkerImage(road, new kakao.maps.Size(40, 40));
     const sidewalkImg = new kakao.maps.MarkerImage(sidewalk, new kakao.maps.Size(40, 40));
+    const accidentImg = new kakao.maps.MarkerImage(accident, new kakao.maps.Size(40, 40));
     const cam1Img = new kakao.maps.MarkerImage(cam1, new kakao.maps.Size(40, 40));
     const cam2Img = new kakao.maps.MarkerImage(cam2, new kakao.maps.Size(40, 40));
     const cam3Img = new kakao.maps.MarkerImage(cam3, new kakao.maps.Size(40, 40));
     const cam4Img = new kakao.maps.MarkerImage(cam4, new kakao.maps.Size(40, 40));
 
-    {
-      markerData.map((data, index) => console.log(data));
-    }
+    markerData.camera.map((data, index) => {
+      const marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(data.lat, data.lng),
+        title: data.idx,
+        map: kakaoMap,
+        image: data.level === 0 ? cam1Img : data.level === 1 ? cam2Img : data.level === 2 ? cam3Img : cam4Img,
+      });
 
-    // // 불법주차 마커 추가
-    // new kakao.maps.Marker({
-    //   position: new kakao.maps.LatLng(kickBoard.lat, kickBoard.lng),
-    //   map: kakaoMap,
-    //   title: kickBoard.title,
-    //   image: kickImg,
-    // });
+      // 클릭 이벤트 추가
+      kakao.maps.event.addListener(marker, 'click', () => {
+        console.log(`Marker ${data.idx} clicked!`);
+      });
+    });
 
-    // // 주차장 마커 추가
-    // Park.forEach((lot) => {
-    //   new kakao.maps.Marker({
-    //     position: new kakao.maps.LatLng(lot.lat, lot.lng),
-    //     map: kakaoMap,
-    //     title: lot.title,
-    //     image: parkImg,
-    //   });
-    // });
+    markerData.point.map((data, index) => {
+      markerData.point.map((data, index) => {
+        const marker = new kakao.maps.Marker({
+          position: new kakao.maps.LatLng(data.lat, data.lng),
+          map: kakaoMap,
+          image:
+            data.type === 1
+              ? peopleImg
+              : data.type === 2
+              ? sidewalkImg
+              : data.type === 3
+              ? helmetImg
+              : data.type === 4
+              ? noparkImg
+              : data.type === 5
+              ? roadImg
+              : accidentImg,
+        });
+
+        // 클릭 이벤트 추가
+        kakao.maps.event.addListener(marker, 'click', () => {
+          alert(`Point Type ${data.type} clicked!`);
+        });
+      });
+    });
   }, [data]);
 
   return <s.Container id="map"></s.Container>;

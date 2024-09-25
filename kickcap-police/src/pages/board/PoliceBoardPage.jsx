@@ -11,6 +11,7 @@ import { Outlet } from 'react-router';
 import { usePageNavHook } from '../../lib/hook/usePageNavHook';
 import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
+import { chart1, chart2, etc } from '../../lib/data/ChartData';
 
 const s = {
   Container: styled.div`
@@ -67,9 +68,42 @@ const PoliceBoardPage = () => {
   const datas = ['200', '100', '300', '500', '100', '400', '900'];
   const labels = ['09.01', '09.02', '09.03', '09.04', '09.05', '09.06', '09.07'];
   const crackLabel = ['안전모 미착용', '다인 승차'];
-  const crackData = ['59.1', '40.9'];
+  // const crackData = ['59.1', '40.9'];
   const reportLabel = ['불법 주차', '안전모 미착용', '다인 승차', '보도 주행', '지정차로 위반'];
-  const reportData = ['50', '10', '15', '5', '20'];
+  // const reportData = ['50', '10', '15', '5', '20'];
+
+  const dates = chart1.map((item) => item.date);
+  const crack = chart1.map((item) => item.crackDown);
+  const report = chart1.map((item) => item.report);
+  const accident = chart1.map((item) => item.accident);
+  const crackdata = chart2.map((item) => item.crackDown);
+  const crackData = [(etc.noHead / (etc.noHead + etc.peoples)) * 100, (etc.peoples / (etc.noHead + etc.peoples)) * 100];
+  const reportData = [
+    (etc.p / (etc.p + etc.n + etc.h + etc.d + etc.w)) * 100,
+    (etc.n / (etc.p + etc.n + etc.h + etc.d + etc.w)) * 100,
+    (etc.h / (etc.p + etc.n + etc.h + etc.d + etc.w)) * 100,
+    (etc.d / (etc.p + etc.n + etc.h + etc.d + etc.w)) * 100,
+    (etc.w / (etc.p + etc.n + etc.h + etc.d + etc.w)) * 100,
+  ];
+  const crackHelmet = (etc.noHead / (etc.noHead + etc.peoples)) * 100;
+  const crackPeople = (etc.peoples / (etc.noHead + etc.peoples)) * 100;
+  const times = chart2.map((item) => {
+    return item.timeIndex === 0
+      ? ' 0-2'
+      : item.timeIndex === 1
+      ? '3-5'
+      : item.timeIndex === 2
+      ? '6-8'
+      : item.timeIndex === 3
+      ? '9-11'
+      : item.timeIndex === 4
+      ? '12-14'
+      : item.timeIndex === 5
+      ? '15-17'
+      : item.timeIndex === 6
+      ? '18-20'
+      : '21-23';
+  });
 
   usePageNavHook('board');
   usePageTypeHook('board');
@@ -84,14 +118,14 @@ const PoliceBoardPage = () => {
           </s.MapArea>
           <s.DataArea>
             <s.ChartArea1>
-              <WeekChart title={'최근 1주일 단속 수'} datas={datas} labels={labels} />
-              <WeekChart title={'최근 1주일 신고 수'} datas={datas} labels={labels} />
-              <WeekChart title={'최근 1주일 사고 수'} datas={datas} labels={labels} />
+              <WeekChart title={'최근 1주일 단속 수'} datas={crack} labels={dates} />
+              <WeekChart title={'최근 1주일 신고 수'} datas={report} labels={labels} />
+              <WeekChart title={'최근 1주일 사고 수'} datas={accident} labels={labels} />
             </s.ChartArea1>
             <s.ChartArea2>
               <RatioChart title={'단속 비율'} datas={crackData} labels={crackLabel} />
               <RatioChart title={'신고 비율'} datas={reportData} labels={reportLabel} />
-              <TimeChart title={'시간대 별 단속 수'} datas={datas} labels={labels} />
+              <TimeChart title={'시간대 별 단속 수'} datas={crackdata} labels={times} />
             </s.ChartArea2>
           </s.DataArea>
         </s.MainArea>

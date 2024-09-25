@@ -3,13 +3,13 @@ export const markerData = {
     {
       lat: 36.36223362315709,
       lng: 127.35508744312109,
-      type: 1,
+      idx: 1,
       level: 0,
     },
     {
       lat: 36.36143066158633,
       lng: 127.35539576956889,
-      type: 0,
+      idx: 2,
       level: 2,
     },
   ],
