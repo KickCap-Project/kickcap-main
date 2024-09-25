@@ -1,10 +1,16 @@
 package com.ssafy.kickcap.dashboard.dto;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
+import java.util.List;
+@AllArgsConstructor
+@Getter
+@Builder
 public class WeekResponse {
 
-    private List<DayToalResponse> chart1;
+    private List<DayTotalResponse> chart1;
     private List<TimeCrackdownResponse> chart2;
     private int noHead;       // 총 미 착용 건
     private int peoples;      // 총 다인 건
