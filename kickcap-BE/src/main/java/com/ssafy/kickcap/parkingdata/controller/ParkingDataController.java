@@ -3,6 +3,7 @@ package com.ssafy.kickcap.parkingdata.controller;
 import com.ssafy.kickcap.parkingdata.dto.ParkingDataRequestDto;
 import com.ssafy.kickcap.parkingdata.dto.ParkingDataResponseDto;
 import com.ssafy.kickcap.parkingdata.service.ParkingDataService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class ParkingDataController {
     private final ParkingDataService parkingDataService;
 
     @GetMapping()
+    @Operation(summary = "주차장 조회", description = "킥보드 주변 1km 반경의 주차장을 조회합니다..")
     public ResponseEntity<List<ParkingDataResponseDto>> getParkingData(@RequestBody ParkingDataRequestDto requestDto) {
         List<ParkingDataResponseDto> parkingDataList = parkingDataService.getParkingData(requestDto);
         return ResponseEntity.ok(parkingDataList);

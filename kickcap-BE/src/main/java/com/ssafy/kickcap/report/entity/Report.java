@@ -73,4 +73,9 @@ public class Report{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "violation_type", nullable = false)
     private ViolationType violationType;
+
+    // 승인 상태 변경
+    public void updateApproveStatus(ApproveStatus approveStatus) {
+        this.approveStatus = approveStatus;
+    }
 }
