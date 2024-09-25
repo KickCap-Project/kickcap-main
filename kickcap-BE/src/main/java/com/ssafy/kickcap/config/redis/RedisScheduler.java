@@ -19,8 +19,8 @@ public class RedisScheduler {
 
     private static final String PUBSUB_CHANNEL = "report_channel";
 
-//    @Scheduled(fixedRate = 60000) // 1분마다 실행
-    @Scheduled(fixedRate = 30000) // 30초마다 실행 - test 용
+    @Scheduled(fixedRate = 60000) // 1분마다 실행
+//    @Scheduled(fixedRate = 30000) // 30초마다 실행 - test 용
     public void checkKeysTTL() {
         System.out.println("스케줄러 시작");
         // 모든 키 조회

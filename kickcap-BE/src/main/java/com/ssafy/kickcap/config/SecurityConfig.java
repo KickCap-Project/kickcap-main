@@ -7,6 +7,7 @@ import com.ssafy.kickcap.user.repository.DeviceInfoRepository;
 import com.ssafy.kickcap.user.service.MemberService;
 import com.ssafy.kickcap.user.service.PoliceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,8 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
     private final TokenProvider tokenProvider;
     private final DeviceInfoRepository deviceInfoRepository;
     private final MemberService memberService;
+    @Value("${redirect_uri}")
+    private String REDIRECT_PATH;
 
     // 스프링 시큐리티 기능 비활성화
     // 스프링 시큐리티의 모든 기능을 사용하지 않게 설정 = 인증, 인가 서비스를 모든 곳에 적용하진 않는다
@@ -76,8 +79,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                         new AntPathRequestMatcher("/members/login"),
                         new AntPathRequestMatcher("/tokens/refresh"),
                         new AntPathRequestMatcher("/police/logout"),
-                        new AntPathRequestMatcher("/members/logout"),
-                        new AntPathRequestMatcher("/reports/**")  // 잠시 사용중 - 현진
+                        new AntPathRequestMatcher("/members/logout")
                 ).permitAll()  // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .requestMatchers(
@@ -89,17 +91,17 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
 
             // OAuth2 로그인 설정 (소셜 로그인 처리)
             .oauth2Login(oauth2 -> oauth2
-                    .loginPage("https://www.bardisue.store/login") // OAuth2 로그인 페이지 URL 설정
+                    .loginPage(REDIRECT_PATH+"/login") // OAuth2 로그인 페이지 URL 설정
                     // Authorization 요청과 관련된 상태 저장
                 .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(oAuth2UserCustomService))
                     // 인증 성공 시 실행할 핸들러
 //                    .failureUrl("https://www.bardisue.store/login?error=true") // 로그인 실패 시 리디렉션할 URL 설정
-                    .defaultSuccessUrl("https://www.bardisue.store/social", true) // 로그인 성공 시 리디렉션할 URL 설정
+                    .defaultSuccessUrl(REDIRECT_PATH+"/social", true) // 로그인 성공 시 리디렉션할 URL 설정
                     .successHandler(oAuth2SuccessHandler()))
                 // 인증 성공 시 실행할 핸들러도 설정
 
                 .logout(logout -> logout // 로그아웃 설정
-                        .logoutSuccessUrl("https://www.bardisue.store/login") // 로그아웃 완료되었을 떄 이동할 경로 설정
+                        .logoutSuccessUrl(REDIRECT_PATH+"/login") // 로그아웃 완료되었을 떄 이동할 경로 설정
                         .invalidateHttpSession(true) // 로그아웃 이후에 세션에서 전체 삭제할지 여부 설정
                 )
 
