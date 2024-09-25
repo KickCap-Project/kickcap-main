@@ -6,7 +6,6 @@ import RatioChart from '../../components/Board/RatioChart';
 import TimeChart from '../../components/Board/TimeChart';
 import DayInfo from '../../components/Board/DayInfo';
 import CompareInfo from '../../components/Board/CompareInfo';
-import BoardCameraModal from '../../components/Modal/BoardCameraModal';
 import { Outlet } from 'react-router';
 import { usePageNavHook } from '../../lib/hook/usePageNavHook';
 import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
@@ -65,12 +64,8 @@ const s = {
 };
 
 const PoliceBoardPage = () => {
-  const datas = ['200', '100', '300', '500', '100', '400', '900'];
-  const labels = ['09.01', '09.02', '09.03', '09.04', '09.05', '09.06', '09.07'];
   const crackLabel = ['안전모 미착용', '다인 승차'];
-  // const crackData = ['59.1', '40.9'];
   const reportLabel = ['불법 주차', '안전모 미착용', '다인 승차', '보도 주행', '지정차로 위반'];
-  // const reportData = ['50', '10', '15', '5', '20'];
 
   const dates = chart1.map((item) => item.date);
   const crack = chart1.map((item) => item.crackDown);
@@ -85,8 +80,6 @@ const PoliceBoardPage = () => {
     (etc.d / (etc.p + etc.n + etc.h + etc.d + etc.w)) * 100,
     (etc.w / (etc.p + etc.n + etc.h + etc.d + etc.w)) * 100,
   ];
-  const crackHelmet = (etc.noHead / (etc.noHead + etc.peoples)) * 100;
-  const crackPeople = (etc.peoples / (etc.noHead + etc.peoples)) * 100;
   const times = chart2.map((item) => {
     return item.timeIndex === 0
       ? ' 0-2'
@@ -119,8 +112,8 @@ const PoliceBoardPage = () => {
           <s.DataArea>
             <s.ChartArea1>
               <WeekChart title={'최근 1주일 단속 수'} datas={crack} labels={dates} />
-              <WeekChart title={'최근 1주일 신고 수'} datas={report} labels={labels} />
-              <WeekChart title={'최근 1주일 사고 수'} datas={accident} labels={labels} />
+              <WeekChart title={'최근 1주일 신고 수'} datas={report} labels={dates} />
+              <WeekChart title={'최근 1주일 사고 수'} datas={accident} labels={dates} />
             </s.ChartArea1>
             <s.ChartArea2>
               <RatioChart title={'단속 비율'} datas={crackData} labels={crackLabel} />
@@ -137,7 +130,6 @@ const PoliceBoardPage = () => {
           <CompareInfo title={'전일 대비 신고'} data={'-35.2'} />
           <CompareInfo title={'전일 대비 이의'} data={'2.4'} />
         </s.FooterArea>
-        {/* <BoardCameraModal open={true} /> */}
       </s.Container>
     </>
   );

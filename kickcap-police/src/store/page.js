@@ -4,6 +4,7 @@ const initialState = {
   crack: 'helmet',
   report: 'park',
   complaint: 'progress',
+  board: 'park',
 };
 
 export const pageSlice = createSlice({
@@ -19,6 +20,9 @@ export const pageSlice = createSlice({
     changeComplaintType: (state, action) => {
       state.complaint = action.payload;
     },
+    changeboardType: (state, action) => {
+      state.board = action.payload;
+    },
   },
 });
 
@@ -26,5 +30,6 @@ export const pageActions = pageSlice.actions;
 export const selectCrackNav = (state) => state.page.crack;
 export const selectReportNav = (state) => state.page.report;
 export const selectComplaintNav = (state) => state.page.complaint;
+export const selectBoardNav = (state) => state.page.board;
 
 export default pageSlice.reducer;
