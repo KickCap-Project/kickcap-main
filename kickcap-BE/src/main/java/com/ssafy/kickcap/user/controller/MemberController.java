@@ -40,17 +40,23 @@ public class MemberController {
 
     @PostMapping("/fcm")
     @Operation(summary = "토큰 전송", description = "시민 사용자의 fcm 토큰과 refresh 토큰 전송")
-    public ResponseEntity<?> saveTokens(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody TokenRequest tokenRequest) {
-
+    public ResponseEntity<SocialLoginResponse> saveTokens(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody TokenRequest tokenRequest) {
         Member member = memberService.findById(principal.getId());
-
-        deviceInfoService.saveFcmAndRefresh(member, tokenRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        SocialLoginResponse socialLoginResponse = deviceInfoService.saveFcmAndRefresh(member, tokenRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(socialLoginResponse);
     }
 
     @PutMapping("/register")
     @Operation(summary = "일반 시민 추가 정보 입력", description = "시민 사용자 휴대폰 번호와 이름을 입력받아 저장합니다.")
-    public ResponseEntity<?> registerMember(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody RegisterDto registerDto) {
+    public ResponseEntity<RegisterDto> registerMember(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody RegisterDto registerDto) {
+        Long id = principal.getId();
+        memberService.updateNameAndPhone(id, registerDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(registerDto);
+    }
+
+    @PutMapping("")
+    @Operation(summary = "개인정보 수정", description = "이름과 휴대폰번호를 수정합니다.")
+    public ResponseEntity<RegisterDto> editMember(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody RegisterDto registerDto) {
         Long id = principal.getId();
         memberService.updateNameAndPhone(id, registerDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(registerDto);
