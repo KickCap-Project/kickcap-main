@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-const BASE_URL = 'https://j11b102.p.ssafy.io'
+const BASE_URL = 'https://j11b102.p.ssafy.io/plate'
 const INSERT_API_ENDPONT = BASE_URL+'/insert';
 const IMAGE_API_ENDPONT = BASE_URL+'/image';
 const OCR_API_ENDPONT = BASE_URL+'/ocr'
