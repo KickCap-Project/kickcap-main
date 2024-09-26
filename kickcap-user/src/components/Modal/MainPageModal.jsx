@@ -47,12 +47,12 @@ const MainPageModal = ({ open, toggleModal }) => {
   };
 
   const handleLogout = async () => {
-    const fcmToken = sessionStorage.getItem('fcmToken');
+    const fcmToken = localStorage.getItem('fcmToken');
     await logout(
       fcmToken,
       (resp) => {
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         navigate('/login');
       },
       (error) => {

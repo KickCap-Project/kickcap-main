@@ -4,9 +4,11 @@ import LogoSvg from './../asset/img/svg/Logo.svg';
 import NotificationOffSvg from './../asset/img/svg/notificationOff.svg';
 import NotificationOnSvg from './../asset/img/svg/notificationOn.svg';
 import SettingSvg from './../asset/img/svg/setting.svg';
+import logoutImg from '../asset/img/svg/logout.svg';
 import { useAppDispatch } from '../lib/hook/useReduxHook';
 import { modalActions } from '../store/modal';
 import { useNavigate } from 'react-router';
+import { logout } from '../lib/api/main-api';
 
 const notification = false;
 
@@ -56,6 +58,22 @@ const Header = () => {
   const handleMovePage = (path) => {
     navigate(path);
   };
+
+  const handleLogout = async () => {
+    const fcmToken = localStorage.getItem('fcmToken');
+    await logout(
+      fcmToken,
+      (resp) => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('Info');
+        navigate('/login');
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+  };
   return (
     <s.HeaderArea>
       <s.Logo src={LogoSvg} />
@@ -65,7 +83,8 @@ const Header = () => {
         ) : (
           <s.ButtonNotification src={NotificationOffSvg} onClick={() => handleMovePage('notification')} />
         )}
-        <s.ButtonSetting src={SettingSvg} onClick={() => handleOpenMainModal(true)} />
+        {/* <s.ButtonSetting src={SettingSvg} onClick={() => handleOpenMainModal(true)} /> */}
+        <s.ButtonSetting src={logoutImg} onClick={handleLogout} />
       </s.ButtonArea>
     </s.HeaderArea>
   );
