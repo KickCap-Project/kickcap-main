@@ -26,4 +26,5 @@ COPY . /app/
 EXPOSE 8765
 
 # Run the application
-CMD ["python", "sockey.py"]
+#CMD ["python", "sockey.py"]
+CMD ["bash", "-c", "sleep 5 && python -u sockey.py"]

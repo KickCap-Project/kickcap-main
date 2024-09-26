@@ -50,30 +50,10 @@ const VideoStream = () => {
     if (videoRef.current) {
       const videoElement = videoRef.current;
       const canvas = document.createElement('canvas');
+      canvas.width = 1920;
+      canvas.height = 1080;
       const context = canvas.getContext('2d');
-  
-      const width = 1920;
-      const height = 1080;
-  
-      // 회전된 이미지를 그리기 위해 캔버스 크기를 설정
-      canvas.width = width;
-      canvas.height = height;
-  
-      // 환경을 감지하여 스마트폰의 가로/세로 모드에서 회전 조정
-      const isPortrait = window.innerHeight > window.innerWidth;
-  
-      if (isPortrait) {
-        // 세로 모드인 경우 캔버스 회전
-        context.save(); // 현재 상태 저장
-        context.translate(width / 2, height / 2); // 캔버스의 중앙으로 이동
-        context.rotate(Math.PI / 2); // 90도 회전
-        context.drawImage(videoElement, -height / 2, -width / 2, height, width); // 세로로 그리기
-        context.restore(); // 회전 이전 상태로 복구
-      } else {
-        // 가로 모드인 경우 그대로 그리기
-        context.drawImage(videoElement, 0, 0, width, height);
-      }
-  
+      context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(
         (blob) => {
           // FormData 준비
@@ -149,7 +129,7 @@ const VideoStream = () => {
         video: {
           width: { ideal: 1920 },
           height: { ideal: 1080 },
-          facingMode: "environment",
+          facingMode: 'environment',
         },
       })
       .then((stream) => {
@@ -167,10 +147,43 @@ const VideoStream = () => {
               .grabFrame()
               .then((imageBitmap) => {
                 const canvas = document.createElement('canvas');
-                canvas.width = 1920;
-                canvas.height = 1080;
                 const context = canvas.getContext('2d');
-                context.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+
+                // 모바일 기기에서의 화면 크기 및 방향 정보 가져오기
+                const { videoWidth, videoHeight } = videoElement;
+
+                // 캔버스 크기를 비디오 요소의 크기에 맞춤
+                canvas.width = videoWidth;
+                canvas.height = videoHeight;
+
+                // 변환 초기화
+                context.resetTransform();
+
+                // 모바일 기기인지 확인 (터치 이벤트가 존재하는지로 간단히 판단)
+                const isMobile = 'ontouchstart' in window;
+
+                if (isMobile) {
+                  // 세로 모드인지 확인
+                  if (window.innerHeight > window.innerWidth) {
+                    // 이미지를 90도 회전시키고 캔버스 위치 조정
+                    context.translate(canvas.width / 2, canvas.height / 2);
+                    context.rotate((90 * Math.PI) / 180);
+                    context.drawImage(
+                      imageBitmap,
+                      -canvas.height / 2,
+                      -canvas.width / 2,
+                      canvas.height,
+                      canvas.width
+                    );
+                  } else {
+                    // 가로 모드인 경우 그대로 그림
+                    context.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+                  }
+                } else {
+                  // 데스크톱 등의 환경에서는 그대로 그림
+                  context.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+                }
+
                 canvas.toBlob(
                   (blob) => {
                     socketRef.current.send(blob); // 프레임 전송
