@@ -1,5 +1,8 @@
 package com.ssafy.kickcap.report.service;
 
+import com.ssafy.kickcap.bill.entity.Bill;
+import com.ssafy.kickcap.bill.entity.PaidStatus;
+import com.ssafy.kickcap.bill.repository.BillRepository;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.report.dto.ReportListResponseDto;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +29,7 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
     private final ViolationTypeRepository violationTypeRepository;
+    private final BillRepository billRepository;
     private static final int DEFAULT_PAGE_SIZE = 10;
     private static final List<ApproveStatus> COMPLETED_STATUSES = Arrays.asList(ApproveStatus.APPROVED, ApproveStatus.REJECTED);
 
@@ -63,5 +68,31 @@ public class ReportService {
         return reportPage.getContent().stream()
                 .map(ReportListResponseDto::fromEntity)
                 .collect(Collectors.toList()); // DTO 리스트 반환
+    }
+
+    public void approveReport(Police police, Long reportId) {
+        Report report = reportRepository.findById(reportId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        // 로그인한 경찰 아이디와 신고 담당 경찰서 아이디가 맞는지 확인
+        if (report.getPolice().getPoliceId() != police.getPoliceId()) {
+            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
+        }
+
+        // 신고 상태 업데이트 UPAPPROVED -> APPROVED
+        report.updateApproveStatus(ApproveStatus.APPROVED);
+        reportRepository.save(report);
+
+        // 고지서 생성
+        Bill bill = Bill.builder()
+                .reportId(reportId)
+                .police(police)
+                .member(report.getMember())
+                .fine(report.getViolationType().getFine())
+                .totalBill(report.getViolationType().getFine()) // 처음 고지서가 만들어질 때는 벌금 금액이 default 로 들어감.
+                .deadline(ZonedDateTime.now().plusDays(10)) // 납부기한을 현재로부터 10일 후로 설정
+                .paidStatus(PaidStatus.UNPAID)
+                .isObjection("N")
+                .build();
+
+        billRepository.save(bill);
     }
 }
