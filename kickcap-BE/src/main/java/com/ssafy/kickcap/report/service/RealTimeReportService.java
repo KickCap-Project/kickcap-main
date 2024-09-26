@@ -86,9 +86,9 @@ public class RealTimeReportService {
         // 기존에 Redis에 저장된 데이터가 없거나 단속 유형이 낮은거
         if (existingReportDto == null || newReportDto.getViolationType() < existingReportDto.getViolationType()) {
             // 새로운 데이터의 violationType이 더 낮으면 덮어쓰기
-            valueOps.set(redisKey, newReportDto, 1, TimeUnit.HOURS); // 1시간 TTL
+//            valueOps.set(redisKey, newReportDto, 1, TimeUnit.HOURS); // 1시간 TTL
             // 2분 TTL로 수정 - test 용
-//            valueOps.set(redisKey, newReportDto, 1, TimeUnit.MINUTES);
+            valueOps.set(redisKey, newReportDto, 1, TimeUnit.MINUTES);
         }
     }
 }
