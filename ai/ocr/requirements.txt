@@ -20,3 +20,5 @@ aiohttp
 aiohttp-cors
 psycopg2-binary
 python-multipart
+httpx
+scikit-learn
