@@ -2,9 +2,10 @@ import React, { useRef, useEffect, useState } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-const INSERT_API_ENDPONT = 'http://localhost:8000/insert';
-const IMAGE_API_ENDPONT = 'http://localhost:8000/image';
-const OCR_API_ENDPONT = 'http://localhost:8000/ocr'
+const BASE_URL = 'https://j11b102.p.ssafy.io'
+const INSERT_API_ENDPONT = BASE_URL+'/insert';
+const IMAGE_API_ENDPONT = BASE_URL+'/image';
+const OCR_API_ENDPONT = BASE_URL+'/ocr'
 
 const VideoStream = () => {
   const videoRef = useRef(null);
