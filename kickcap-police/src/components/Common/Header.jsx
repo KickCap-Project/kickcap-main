@@ -95,7 +95,11 @@ const Header = ({ title, subTitle }) => {
   const dispatch = useAppDispatch();
   const handleClickIcon = (mode) => {
     dispatch(navActions.change(mode));
-    navigate('/' + mode);
+    if (mode === 'board') {
+      navigate(`/${mode}?sido=전국`);
+    } else {
+      navigate(`/${mode}?pageNo=1`);
+    }
   };
 
   const getColor = (mode) => {
