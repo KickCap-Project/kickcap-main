@@ -70,12 +70,13 @@ API_ENDPOINT = os.getenv("API_ENDPOINT")
 
 
 # 파일을 서버로 업로드하는 함수
-def upload_image(image_buffer, file_name, type):
+def upload_image2(image_buffer, file_name, type):
     url = f"https://j11b102.p.ssafy.io/image/upload/{type}"  # Postman에서 사용한 URL
     # 메모리 버퍼를 바이너리로 전송
     files = {'image': (f'{file_name}.jpg', image_buffer.tobytes(), 'image/jpeg')}
     response = requests.post(url, files=files)  # POST 요청 보내기
     return f'{response.text}'
+
 
 
 class OCRRequests(BaseModel):
@@ -169,10 +170,11 @@ async def capture_image(image: UploadFile = File(...)):
         if not success:
             raise Exception("이미지 인코딩 실패")
         # 인코딩된 이미지를 업로드
-        upload_result = upload_image(image_encoded, image.filename, 'camera')
+        upload_result = upload_image2(image_encoded, image.filename, 'camera')
         return {"message": "이미지 업로드 성공", "image_src": upload_result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"이미지 처리 중 오류 발생: {str(e)}")
+
 
 
 app = FastAPI()
