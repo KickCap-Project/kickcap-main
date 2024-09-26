@@ -164,7 +164,6 @@ const VideoStream = () => {
           const imageCapture = new ImageCapture(videoTrack);
 
           const sendFrame = () => {
-            console.log('FPS')
             imageCapture
               .grabFrame()
               .then((imageBitmap) => {
