@@ -103,4 +103,8 @@ public class Member {
         this.updatedAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
         return this;
     }
+
+    public void updateDemerit(int demerit) {
+        this.demerit += demerit;
+    }
 }
