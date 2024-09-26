@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -55,7 +56,7 @@ const s = {
 
 const ObjectionListPage = () => {
   // dummy data
-  const objectionList = [
+  const [objectionList, setObjectionList] = useState([
     {
       idx: 0,
       date: '2024-08-03 오후 12:12:12',
@@ -106,8 +107,29 @@ const ObjectionListPage = () => {
       date: '2024-08-03 오후 12:12:12',
       title: '다시 검토해주세요',
     },
-  ];
+  ]);
+  const [isSelected, setIsSelected] = useState(true);
 
+  // 접수완료 : status = 0
+  // 답변완료 : status = 1
+
+  // 페이지 진입 시 접수완료 목록 보이기
+  useEffect(() => {
+    axios
+      .get('', {
+        params: {
+          status: 0,
+        },
+      })
+      .then((response) => {
+        setObjectionList(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  // 접수완료, 답변완료 버튼 클릭 시 isSelected 변경 및 axios 요청
   const onClickControl = (item) => {
     console.log(item);
 

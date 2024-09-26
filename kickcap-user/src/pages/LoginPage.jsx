@@ -57,15 +57,15 @@ const LoginPage = () => {
   };
 
   const handleClickKaKao = () => {
-    window.location.href = 'https://www.arraylist.xyz/oauth2/authorization/kakao';
+    window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/kakao';
   };
 
   const handleClickNaver = () => {
-    window.location.href = 'https://www.arraylist.xyz/oauth2/authorization/naver';
+    window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/naver';
   };
 
   const handleClickGoogle = () => {
-    window.location.href = 'https://www.arraylist.xyz/oauth2/authorization/google';
+    window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/google';
   };
 
   // const setFcmToken = async () => {

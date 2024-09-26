@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import Button from '../Common/Button';
 import Input from '../Common/Input';
 import TextArea from '../Common/TextArea';
 import UploadImgButton from '../../components/Report/UploadImgButtom';
+import axios from 'axios';
 import EXIF from 'exif-js';
 
 const s = {
@@ -50,14 +52,16 @@ const s = {
 };
 
 const ReportIllegalParkingForm = () => {
-  const [image, setImage] = useState('');
-  const [kickboardNumber, setKickboardNumber] = useState('');
+  const navigate = useNavigate();
+
+  const [imgFile, setImgFile] = useState('');
+  const [selectedImage, setSelectedImage] = useState('');
+
   const [description, setDescription] = useState('');
+  const [kickboardNumber, setKickboardNumber] = useState('');
+  const [date, setDate] = useState(null);
 
   const fileInputRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState('');
-  const [imgFile, setImgFile] = useState('');
-  const [date, setDate] = useState(null);
 
   const handleChangeKickNumber = (e) => {
     setKickboardNumber(e.target.value);
@@ -104,6 +108,32 @@ const ReportIllegalParkingForm = () => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('violationType', 4); // 4 - 불법 주차
+    formData.append('image', imgFile);
+    formData.append('description', description);
+    formData.append('kickboardNumber', kickboardNumber);
+    formData.append('reportTime', date);
+
+    // 신고 - 불법주차 신고
+    // axios.post
+    try {
+      const response = await axios.post('', formData, {
+        headers: {
+          'Content-type': 'multipart/form-data',
+        },
+      });
+      console.log('response: ' + response.data);
+      navigate('/report/parking/success');
+    } catch (error) {
+      // 신고 제출 오류
+      console.log('error: ' + error);
+    }
+  };
+
   return (
     <s.Form>
       {selectedImage ? (
@@ -146,9 +176,7 @@ const ReportIllegalParkingForm = () => {
           InputColor="AreaColor"
           placeholder={'사진 첨부 시 정보가 입력됩니다.'}
           value={date}
-        >
-          {image}
-        </Input>
+        />
       </s.InputArea>
       <TextArea
         id={'desciption'}
@@ -163,8 +191,8 @@ const ReportIllegalParkingForm = () => {
         onChange={handleChangeDescription}
       />
       <s.ButtonArea>
-        {imgFile && kickboardNumber && description ? (
-          <Button width={'90%'} height={'40px'} bold={'700'} size={'24px'}>
+        {imgFile && description && kickboardNumber && date ? (
+          <Button width={'90%'} height={'40px'} bold={'700'} size={'24px'} onClick={handleSubmit}>
             작성 완료
           </Button>
         ) : (
