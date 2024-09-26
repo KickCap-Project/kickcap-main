@@ -88,8 +88,7 @@ const MainPage = () => {
   const handleMovePage = (path) => {
     navigate(path);
   };
-  const username = '오진영';
-  const demerit = 10;
+  const Info = JSON.parse(localStorage.getItem('Info'));
 
   return (
     <s.Container>
@@ -97,13 +96,13 @@ const MainPage = () => {
 
       <s.UserInfoArea>
         <Text
-          children={username + ' 님 벌점 : '}
+          children={Info.name + ' 님 벌점 : '}
           bold={'800'}
           color={'textBasic2'}
           size={'20px'}
           margin={'0 5px 0 0'}
         />
-        <Text children={+demerit + ' 점'} bold={'800'} color={'textBasic2'} size={'30px'} />
+        <Text children={Info.demerit + ' 점'} bold={'800'} color={'textBasic2'} size={'30px'} />
       </s.UserInfoArea>
 
       <s.MainArea>
