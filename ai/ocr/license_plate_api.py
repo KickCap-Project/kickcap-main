@@ -176,6 +176,7 @@ async def capture_image(image: UploadFile = File(...)):
 
 @app.post("/ocr")
 async def ocr_endpoint(request: OCRRequests):
+    print('ocr 시작')
     try:
         async with httpx.AsyncClient(timeout=60.0) as client:
             response = await client.post(API_ENDPOINT, json=request.model_dump())
