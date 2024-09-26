@@ -4,7 +4,7 @@ const local = localAxios();
 
 export const getReportTotalCount = async (violationType, success, fail) => {
   // 신고게시판 총 개수
-  await local.get(`/reports/totalCount?violationType=${violationType}`).then(success).catch(fail);
+  await local.get(`/reports/count?violationType=${violationType}`).then(success).catch(fail);
 };
 
 export const getReportList = async (violationType, pageNo, success, fail) => {
@@ -14,7 +14,7 @@ export const getReportList = async (violationType, pageNo, success, fail) => {
 
 export const getReportEndTotalCount = async (violationType, success, fail) => {
   // 완료건 게시글 총 개수
-  await local.get(`/reports/end/totalCount?violationType=${violationType}`).then(success).catch(fail);
+  await local.get(`/reports/end/count?violationType=${violationType}`).then(success).catch(fail);
 };
 
 export const getReportEndList = async (violationType, pageNo, success, fail) => {
