@@ -9,7 +9,7 @@ import UploadImgButton from '../../components/Report/UploadImgButtom';
 import { localAxios } from '../../util/axios-setting';
 import EXIF from 'exif-js';
 
-import { uploadImg } from '../../lib/api/report-uploadimg';
+import { uploadImg } from '../../lib/api/report-api';
 import { convertExifToISO } from '../../lib/data/ConvertTime';
 
 const s = {
@@ -125,21 +125,21 @@ const ReportIllegalParkingForm = () => {
       alert('이미지 업로드에 실패했습니다.');
     }
 
-    const formData = new FormData();
-    formData.append('violationType', 4); // 4 - 불법 주차
-    formData.append('image', imgUrl);
-    formData.append('description', description);
-    formData.append('kickboardNumber', kickboardNumber);
-    formData.append('reportTime', date);
-
     // 신고 - 불법주차 신고
     // axios.post
     try {
-      const response = await axiosInstance.post('/reports/parking', formData);
+      const response = await axiosInstance.post('/reports/parking', {
+        violationType: 4,
+        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/upload/type4/${imgUrl}`,
+        description: description,
+        kickboardNumber: kickboardNumber,
+        reportTime: date,
+      });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         navigate('/report/parking/success');
       } else {
+        console.log(response.status);
         alert('신고 제출에 실패했습니다.');
       }
     } catch (error) {

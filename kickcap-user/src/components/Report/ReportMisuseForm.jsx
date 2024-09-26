@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { localAxios } from '../../util/axios-setting';
 import EXIF from 'exif-js';
-import { uploadImg } from '../../lib/api/report-uploadimg';
+import { uploadImg } from '../../lib/api/report-api';
 
 import Button from '../Common/Button';
 import Input from '../Common/Input';
@@ -222,23 +222,22 @@ const ReportMisuseForm = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('violationType', typeRequest);
-    formData.append('image', imgUrl);
-    formData.append('description', description);
-    formData.append('kickboardNumber', kickboardNumber);
-    formData.append('lat', latitude);
-    formData.append('lng', longitude);
-    formData.append('addr', address);
-    formData.append('code', code);
-    formData.append('reportTime', date);
-
     // 신고 - 실시간 이용 신고
     // axios.post
     try {
-      const response = await axiosInstance.post('/reports/real-time', formData);
+      const response = await axiosInstance.post('/reports/real-time', {
+        violationType: typeRequest,
+        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/upload/type${typeRequest}/${imgUrl}`,
+        description: description,
+        kickboardNumber: kickboardNumber,
+        lat: latitude,
+        lng: longitude,
+        addr: address,
+        code: code,
+        reportTime: date,
+      });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         navigate('/report/real-time/success');
       } else {
         alert('신고 제출에 실패했습니다.');
