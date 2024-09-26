@@ -78,7 +78,6 @@ def upload_image2(image_buffer, file_name, type):
     return f'{response.text}'
 
 
-
 class OCRRequests(BaseModel):
     camera_idx: int
     file_name: str
@@ -174,10 +173,6 @@ async def capture_image(image: UploadFile = File(...)):
         return {"message": "이미지 업로드 성공", "image_src": upload_result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"이미지 처리 중 오류 발생: {str(e)}")
-
-
-
-app = FastAPI()
 
 @app.post("/ocr")
 async def ocr_endpoint(request: OCRRequests):
