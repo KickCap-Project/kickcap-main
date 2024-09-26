@@ -5,8 +5,10 @@ import Button from '../Common/Button';
 import Input from '../Common/Input';
 import TextArea from '../Common/TextArea';
 import UploadImgButton from '../../components/Report/UploadImgButtom';
-import axios from 'axios';
+import { localAxios } from '../../util/axios-setting';
 import EXIF from 'exif-js';
+
+import { convertExifToISO } from '../../lib/data/ConvertTime';
 
 const s = {
   Form: styled.form`
@@ -53,6 +55,7 @@ const s = {
 
 const ReportIllegalParkingForm = () => {
   const navigate = useNavigate();
+  const axiosInstance = localAxios();
 
   const [imgFile, setImgFile] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
@@ -99,7 +102,10 @@ const ReportIllegalParkingForm = () => {
         image.onload = () => {
           EXIF.getData(image, function () {
             const allMetaData = EXIF.getAllTags(this);
-            setDate(allMetaData.DateTimeOriginal || '정보 없음');
+
+            // setDate(allMetaData.DateTimeOriginal || '정보 없음');
+            const convertDate = convertExifToISO(allMetaData.DateTimeOriginal);
+            setDate(convertDate || '정보 없음');
             console.log(allMetaData);
           });
         };
@@ -121,12 +127,12 @@ const ReportIllegalParkingForm = () => {
     // 신고 - 불법주차 신고
     // axios.post
     try {
-      const response = await axios.post('', formData, {
+      const response = await axiosInstance.post('/reports/parking', formData, {
         headers: {
           'Content-type': 'multipart/form-data',
         },
       });
-      console.log('response: ' + response.data);
+      console.log('response: ' + response.status);
       navigate('/report/parking/success');
     } catch (error) {
       // 신고 제출 오류

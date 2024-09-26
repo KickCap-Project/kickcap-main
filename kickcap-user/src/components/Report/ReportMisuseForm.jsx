@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
-import axios from 'axios';
+import { localAxios } from '../../util/axios-setting';
 import EXIF from 'exif-js';
 
 import Button from '../Common/Button';
@@ -15,6 +15,8 @@ import ReportGetPositionModal from '../Modal/ReportGetPositionModal';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { selectIsMap, modalActions } from '../../store/modal';
 import { selectLatitude, selectLongitude, selectAddress, selectCode } from '../../store/location';
+
+import { convertExifToISO } from '../../lib/data/ConvertTime';
 
 const s = {
   Form: styled.form`
@@ -88,6 +90,7 @@ const s = {
 };
 
 const ReportMisuseForm = () => {
+  const axiosInstance = localAxios();
   const navigate = useNavigate();
   const typeIdx = [3, 1, 2, 5]; // 순서: 안전모 미착용, 다인 승차, 보도 주행, 지정 차로 위반
 
@@ -155,7 +158,10 @@ const ReportMisuseForm = () => {
         image.onload = () => {
           EXIF.getData(image, function () {
             const allMetaData = EXIF.getAllTags(this);
-            setDate(allMetaData.DateTimeOriginal || '정보 없음');
+            // setDate(allMetaData.DateTimeOriginal || '정보 없음');
+
+            const convertDate = convertExifToISO(allMetaData.DateTimeOriginal);
+            setDate(convertDate || '정보 없음');
           });
         };
       };
@@ -221,12 +227,12 @@ const ReportMisuseForm = () => {
     // 신고 - 실시간 이용 신고
     // axios.post
     try {
-      const response = await axios.post('', formData, {
+      const response = await axiosInstance.post('/reports/real-time', formData, {
         headers: {
           'Content-type': 'multipart/form-data',
         },
       });
-      console.log('response: ' + response.data);
+      console.log('response: ' + response.status);
       navigate('/report/real-time/success');
     } catch (error) {
       // 신고 제출 오류
