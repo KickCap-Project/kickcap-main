@@ -164,6 +164,7 @@ const VideoStream = () => {
           const imageCapture = new ImageCapture(videoTrack);
 
           const sendFrame = () => {
+            console.log('FPS')
             imageCapture
               .grabFrame()
               .then((imageBitmap) => {
@@ -183,8 +184,7 @@ const VideoStream = () => {
                 console.error('프레임 캡처 중 오류 발생:', error);
               });
           };
-
-          setInterval(sendFrame, 333); // 3 FPS로 프레임 전송
+          setInterval(sendFrame, 500); // 3 FPS로 프레임 전송
         };
       })
       .catch((error) => {

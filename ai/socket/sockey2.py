@@ -32,24 +32,18 @@ async def video_stream(request):
                 image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
                 if image is not None:
-                    current_time = datetime.datetime.now()
-                    time_elapsed = (current_time - last_frame_time).total_seconds()
-
-                    if time_elapsed >= frame_interval:
-                        # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
-                        _, image_encoded = cv2.imencode('.jpg', image)
-                        # FastAPI 엔드포인트로 이미지 전송
-                        files = {'image_file': image_encoded.tobytes()}
-                        async with session.post(API_ENDPOINT, data=files) as resp:
-                            if resp.status == 200:
-                                # 응답으로 받은 주석 처리된 이미지 수신
-                                annotated_image_bytes = await resp.read()
-                                # 클라이언트로 전송
-                                await ws.send_bytes(annotated_image_bytes)
-                            else:
-                                print(f"Error from FastAPI endpoint: {resp.status}")
-                        # 마지막 프레임 시간을 현재 시간으로 업데이트
-                        last_frame_time = datetime.datetime.now()
+                    # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+                    _, image_encoded = cv2.imencode('.jpg', image)
+                    # FastAPI 엔드포인트로 이미지 전송
+                    files = {'image_file': image_encoded.tobytes()}
+                    async with session.post(API_ENDPOINT, data=files) as resp:
+                        if resp.status == 200:
+                            # 응답으로 받은 주석 처리된 이미지 수신
+                            annotated_image_bytes = await resp.read()
+                            # 클라이언트로 전송
+                            await ws.send_bytes(annotated_image_bytes)
+                        else:
+                            print(f"Error from FastAPI endpoint: {resp.status}")
 
             except (aiohttp.WSServerHandshakeError, aiohttp.ClientError) as e:
                 print(f"Error: {e}")
