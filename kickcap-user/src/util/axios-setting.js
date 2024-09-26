@@ -84,3 +84,10 @@ export const localAxios = () => {
   // instance.defaults.headers.put['Content-Type'] = 'application/json';
   return instance;
 };
+
+export const imgLocalAxios = axios.create({
+  baseURL: process.env.REACT_APP_IMG_SERVER_BASE_URL,
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
