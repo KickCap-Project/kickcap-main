@@ -184,19 +184,24 @@ const VideoStream = () => {
                 console.error('프레임 캡처 중 오류 발생:', error);
               });
           };
-          setInterval(sendFrame, 500); // 3 FPS로 프레임 전송
+          setInterval(sendFrame, 333); // 3 FPS로 프레임 전송
         };
       })
       .catch((error) => {
         console.error('웹캠 접근 오류:', error);
       });
 
-    // WebSocket을 통해 수신한 데이터 처리
+     // 현재 기기가 모바일이 아닌 경우에만 WebSocket으로 수신한 데이터를 처리
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  
+  if (!isMobile) {
+    // WebSocket을 통해 수신한 데이터 처리 (모바일이 아닌 경우에만)
     socketRef.current.onmessage = (event) => {
       const imageBlob = event.data;
       const imageUrl = URL.createObjectURL(imageBlob);
       setAnnotatedImage(imageUrl); // 수신한 이미지 URL을 상태에 저장
     };
+  }
 
     return () => {
       if (socketRef.current) {
