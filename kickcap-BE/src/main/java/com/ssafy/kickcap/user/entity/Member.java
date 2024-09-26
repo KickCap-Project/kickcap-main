@@ -91,11 +91,10 @@ public class Member {
     }
 
     @Builder
-    public Member(String email) {
+    public Member(String email, String name, String phone) {
         this.email = email;
-        this.name = " ";
-        this.phone = " ";
-        this.demerit = 0;
+        this.name = name;
+        this.phone = phone;
     }
 
     public Member update(String name, String Phone) {
