@@ -76,13 +76,14 @@ const VideoStream = () => {
       }
   
       canvas.toBlob(
-        (blob) => {
+        async (blob) => {
           // FormData 준비
           const formData = new FormData();
           formData.append('image', blob, uuidv4() + '.jpg');
       
           // /image 엔드포인트로 이미지 전송
-          axios
+          let fileName = ''
+          await axios
             .post(IMAGE_API_ENDPONT, formData, {
               headers: {
                 'Content-Type': 'multipart/form-data',
@@ -93,32 +94,34 @@ const VideoStream = () => {
               console.log(response);
       
               // 서버에서 반환된 파일 이름 사용 (예: response.data.file_name)
-              const fileName = response.data.image_src
-      
-              // /ocr 엔드포인트에 보낼 데이터 준비
-              const ocrData = {
-                camera_idx: 1,
-                file_name: fileName, // 응답에서 가져온 파일 이름을 사용
-                type: 3,
-                time: getCurrentTimeString(),
-              };
-      
-              // /ocr 엔드포인트로 데이터 전송
-              axios
-                .post(OCR_API_ENDPONT, ocrData)
-                .then((response) => {
-                  if (response.status === 200) {
-                    // 결과를 라벨에 표시
-                    setLabelResult(response.data.result);
-                  }
-                })
-                .catch((error) => {
-                  console.error('OCR 요청 중 오류 발생:', error.response.data.detail);
-                });
+              fileName = response.data.image_src
+    
             })
             .catch((error) => {
               console.error('/image로 이미지 전송 중 오류 발생:', error);
             });
+          
+          // /ocr 엔드포인트에 보낼 데이터 준비
+          const ocrData = {
+            camera_idx: 1,
+            file_name: fileName, // 응답에서 가져온 파일 이름을 사용
+            type: 3,
+            time: getCurrentTimeString(),
+          };
+  
+          // /ocr 엔드포인트로 데이터 전송
+          await axios
+            .post(OCR_API_ENDPONT, ocrData)
+            .then((response) => {
+              if (response.status === 200) {
+                // 결과를 라벨에 표시
+                setLabelResult(response.data.result);
+              }
+            })
+            .catch((error) => {
+              console.error('OCR 요청 중 오류 발생:', error.response.data.detail);
+            });
+
         },
         'image/jpeg'
       );
