@@ -87,3 +87,12 @@ export const etc = {
   d: 40,
   w: 30,
 };
+
+export const bottomData = {
+  tCrack: 2130,
+  tReport: 1698,
+  tAccident: 120,
+  yCrack: 1452,
+  yReport: 1721,
+  yAccident: 120,
+};
