@@ -47,7 +47,16 @@ const VideoStream = () => {
     return `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}000`;
   };
 
-  const handleCapture = () => {
+  // canvas.toBlob을 Promise로 감싸는 함수
+  const getCanvasBlob = (canvas) => {
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        resolve(blob);
+      }, 'image/jpeg');
+    });
+  };
+
+  const handleCapture = async () => {
     if (videoRef.current) {
       const videoElement = videoRef.current;
       const canvas = document.createElement('canvas');
@@ -56,69 +65,68 @@ const VideoStream = () => {
       const width = 1920;
       const height = 1080;
   
-      // 회전된 이미지를 그리기 위해 캔버스 크기를 설정
+      // 캔버스 크기 설정
       canvas.width = width;
       canvas.height = height;
   
-      // 환경을 감지하여 스마트폰의 가로/세로 모드에서 회전 조정
+      // 환경 감지하여 가로/세로 모드 회전 조정
       const isPortrait = window.innerHeight > window.innerWidth;
   
       if (isPortrait) {
-        // 세로 모드인 경우 캔버스 회전
         context.save(); // 현재 상태 저장
         context.translate(width / 2, height / 2); // 캔버스의 중앙으로 이동
         context.rotate(Math.PI / 2); // 90도 회전
         context.drawImage(videoElement, -height / 2, -width / 2, height, width); // 세로로 그리기
         context.restore(); // 회전 이전 상태로 복구
       } else {
-        // 가로 모드인 경우 그대로 그리기
         context.drawImage(videoElement, 0, 0, width, height);
       }
   
-      canvas.toBlob(async (blob) => {
-        try {
-          // FormData 준비
-          const formData = new FormData();
-          formData.append('image', blob, uuidv4() + '.jpg');
+      try {
+        // canvas.toBlob을 비동기로 처리
+        const blob = await getCanvasBlob(canvas);
   
-          // /image 엔드포인트로 이미지 전송
-          const imageResponse = await axios.post(IMAGE_API_ENDPONT, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
+        // FormData 준비
+        const formData = new FormData();
+        formData.append('image', blob, uuidv4() + '.jpg');
   
-          console.log('/image로 이미지 전송 성공');
-          console.log(imageResponse);
+        // /image 엔드포인트로 이미지 전송
+        const imageResponse = await axios.post(IMAGE_API_ENDPONT, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
   
-          // 서버에서 반환된 파일 이름 사용
-          const fileName = imageResponse.data.image_src;
+        console.log('/image로 이미지 전송 성공');
+        console.log(imageResponse);
   
-          // /ocr 엔드포인트에 보낼 데이터 준비
-          const ocrData = {
-            camera_idx: 1,
-            file_name: fileName, // 응답에서 가져온 파일 이름을 사용
-            type: 3,
-            time: getCurrentTimeString(),
-          };
+        // 서버에서 반환된 파일 이름 사용
+        const fileName = imageResponse.data.image_src;
   
-          // /ocr 엔드포인트로 데이터 전송
-          const ocrResponse = await axios.post(OCR_API_ENDPONT, ocrData);
-          
-          if (ocrResponse.status === 200) {
-            // 결과를 라벨에 표시
-            setLabelResult(ocrResponse.data.result);
-          }
+        // /ocr 엔드포인트에 보낼 데이터 준비
+        const ocrData = {
+          camera_idx: 1,
+          file_name: fileName, // 응답에서 가져온 파일 이름을 사용
+          type: 3,
+          time: getCurrentTimeString(),
+        };
   
-        } catch (error) {
-          // 에러 처리
-          if (error.response) {
-            console.error('요청 중 오류 발생:', error.response.data.detail);
-          } else {
-            console.error('요청 중 오류 발생:', error.message);
-          }
+        // /ocr 엔드포인트로 데이터 전송
+        const ocrResponse = await axios.post(OCR_API_ENDPONT, ocrData);
+  
+        if (ocrResponse.status === 200) {
+          // 결과를 라벨에 표시
+          setLabelResult(ocrResponse.data.result);
         }
-      }, 'image/jpeg');
+  
+      } catch (error) {
+        // 에러 처리
+        if (error.response) {
+          console.error('요청 중 오류 발생:', error.response.data.detail);
+        } else {
+          console.error('요청 중 오류 발생:', error.message);
+        }
+      }
     }
   };
   
