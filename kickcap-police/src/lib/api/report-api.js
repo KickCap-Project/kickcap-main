@@ -24,17 +24,17 @@ export const getReportEndList = async (violationType, pageNo, success, fail) => 
 
 export const getListDetail = async (reportId, success, fail) => {
   // 목록 상세 조회
-  await local.get(`/report/${reportId}`).then(success).catch(fail);
+  await local.get(`/reports/${reportId}`).then(success).catch(fail);
 };
 
-export const getCrackInfo = async (memberId, success, fail) => {
+export const getCrackInfo = async (memberId, reportIdx, success, fail) => {
   // 단속자 정보 조회
-  await local.get(`/members/${memberId}/info`).then(success).catch(fail);
+  await local.get(`/members/${memberId}/info`, reportIdx).then(success).catch(fail);
 };
 
-export const getParkData = async (success, fail) => {
+export const getParkData = async (param, success, fail) => {
   // 주차장 정보 조회
-  await local.get(`/parking-data`).then(success).catch(fail);
+  await local.get(`/parking-data`, param).then(success).catch(fail);
 };
 
 export const postApprove = async (reportId, success, fail) => {
