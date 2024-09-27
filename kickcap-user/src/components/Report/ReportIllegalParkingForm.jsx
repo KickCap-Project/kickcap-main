@@ -123,6 +123,7 @@ const ReportIllegalParkingForm = () => {
 
     if (!imgUrl) {
       alert('이미지 업로드에 실패했습니다.');
+      return;
     }
 
     // 신고 - 불법주차 신고
@@ -145,7 +146,7 @@ const ReportIllegalParkingForm = () => {
     } catch (error) {
       // 신고 제출 오류
       console.log('신고 제출 중 오류 발생: ' + error);
-      alert('신고 제출 중 오류가 발생했습니다.');
+      alert('입력 정보를 다시 한 번 확인해주세요.');
     }
   };
 
