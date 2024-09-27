@@ -13,9 +13,9 @@ const VideoStream = () => {
   const [annotatedImage, setAnnotatedImage] = useState(null);
   const [labelResult, setLabelResult] = useState('');
   // kickboard_number를 상태로 관리 (초기값을 빈 문자열로 설정)
-  const [kickboardNumber, setKickboardNumber] = useState('G0387');
+  const [kickboardNumber, setKickboardNumber] = useState('S4821');
   const [inputName, setName] = useState('김종원');
-  const [inputPhone, setPhone] = useState('01011112222');
+  const [inputPhone, setPhone] = useState('+82 10-6632-7764');
   const [inputMinute, setMinute] = useState('1');
 
   // 입력 값이 변경될 때 상태 업데이트
@@ -112,6 +112,7 @@ const VideoStream = () => {
         };
   
         // /ocr 엔드포인트로 데이터 전송
+        console.log('OCR 시작')
         const ocrResponse = await axios.post(OCR_API_ENDPONT, ocrData);
   
         if (ocrResponse.status === 200) {

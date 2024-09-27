@@ -252,11 +252,12 @@ async def ocr_endpoint(request: OCRRequests):
                 data = (request.camera_idx, accused_idx[0], request.type, result.image_src, crackdown_time, now_kst)
                 cursor.execute(insert_query, data)
                 connection.commit()
-
+                print('여기까지 옴')
             except HTTPException as http_exc:
                 raise http_exc
 
             except Exception as error:
+                print(error)
                 raise HTTPException(status_code=500, detail="DataBase Error")  # 데이터베이스 예외 처리
 
             finally:
@@ -266,7 +267,7 @@ async def ocr_endpoint(request: OCRRequests):
                     # print("PostgreSQL 연결이 닫혔습니다.")
 
             await redis_client.setex(key, expire_seconds, 'processed')
-
+            print("여기까지 옴 2")
             return {
                 'cctv_idx': request.camera_idx,
                 'accused_idx': accused_idx[0],
