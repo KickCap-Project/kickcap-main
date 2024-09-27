@@ -88,6 +88,13 @@ public class ReportService {
         Member member = memberRepository.findById(report.getMember().getId())
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
+        int isEnd;  // 0 = 미완료, 1 = 완료
+
+        if (report.getApproveStatus().equals(ApproveStatus.UNAPPROVED)) {
+            isEnd = 0;
+        } else {
+            isEnd = 1;
+        }
         return ReportResponseDto.builder()
                 .idx(reportId)
                 .memberId(member.getId())
@@ -98,6 +105,7 @@ public class ReportService {
                 .imageSrc(report.getImageSrc())
                 .lat(report.getLatitude())
                 .lng(report.getLongitude())
+                .isEnd(isEnd)
                 .build();
     }
 
