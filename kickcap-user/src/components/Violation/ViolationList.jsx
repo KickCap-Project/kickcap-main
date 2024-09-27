@@ -46,6 +46,7 @@ const s = {
 };
 
 const ViolationList = ({ vList }) => {
+  console.log(vList);
   const navigate = useNavigate();
   const handleMovePage = (idx) => {
     navigate('detail', { state: { idx } });
@@ -61,7 +62,7 @@ const ViolationList = ({ vList }) => {
           </s.CardRow>
           <s.CardRow>
             <s.CardRowTitle>위반내용</s.CardRowTitle>
-            <s.CardRowContent>{ViolationType[v.violationType].type}</s.CardRowContent>
+            <s.CardRowContent>{v.violationType}</s.CardRowContent>
           </s.CardRow>
           <s.CardRow>
             <s.CardRowTitle>납부기한</s.CardRowTitle>
