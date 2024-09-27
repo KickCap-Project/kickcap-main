@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import LoginButton from './../components/LoginButton';
 
@@ -7,6 +7,7 @@ import Logo from './../asset/img/svg/Logo.svg';
 import kakao from './../asset/img/login/kakao.png';
 import naver from './../asset/img/login/naver.png';
 import google from './../asset/img/login/google.png';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -56,18 +57,16 @@ const LoginPage = () => {
     window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/naver';
   };
 
-  const handleClickGoogle = () => {
-    window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/google';
-  };
-
-  // const setFcmToken = async () => {
-  //   const fcmToken = await requestPermission();
-  //   sessionStorage.setItem('fcmToken', fcmToken);
+  // const handleClickGoogle = () => {
+  //   window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/google';
   // };
 
-  // useEffect(() => {
-  //   setFcmToken();
-  // }, []);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!localStorage.getItem('fcmToken')) {
+      navigate('/');
+    }
+  }, []);
 
   return (
     <s.Container>
