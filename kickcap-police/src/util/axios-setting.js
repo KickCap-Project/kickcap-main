@@ -10,9 +10,9 @@ export const localAxios = () => {
   // 요청 인터셉터
   instance.interceptors.request.use(
     (config) => {
-      const accessToken = sessionStorage.getItem('accessToken');
-      const refreshToken = sessionStorage.getItem('refreshToken');
-      const fcmToken = sessionStorage.getItem('fcmToken');
+      const accessToken = localStorage.getItem('accessToken');
+      const refreshToken = localStorage.getItem('refreshToken');
+      const fcmToken = localStorage.getItem('fcmToken');
 
       if (accessToken) {
         config.headers['Authorization'] = `Bearer ${accessToken}`;

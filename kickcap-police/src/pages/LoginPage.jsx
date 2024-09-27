@@ -50,7 +50,7 @@ const s = {
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const fcmToken = sessionStorage.getItem('fcmToken');
+  const fcmToken = localStorage.getItem('fcmToken');
   const [login, setLogin] = useState({
     policeId: '',
     password: '',
@@ -59,7 +59,7 @@ const LoginPage = () => {
 
   // const setFcmToken = async () => {
   //   const fcmToken = await requestPermission();
-  //   sessionStorage.setItem('fcmToken', fcmToken);
+  //   localStorage.setItem('fcmToken', fcmToken);
   //   setLogin({ ...login, fcmToken });
   // };
   // useEffect(() => {
@@ -79,9 +79,9 @@ const LoginPage = () => {
     await policeLogin(
       login,
       (resp) => {
-        sessionStorage.setItem('police', resp.data.name);
-        sessionStorage.setItem('accessToken', resp.data.accessToken);
-        sessionStorage.setItem('refreshToken', resp.data.refreshToken);
+        localStorage.setItem('police', resp.data.name);
+        localStorage.setItem('accessToken', resp.data.accessToken);
+        localStorage.setItem('refreshToken', resp.data.refreshToken);
         navigate('/');
       },
       (error) => {
