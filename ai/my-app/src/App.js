@@ -17,6 +17,7 @@ const VideoStream = () => {
   const [inputName, setName] = useState('홍길동');
   const [inputPhone, setPhone] = useState('+82 10-1111-2222');
   const [inputMinute, setMinute] = useState('1');
+  const [inputCameraIdx, setCameraIdx] = useState('1');
 
   // 입력 값이 변경될 때 상태 업데이트
   const handleInputNumberChange = (e) => {
@@ -30,6 +31,9 @@ const VideoStream = () => {
   };
   const handleInputMinuteChange = (e) => {
     setMinute(e.target.value)
+  };
+  const handleInputCameraIdxChange = (e) => {
+    setCameraIdx(e.target.value)
   };
 
   const getCurrentTimeString = () => {
@@ -105,7 +109,7 @@ const VideoStream = () => {
   
         // /ocr 엔드포인트에 보낼 데이터 준비
         const ocrData = {
-          camera_idx: 1,
+          camera_idx: inputCameraIdx,
           file_name: fileName, // 응답에서 가져온 파일 이름을 사용
           type: 3,
           time: getCurrentTimeString(),
@@ -258,6 +262,13 @@ const VideoStream = () => {
         )}
       </div>
       <div>
+        <div>
+          <label>camera_idx: </label>
+          <input 
+            value={inputCameraIdx} 
+            onChange={handleInputCameraIdxChange} 
+          />
+        </div>
         <div>
           <label>name: </label>
           <input 
