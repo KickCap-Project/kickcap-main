@@ -26,7 +26,6 @@ POST: http://localhost:8000/ocr
 }
 
 >> redis 에서는 "camera1_번호판 번호" 형태의 키로 저장 (TTL은 1분)
-
 - DB에 저장하는 코드 추가해야 됨
 - OCR 정확도 확인 필요
 -- 파라미터 조정
@@ -39,7 +38,6 @@ app = FastAPI()
 # CORS 설정 추가
 origins = [
     "http://localhost:3000",  # React 앱이 실행되는 도메인
-    # 필요에 따라 다른 도메인을 추가할 수 있습니다.
 ]
 
 app.add_middleware(
