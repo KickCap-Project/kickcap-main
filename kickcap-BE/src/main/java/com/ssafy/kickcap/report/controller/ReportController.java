@@ -96,4 +96,12 @@ public class ReportController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/{reportId}/reject")
+    @Operation(summary = "신고 반려", description = "해당 신고를 경찰이 반려합니다.")
+    public ResponseEntity<Void> rejectReport(@AuthenticationPrincipal User user, @PathVariable Long reportId) {
+        Police police = policeService.findByPoliceId(user.getUsername());
+        reportService.rejectReport(police, reportId);
+        return ResponseEntity.ok().build();
+    }
+
 }

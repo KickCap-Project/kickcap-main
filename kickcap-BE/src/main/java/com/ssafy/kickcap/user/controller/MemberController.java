@@ -10,6 +10,7 @@ import com.ssafy.kickcap.config.jwt.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -75,5 +76,12 @@ public class MemberController {
         // 로그아웃 로직 (SecurityContext 초기화 등)
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logout successful");
+    }
+
+    @GetMapping("/{memberId}/info")
+    @Operation(summary = "단속자 정보 조회", description = "신고페이지에서 단속자 정보를 조회합니다.")
+    public ResponseEntity<MemberInfoResponseDto> getMemberInfo(@PathVariable Long memberId, @RequestBody MemberInfoReqeustDto reqeustDto) {
+        MemberInfoResponseDto memberInfo = memberService.getMemberInfo(memberId, reqeustDto.getReportIdx());
+        return ResponseEntity.ok(memberInfo);
     }
 }
