@@ -116,6 +116,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");  // 허용할 Origin 설정
+        configuration.addAllowedOrigin("http://localhost:3001");
         configuration.addAllowedOrigin("https://j11b102.p.ssafy.io");
         configuration.addAllowedOrigin("https://www.bardisue.store");
         configuration.addAllowedMethod("*");  // 모든 메서드 허용 (GET, POST, PUT 등)
