@@ -94,7 +94,7 @@ public class ParkingReportService {
         }
 
         if (existingData == null) {
-            valueOps.set(redisKey, redisDto, 24, TimeUnit.HOURS); // 1시간 TTL
+//            valueOps.set(redisKey, redisDto, 24, TimeUnit.HOURS); // 1시간 TTL
             // 2분 TTL로 수정 - test 용
 //            valueOps.set(redisKey, redisDto, 1, TimeUnit.MINUTES);
         }

@@ -19,6 +19,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class ReportMessageListener {
@@ -71,24 +73,33 @@ public class ReportMessageListener {
 
         ViolationType violationType = violationTypeRepository.findById(reportDto.getViolationType()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        // Report 엔티티 생성
-        Report report = Report.builder()
-                .imageSrc(reportDto.getImage())
-                .address(reportDto.getAddr())
-                .latitude(Float.parseFloat(reportDto.getLat()))
-                .longitude(Float.parseFloat(reportDto.getLng()))
-                .kickboardNumber(reportDto.getKickboardNumber())
-                .reportTime(reportDto.getReportTime())
-                .description(reportDto.getDescription())
-                .approveStatus(ApproveStatus.UNAPPROVED)
-                .member(member) // Member 객체 설정
-                .police(police) // 경찰 객체
-                .violationType(violationType)
-                .build();
+        ZonedDateTime reportTime = reportDto.getReportTime();
 
-        // Report 엔티티 저장
-        reportRepository.save(report);
+        System.out.println("reportTime : " + reportTime);
 
+        long count = reportRepository.countByKickboardNumberAndReportTimeAndMember(reportDto.getKickboardNumber(), member, reportTime);
+        System.out.println("count : " + count);
+
+        // 중복 데이터가 없으면 저장
+        if (count == 0) {
+            // Report 엔티티 생성
+            Report report = Report.builder()
+                    .imageSrc(reportDto.getImage())
+                    .address(reportDto.getAddr())
+                    .latitude(Float.parseFloat(reportDto.getLat()))
+                    .longitude(Float.parseFloat(reportDto.getLng()))
+                    .kickboardNumber(reportDto.getKickboardNumber())
+                    .reportTime(reportDto.getReportTime())
+                    .description(reportDto.getDescription())
+                    .approveStatus(ApproveStatus.UNAPPROVED)
+                    .member(member) // Member 객체 설정
+                    .police(police) // 경찰 객체
+                    .violationType(violationType)
+                    .build();
+
+            // Report 엔티티 저장
+            reportRepository.save(report);
+        }
         // Redis에서 키 삭제
         redisTemplate.delete(key);
     }

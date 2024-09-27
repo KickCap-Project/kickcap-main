@@ -9,7 +9,9 @@ import com.ssafy.kickcap.report.dto.ReportListResponseDto;
 import com.ssafy.kickcap.report.entity.ApproveStatus;
 import com.ssafy.kickcap.report.entity.Report;
 import com.ssafy.kickcap.report.repository.ReportRepository;
+import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
+import com.ssafy.kickcap.user.repository.MemberRepository;
 import com.ssafy.kickcap.violationtype.entity.ViolationType;
 import com.ssafy.kickcap.violationtype.repository.ViolationTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final ViolationTypeRepository violationTypeRepository;
     private final BillRepository billRepository;
+    private final MemberRepository memberRepository;
     private static final int DEFAULT_PAGE_SIZE = 10;
     private static final List<ApproveStatus> COMPLETED_STATUSES = Arrays.asList(ApproveStatus.APPROVED, ApproveStatus.REJECTED);
 
@@ -80,6 +83,13 @@ public class ReportService {
         // 신고 상태 업데이트 UPAPPROVED -> APPROVED
         report.updateApproveStatus(ApproveStatus.APPROVED);
         reportRepository.save(report);
+
+        Member member = report.getMember();
+
+        // 단속 유형에 따른 벌점 update , 고지서 생성될 때마다 update
+        member.updateDemerit(report.getViolationType().getScore());
+
+        memberRepository.save(member);
 
         // 고지서 생성
         Bill bill = Bill.builder()
