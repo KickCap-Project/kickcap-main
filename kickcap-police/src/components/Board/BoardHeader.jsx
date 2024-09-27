@@ -88,15 +88,17 @@ const s = {
 
 const BoardHeader = () => {
   const navigate = useNavigate();
-  const policeName = sessionStorage.getItem('police');
+  const policeName = localStorage.getItem('police');
   const type = useAppSelector(selectNav);
   const dispatch = useAppDispatch();
   const handleClickIcon = (mode) => {
     dispatch(navActions.change(mode));
     if (mode === 'board') {
       navigate(`/${mode}?sido=전국`);
+    } else if (mode === 'complaint') {
+      navigate(`/${mode}?state=receipt&pageNo=1`);
     } else {
-      navigate(`/${mode}?/pageNo=1`);
+      navigate(`/${mode}?violationType=3&pageNo=1`);
     }
   };
 
@@ -105,14 +107,14 @@ const BoardHeader = () => {
   };
 
   const handleLogout = async () => {
-    const fcmToken = sessionStorage.getItem('fcmToken');
+    const fcmToken = localStorage.getItem('fcmToken');
     await logout(
       fcmToken,
       (resp) => {
-        sessionStorage.removeItem('fcmToken');
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
-        sessionStorage.removeItem('police');
+        localStorage.removeItem('fcmToken');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('police');
         navigate('/');
       },
       (error) => {

@@ -5,9 +5,16 @@ import { pageActions, selectReportNav } from '../../store/page';
 import { useNavigate } from 'react-router';
 import Button from './../Common/Button';
 import Input from './../Common/Input';
-import { getReportEndList, getReportEndTotalCount, getReportList, getReportTotalCount } from '../../lib/api/report-api';
+import {
+  getListDetail,
+  getReportEndList,
+  getReportEndTotalCount,
+  getReportList,
+  getReportTotalCount,
+} from '../../lib/api/report-api';
 import moment from 'moment';
 import Pagination from 'react-js-pagination';
+import { useSearchParams } from 'react-router-dom';
 
 const s = {
   Container: styled.div`
@@ -36,6 +43,7 @@ const s = {
   `,
   TableArea: styled.div`
     width: 100%;
+    height: 480px;
     border-radius: 10px;
     border-left: 4px solid rgba(0, 0, 0, 0.2);
     border-right: 4px solid rgba(0, 0, 0, 0.2);
@@ -92,19 +100,36 @@ const s = {
 };
 
 const ReportList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const type = useAppSelector(selectReportNav);
   const dispatch = useAppDispatch();
-  const [violationType, setViolationType] = useState(4);
+  const [violationType, setViolationType] = useState(searchParams.get('violationType'));
   const [totalPage, setTotalPage] = useState(0);
-  const [pageNo, setPageNo] = useState(1);
+  const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
   const [isEnd, setIsEnd] = useState(false);
   const [data, setData] = useState([]);
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeReportType(mode));
-    setViolationType(
-      mode === 'park' ? 4 : mode === 'helmet' ? 3 : mode === 'peoples' ? 1 : mode === 'sideWalk' ? 2 : 5,
-    ); // 마커 타입 설정
+    const newViolationType =
+      mode === 'park' ? 4 : mode === 'helmet' ? 3 : mode === 'peoples' ? 1 : mode === 'sideWalk' ? 2 : 5;
+    setSearchParams({ violationType: newViolationType, pageNo: 1 });
   };
+
+  useEffect(() => {
+    setViolationType(searchParams.get('violationType'));
+    setPageNo(pageNo);
+    const newViolationType =
+      searchParams.get('violationType') == 4
+        ? 'park'
+        : searchParams.get('violationType') == 3
+        ? 'helmet'
+        : searchParams.get('violationType') == 1
+        ? 'peoples'
+        : searchParams.get('violationType') == 2
+        ? 'sideWalk'
+        : 'read';
+    dispatch(pageActions.changeReportType(newViolationType));
+  }, [searchParams]);
 
   const getColor = (mode) => {
     return type === mode ? '#0054A6' : undefined;
@@ -114,8 +139,8 @@ const ReportList = () => {
   };
 
   const navigate = useNavigate();
-  const handleMovePage = () => {
-    navigate('read');
+  const handleMovePage = (reportId) => {
+    navigate(`read?violationType=${violationType}&detail=${reportId}`);
   };
 
   const handleClickPage = (pageNo) => {
@@ -170,14 +195,14 @@ const ReportList = () => {
   return (
     <s.Container>
       <s.TypeArea>
-        <s.TypeText onClick={() => handleClickIcon('park')} color={getColor('park')} size={getSize('park')}>
-          불법 주차
-        </s.TypeText>
         <s.TypeText onClick={() => handleClickIcon('helmet')} color={getColor('helmet')} size={getSize('helmet')}>
           안전모 미착용
         </s.TypeText>
         <s.TypeText onClick={() => handleClickIcon('peoples')} color={getColor('peoples')} size={getSize('peoples')}>
           다인 승차
+        </s.TypeText>
+        <s.TypeText onClick={() => handleClickIcon('park')} color={getColor('park')} size={getSize('park')}>
+          불법 주차
         </s.TypeText>
         <s.TypeText onClick={() => handleClickIcon('sideWalk')} color={getColor('sideWalk')} size={getSize('sideWalk')}>
           보도 주행
@@ -197,7 +222,7 @@ const ReportList = () => {
           </s.Thead>
           <s.Tbody>
             {data.map((d, index) => (
-              <s.Tr key={index} onClick={() => handleMovePage()}>
+              <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
                 <s.Td>{d.idx}</s.Td>
                 <s.Td>{d.addr}</s.Td>
                 <s.Td>{moment(d.reportTime).format('YY-MM-DD')}</s.Td>

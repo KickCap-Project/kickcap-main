@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectCrackNav } from '../../store/page';
 import { useNavigate } from 'react-router';
+import { useSearchParams } from 'react-router-dom';
 
 const s = {
   Container: styled.div`
@@ -30,6 +31,7 @@ const s = {
   `,
   TableArea: styled.div`
     width: 100%;
+    height: 480px;
     border-radius: 10px;
     border-left: 4px solid rgba(0, 0, 0, 0.2);
     border-right: 4px solid rgba(0, 0, 0, 0.2);
@@ -67,10 +69,25 @@ const s = {
 };
 
 const CrackDownList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const type = useAppSelector(selectCrackNav);
   const dispatch = useAppDispatch();
+  const [violationType, setViolationType] = useState(searchParams.get('violationType'));
+  const [totalPage, setTotalPage] = useState(0);
+  const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    setViolationType(searchParams.get('violationType'));
+    setPageNo(pageNo);
+    const newViolationType = searchParams.get('violationType') == 3 ? 'helmet' : 'peoples';
+    dispatch(pageActions.changeCrackType(newViolationType));
+  }, [searchParams]);
+
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeCrackType(mode));
+    const newViolationType = mode === 'helmet' ? 3 : 1;
+    setSearchParams({ violationType: newViolationType, pageNo: 1 });
   };
 
   const getColor = (mode) => {
@@ -106,54 +123,6 @@ const CrackDownList = () => {
           </s.Thead>
           <s.Tbody>
             <s.Tr onClick={() => handleMovePage()}>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
               <s.Td>1</s.Td>
               <s.Td>대전 유성구 학하북로 75-21</s.Td>
               <s.Td>안전모 미착용</s.Td>
