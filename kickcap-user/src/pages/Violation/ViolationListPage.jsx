@@ -147,19 +147,29 @@ const ViolationListPage = () => {
 
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
   const observerRef = useRef(null);
 
   // 데이터 로드 함수
   const loadMoreData = async () => {
-    if (!isLoading) {
-      setIsLoading(true);
+    if (isLoading || !hasMoreData) return;
+
+    setIsLoading(true);
+    try {
       const newList = await getBillList(page);
+
       if (newList && newList.length > 0) {
         setVList((prevPage) => [...prevPage, ...newList]);
         setPage((prevPage) => prevPage + 1);
+      } else {
+        console.log('더 이상 불러올 데이터가 없습니다.');
+        setHasMoreData(false);
       }
+    } catch (err) {
+      console.error('데이터를 불러오는 중 문제가 발생했습니다: ', err);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -169,23 +179,24 @@ const ViolationListPage = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+        if (entries[0].isIntersecting && !isLoading && hasMoreData) {
           loadMoreData();
         }
       },
       { threshold: 1.0 },
     );
 
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
+    const currentObserverRef = observerRef.current;
+    if (currentObserverRef) {
+      observer.observe(currentObserverRef);
     }
 
     return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
+      if (currentObserverRef) {
+        observer.unobserve(currentObserverRef);
       }
     };
-  }, [observerRef.current]);
+  }, [isLoading, hasMoreData]);
 
   return (
     <s.Container>

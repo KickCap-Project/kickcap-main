@@ -60,16 +60,16 @@ export const getBillDetail = async (billId) => {
 
 export const getImgFile = async (imgSrc) => {
   try {
-    const response = await axios.get(imgSrc);
+    const response = await axios.get(imgSrc, { responseType: 'blob' });
 
     if (response.status === 200) {
       return response.data;
-    } else {
-      console.log(`이미지를 불러오는 데 실패했습니다: ${response.status}`);
-      return;
     }
+
+    console.log(`이미지를 불러오는 데 실패했습니다: ${response.status}`);
+    return null;
   } catch (err) {
-    console.log(`error: ${err}`);
-    return;
+    console.log(`이미지를 불러오는 중 에러가 발생했습니다: ${err}`);
+    return null;
   }
 };

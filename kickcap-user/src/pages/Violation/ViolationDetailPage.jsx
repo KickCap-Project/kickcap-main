@@ -79,18 +79,22 @@ const ViolationDetailPage = () => {
     (async () => {
       if (!isLoading) {
         setIsLoading(true);
-        const detailReturn = await getBillDetail(id);
-        setDetail(detailReturn);
-        setIsLoading(false);
+
+        try {
+          const detailResponse = await getBillDetail(id);
+          setDetail(detailResponse);
+
+          const imgSrc = detail.imageaSrc;
+          const imgFileResponse = (async () => await getImgFile(imgSrc))();
+          setImgFile(imgFileResponse);
+        } catch (error) {
+          console.error('Error fetching data: ', error);
+        } finally {
+          setIsLoading(false);
+        }
       }
     })();
   }, []);
-
-  useEffect(() => {
-    const imgSrc = detail.imageSrc;
-    const imgFileResponse = (async () => await getImgFile(imgSrc))();
-    setImgFile(imgFileResponse);
-  }, [detail]);
 
   return (
     <s.Container>
