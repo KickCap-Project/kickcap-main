@@ -82,6 +82,33 @@ const CameraMap = ({ point }) => {
   const [timeType, setTimeType] = useState(0);
   const [markers, setMarkers] = useState([]);
 
+  // 카메라 배열 전처리
+  const calculateRatios = (data) => {
+    const sum = Array(8).fill(0);
+
+    // 각 카메라 데이터에서 키(0~7)의 값들을 합산
+    data.forEach((camera) => {
+      for (let i = 0; i < 8; i++) {
+        sum[i] += camera[i];
+      }
+    });
+
+    // 비율 계산
+    const ratios = data.map((camera) => {
+      const ratioObj = { lat: camera.lat, lng: camera.lng, idx: camera.idx };
+      for (let i = 0; i < 8; i++) {
+        ratioObj[i] = sum[i] === 0 ? 0 : (camera[i] / sum[i]).toFixed(2); // 0으로 나누는 것 방지
+      }
+      return ratioObj;
+    });
+
+    return ratios;
+  };
+
+  const result = calculateRatios(markerData.camera);
+  console.log(result);
+  ////////
+
   const handleChangeTimeType = (e) => {
     setTimeType(e.target.value);
   };
@@ -93,7 +120,7 @@ const CameraMap = ({ point }) => {
       return;
     }
     const container = document.getElementById('map');
-    const options = { center: new kakao.maps.LatLng(data.lat, data.lng), level: 5 };
+    const options = { center: new kakao.maps.LatLng(data.lat, data.lng), level: 4 };
     const kakaoMap = new kakao.maps.Map(container, options);
     setMap(kakaoMap);
 
@@ -116,14 +143,42 @@ const CameraMap = ({ point }) => {
 
     let center = kakaoMap.getCenter();
 
+    const pickCameraMarker = (num) => {
+      if (num <= 0.2) {
+        return cam1Img;
+      } else if (num > 0.2 && num <= 0.4) {
+        return cam2Img;
+      } else if (num > 0.4 && num <= 0.6) {
+        return cam3Img;
+      } else {
+        return cam4Img;
+      }
+    };
+
     const newMarkers = [];
 
-    markerData.camera.map((data, index) => {
+    // markerData.camera.map((data, index) => {
+    //   const marker = new kakao.maps.Marker({
+    //     position: new kakao.maps.LatLng(data.lat, data.lng),
+    //     title: data.idx,
+    //     map: kakaoMap,
+    //     image: data.level === 0 ? cam1Img : data.level === 1 ? cam2Img : data.level === 2 ? cam3Img : cam4Img,
+    //   });
+
+    //   // 클릭 이벤트 추가
+    //   kakao.maps.event.addListener(marker, 'click', () => {
+    //     setCameraIdx(data.idx);
+    //     handleOpenCamera(true);
+    //   });
+
+    //   newMarkers.push(marker);
+    // });
+    result.map((data, index) => {
       const marker = new kakao.maps.Marker({
         position: new kakao.maps.LatLng(data.lat, data.lng),
         title: data.idx,
         map: kakaoMap,
-        image: data.level === 0 ? cam1Img : data.level === 1 ? cam2Img : data.level === 2 ? cam3Img : cam4Img,
+        image: pickCameraMarker(data[timeType]),
       });
 
       // 클릭 이벤트 추가
