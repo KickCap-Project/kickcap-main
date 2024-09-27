@@ -31,7 +31,8 @@ const ResponsiveWrapper = ({ children }) => {
   const navigate = useNavigate();
 
   // 해상도 조건에 따라 안내 페이지로 리디렉션
-  if (width <= 1080 || height <= 600) {
+  if (width <= 1080 || height <= 200) {
+    // 원래 높이 200
     // navigate('/guide'); // 안내 페이지로 이동
     // return null; // 컴포넌트 렌더링을 중지
     return <>{<SizeGuidePage />}</>;

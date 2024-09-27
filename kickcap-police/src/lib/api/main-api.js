@@ -11,3 +11,7 @@ export const logout = async (fcmToken, success, fail) => {
   // 로그아웃
   await local.post(`/police/logout`, fcmToken).then(success).catch(fail);
 };
+
+export const getRefresh = async (refreshToken, success, fail) => {
+  await local.post(`/token/refresh`, refreshToken).then(success).catch(fail);
+};

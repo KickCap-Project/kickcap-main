@@ -27,17 +27,20 @@ const SocialLoginPage = () => {
   useEffect(() => {
     const accessToken = new URL(window.location.href).searchParams.get('accessToken');
     const refreshToken = new URL(window.location.href).searchParams.get('refreshToken');
-    sessionStorage.setItem('accessToken', accessToken);
-    sessionStorage.setItem('refreshToken', refreshToken);
-    const fcmToken = sessionStorage.getItem('fcmToken');
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    const fcmToken = localStorage.getItem('fcmToken');
     socialLogin(
       { fcmToken, refreshToken },
       (resp) => {
+        localStorage.setItem('Info', JSON.stringify({ name: resp.data.name, demerit: resp.data.demerit }));
         navigate('/main');
       },
       (error) => {
         alert('잠시 후 다시 시도해주세요.');
-        // navigate('/login');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        navigate('/');
       },
     );
   }, []);

@@ -8,7 +8,6 @@ import kakao from './../asset/img/login/kakao.png';
 import naver from './../asset/img/login/naver.png';
 import google from './../asset/img/login/google.png';
 import { useNavigate } from 'react-router';
-import { requestPermission } from '../firebaseCloudMessaging';
 
 const s = {
   Container: styled.div`
@@ -50,12 +49,6 @@ const s = {
 };
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-  const handleLogin = () => {
-    sessionStorage.setItem('accessToken', 'test');
-    navigate('/main');
-  };
-
   const handleClickKaKao = () => {
     window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/kakao';
   };
@@ -64,18 +57,16 @@ const LoginPage = () => {
     window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/naver';
   };
 
-  const handleClickGoogle = () => {
-    window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/google';
-  };
-
-  // const setFcmToken = async () => {
-  //   const fcmToken = await requestPermission();
-  //   sessionStorage.setItem('fcmToken', fcmToken);
+  // const handleClickGoogle = () => {
+  //   window.location.href = process.env.REACT_APP_BASE_URL + '/oauth2/authorization/google';
   // };
 
-  // useEffect(() => {
-  //   setFcmToken();
-  // }, []);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!localStorage.getItem('fcmToken')) {
+      navigate('/');
+    }
+  }, []);
 
   return (
     <s.Container>
@@ -97,13 +88,13 @@ const LoginPage = () => {
             bgcolor="#03C75A"
             onClick={handleClickNaver}
           />
-          <LoginButton
+          {/* <LoginButton
             title="구글 로그인"
             imgSrc={google}
             color="#000000"
             bgcolor="#FFFFFF"
             onClick={handleClickGoogle}
-          />
+          /> */}
         </s.ButtonArea>
       </s.MainArea>
     </s.Container>

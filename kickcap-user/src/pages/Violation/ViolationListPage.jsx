@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ViolationEmpty from '../../components/Violation/ViolationEmpty';
 import ViolationList from '../../components/Violation/ViolationList';
-import { ViolationType, isFlagType } from '../../lib/data/Violation';
-import { useNavigate } from 'react-router';
+import { isFlagType } from '../../lib/data/Violation';
+import { getBillList } from '../../lib/api/violation-api';
 
 const s = {
   Container: styled.div`
@@ -59,6 +59,11 @@ const s = {
     flex-basis: 0;
     overflow: auto;
   `,
+  ObserveArea: styled.div`
+    width: 100%;
+    height: 1px;
+    margin-bottom: 1px;
+  `,
 };
 
 const IndexComponent = ({ color, title }) => {
@@ -72,77 +77,55 @@ const IndexComponent = ({ color, title }) => {
 
 const ViolationListPage = () => {
   // dummy data
-  const violationList = [
-    {
-      idx: 1,
-      date: '2024-08-03 오후 12:12:12',
-      type: 1,
-      deadLine: '2024-09-02 오후 23:59:59',
-      isFlag: 3,
-    },
-    {
-      idx: 2,
-      date: '2024-08-03 오후 12:12:12',
-      type: 2,
-      deadLine: '2024-09-02 오후 23:59:59',
-      isFlag: 2,
-    },
-    {
-      idx: 3,
-      date: '2024-08-03 오후 12:12:12',
-      type: 3,
-      deadLine: '2024-09-02 오후 23:59:59',
-      isFlag: 1,
-    },
-    {
-      idx: 4,
-      date: '2024-08-03 오후 12:12:12',
-      type: 4,
-      deadLine: '2024-09-02 오후 23:59:59',
-      isFlag: 0,
-    },
-    {
-      idx: 5,
-      date: '2024-08-03 오후 12:12:12',
-      type: 5,
-      deadLine: '2024-09-02 오후 23:59:59',
-      isFlag: 0,
-    },
-    {
-      idx: 6,
-      date: '2024-08-03 오후 12:12:12',
-      type: 1,
-      deadLine: '2024-09-02 오후 23:59:59',
-      isFlag: 0,
-    },
-    {
-      idx: 7,
-      date: '2024-08-03 오후 12:12:12',
-      type: 1,
-      deadLine: '2024-09-02 오후 23:59:59',
-      isFlag: 0,
-    },
-    {
-      idx: 8,
-      date: '2024-08-03 오후 12:12:12',
-      type: 1,
-      deadLine: '2024-09-02 오후 23:59:59',
-      isFlag: 0,
-    },
-    {
-      idx: 9,
-      date: '2024-08-03 오후 12:12:12',
-      type: 1,
-      deadLine: '2024-09-02 오후 23:59:59',
-      isFlag: 0,
-    },
-  ];
+  const [vList, setVList] = useState([]);
+
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const observerRef = useRef(null);
+
+  // 데이터 로드 함수
+  const loadMoreData = async () => {
+    if (!isLoading) {
+      setIsLoading(true);
+      const newList = await getBillList(page);
+      if (newList && newList.length > 0) {
+        setVList((prevPage) => [...prevPage, ...newList]);
+        setPage((prevPage) => prevPage + 1);
+      }
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    loadMoreData();
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMoreData();
+        }
+      },
+      { threshold: 1.0 },
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [observerRef.current]);
 
   return (
     <s.Container>
       <Header title={'나의 단속 내역'} />
 
-      {violationList.length === 0 ? (
+      {vList.length === 0 ? (
         <s.MainAreaEmpty>
           <ViolationEmpty />
         </s.MainAreaEmpty>
@@ -154,7 +137,8 @@ const ViolationListPage = () => {
             ))}
           </s.Index>
           <s.MainArea>
-            <ViolationList violationList={violationList} />
+            <ViolationList vList={vList} />
+            <s.ObserveArea ref={observerRef} />
           </s.MainArea>
         </>
       )}

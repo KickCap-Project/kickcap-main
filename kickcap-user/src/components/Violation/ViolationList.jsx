@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { ViolationType, isFlagType } from '../../lib/data/Violation';
 import { useNavigate } from 'react-router';
+import { convertToKoreanTimeString } from '../../lib/data/ConvertTime';
 
 const s = {
   Container: styled.div`
@@ -44,7 +45,7 @@ const s = {
   `,
 };
 
-const ViolationList = ({ violationList }) => {
+const ViolationList = ({ vList }) => {
   // onClick event handler function
   const onClickCardFunction = (violation) => {
     console.log(`onClick: ${violation.idx}`);
@@ -57,7 +58,7 @@ const ViolationList = ({ violationList }) => {
 
   return (
     <s.Container>
-      {violationList.map((violation) => (
+      {vList.map((violation) => (
         <s.Card
           key={violation.idx}
           color={isFlagType[violation.isFlag].color}
@@ -65,11 +66,11 @@ const ViolationList = ({ violationList }) => {
         >
           <s.CardRow>
             <s.CardRowTitle>위반일시</s.CardRowTitle>
-            <s.CardRowContent>{violation.date}</s.CardRowContent>
+            <s.CardRowContent>{convertToKoreanTimeString(violation.date)}</s.CardRowContent>
           </s.CardRow>
           <s.CardRow>
             <s.CardRowTitle>위반내용</s.CardRowTitle>
-            <s.CardRowContent>{ViolationType[violation.type].type}</s.CardRowContent>
+            <s.CardRowContent>{ViolationType[violation.violationType].type}</s.CardRowContent>
           </s.CardRow>
           <s.CardRow>
             <s.CardRowTitle>납부기한</s.CardRowTitle>

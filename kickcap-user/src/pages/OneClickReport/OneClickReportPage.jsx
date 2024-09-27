@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
+import { localAxios } from '../../util/axios-setting';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -41,6 +41,7 @@ const s = {
 const { kakao } = window;
 
 const OneClickReportPage = () => {
+  const axiosInstance = localAxios();
   const topText =
     '킥보드 이용 중 긴급 상황 발생 시\n 가까운 관할 경찰서로 신고가 접수됩니다.\n\n[제공 정보]\n신고자 정보 및 GPS 위치';
   const bottomText = '허위 신고 적발 시 112신고처리법에 따라\n형사처벌을 받을 수 있습니다.';
@@ -122,8 +123,8 @@ const OneClickReportPage = () => {
         .then((position) => {
           const { lat, lng } = position;
 
-          axios
-            .post('', {
+          axiosInstance
+            .post('/reports/accident', {
               lat,
               lng,
               addr,
