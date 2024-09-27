@@ -177,7 +177,7 @@ async def ocr_endpoint(request: OCRRequests):
         async with httpx.AsyncClient(timeout=60.0) as client:
             response = await client.post(API_ENDPOINT, json=request.model_dump())
             if response.status_code != 200:
-                raise HTTPException(status_code=response.status_code, detail="Error calling Preprocess API")
+                raise HTTPException(status_code=response.status_code, detail=f"Error calling Preprocess API: {response.json().get('detail', 'No detail provided')}")
             response_data = response.json()
 
             result = ResultRequests(
