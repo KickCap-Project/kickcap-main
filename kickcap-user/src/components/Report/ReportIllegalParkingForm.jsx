@@ -5,9 +5,11 @@ import Button from '../Common/Button';
 import Input from '../Common/Input';
 import TextArea from '../Common/TextArea';
 import UploadImgButton from '../../components/Report/UploadImgButtom';
+
 import { localAxios } from '../../util/axios-setting';
 import EXIF from 'exif-js';
 
+import { uploadImg } from '../../lib/api/report-api';
 import { convertExifToISO } from '../../lib/data/ConvertTime';
 
 const s = {
@@ -117,26 +119,33 @@ const ReportIllegalParkingForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('violationType', 4); // 4 - 불법 주차
-    formData.append('image', imgFile);
-    formData.append('description', description);
-    formData.append('kickboardNumber', kickboardNumber);
-    formData.append('reportTime', date);
+    const imgUrl = await uploadImg(imgFile, 4);
+
+    if (!imgUrl) {
+      alert('이미지 업로드에 실패했습니다.');
+    }
 
     // 신고 - 불법주차 신고
     // axios.post
     try {
-      const response = await axiosInstance.post('/reports/parking', formData, {
-        headers: {
-          'Content-type': 'multipart/form-data',
-        },
+      const response = await axiosInstance.post('/reports/parking', {
+        violationType: 4,
+        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/upload/type4/${imgUrl}`,
+        description: description,
+        kickboardNumber: kickboardNumber,
+        reportTime: date,
       });
-      console.log('response: ' + response.status);
-      navigate('/report/parking/success');
+
+      if (response.status === 201) {
+        navigate('/report/parking/success');
+      } else {
+        console.log(response.status);
+        alert('신고 제출에 실패했습니다.');
+      }
     } catch (error) {
       // 신고 제출 오류
-      console.log('error: ' + error);
+      console.log('신고 제출 중 오류 발생: ' + error);
+      alert('신고 제출 중 오류가 발생했습니다.');
     }
   };
 

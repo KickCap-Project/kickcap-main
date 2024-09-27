@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { localAxios } from '../../util/axios-setting';
 import EXIF from 'exif-js';
+import { uploadImg } from '../../lib/api/report-api';
 
 import Button from '../Common/Button';
 import Input from '../Common/Input';
@@ -213,30 +214,38 @@ const ReportMisuseForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('violationType', typeRequest);
-    formData.append('image', imgFile);
-    formData.append('description', description);
-    formData.append('kickboardNumber', kickboardNumber);
-    formData.append('lat', latitude);
-    formData.append('lng', longitude);
-    formData.append('addr', address);
-    formData.append('code', code);
-    formData.append('reportTime', date);
+    // 이미지 파일을 이미지 서버에 업로드하고 주소 반환
+    const imgUrl = await uploadImg(imgFile, typeRequest);
+
+    if (!imgUrl) {
+      alert('이미지 업로드에 실패했습니다.');
+      return;
+    }
 
     // 신고 - 실시간 이용 신고
     // axios.post
     try {
-      const response = await axiosInstance.post('/reports/real-time', formData, {
-        headers: {
-          'Content-type': 'multipart/form-data',
-        },
+      const response = await axiosInstance.post('/reports/real-time', {
+        violationType: typeRequest,
+        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/upload/type${typeRequest}/${imgUrl}`,
+        description: description,
+        kickboardNumber: kickboardNumber,
+        lat: latitude,
+        lng: longitude,
+        addr: address,
+        code: code,
+        reportTime: date,
       });
-      console.log('response: ' + response.status);
-      navigate('/report/real-time/success');
+
+      if (response.status === 201) {
+        navigate('/report/real-time/success');
+      } else {
+        alert('신고 제출에 실패했습니다.');
+      }
     } catch (error) {
       // 신고 제출 오류
-      console.log('error: ' + error);
+      console.log('신고 제출 중 오류 발생: ' + error);
+      alert('킥보드 번호판 정보를 다시 한 번 확인해주세요.');
     }
   };
 
