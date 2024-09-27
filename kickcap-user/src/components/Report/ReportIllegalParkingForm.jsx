@@ -130,7 +130,7 @@ const ReportIllegalParkingForm = () => {
     try {
       const response = await axiosInstance.post('/reports/parking', {
         violationType: 4,
-        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/type4/${imgUrl}`,
+        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/upload/type4/${imgUrl}`,
         description: description,
         kickboardNumber: kickboardNumber,
         reportTime: date,
