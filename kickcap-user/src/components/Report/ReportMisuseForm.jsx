@@ -245,7 +245,7 @@ const ReportMisuseForm = () => {
     } catch (error) {
       // 신고 제출 오류
       console.log('신고 제출 중 오류 발생: ' + error);
-      alert('신고 제출 중 오류가 발생했습니다.');
+      alert('킥보드 번호판 정보를 다시 한 번 확인해주세요.');
     }
   };
 
