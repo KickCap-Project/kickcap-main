@@ -77,7 +77,7 @@ public class ReportService {
         Report report = reportRepository.findById(reportId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
         // 로그인한 경찰 아이디와 신고 담당 경찰서 아이디가 맞는지 확인
         if (report.getPolice().getPoliceId() != police.getPoliceId()) {
-            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
+            throw new RestApiException(ErrorCode.FORBIDDEN_ACCESS);
         }
 
         // 신고 상태 업데이트 UPAPPROVED -> APPROVED
@@ -104,5 +104,17 @@ public class ReportService {
                 .build();
 
         billRepository.save(bill);
+    }
+
+    public void rejectReport(Police police, Long reportId) {
+        Report report = reportRepository.findById(reportId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        // 로그인한 경찰 아이디와 신고 담당 경찰서 아이디가 맞는지 확인
+        if (report.getPolice().getPoliceId() != police.getPoliceId()) {
+            throw new RestApiException(ErrorCode.FORBIDDEN_ACCESS);
+        }
+
+        // 신고 상태 업데이트 UPAPPROVED -> APPROVED
+        report.updateApproveStatus(ApproveStatus.REJECTED);
+        reportRepository.save(report);
     }
 }
