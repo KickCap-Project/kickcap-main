@@ -14,8 +14,8 @@ const VideoStream = () => {
   const [labelResult, setLabelResult] = useState('');
   // kickboard_number를 상태로 관리 (초기값을 빈 문자열로 설정)
   const [kickboardNumber, setKickboardNumber] = useState('S4821');
-  const [inputName, setName] = useState('김종원');
-  const [inputPhone, setPhone] = useState('+82 10-6632-7764');
+  const [inputName, setName] = useState('홍길동');
+  const [inputPhone, setPhone] = useState('+82 10-1111-2222');
   const [inputMinute, setMinute] = useState('1');
 
   // 입력 값이 변경될 때 상태 업데이트
