@@ -1,9 +1,7 @@
-import time
 import requests
 from pydantic import BaseModel
 import cv2
 import numpy as np
-import re
 import redis.asyncio as aioredis
 import pytz
 from datetime import datetime, timedelta
