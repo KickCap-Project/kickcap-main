@@ -6,8 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface BillRepository extends JpaRepository<Bill, Long> {
 
     // member의 고지서 내역 조회하기
     Page<Bill> findByMemberOrderByDeadlineDesc(Member member, Pageable pageable);
+
+    Optional<Bill> findFirstByMemberIdOrderByCreatedAtDesc(Long memberId);
 }
