@@ -2,10 +2,7 @@ package com.ssafy.kickcap.dashboard.service;
 
 import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepositoryImpl;
-import com.ssafy.kickcap.dashboard.dto.DayTotalResponse;
-import com.ssafy.kickcap.dashboard.dto.TimeCrackdownResponse;
-import com.ssafy.kickcap.dashboard.dto.TimeIndex;
-import com.ssafy.kickcap.dashboard.dto.WeekResponse;
+import com.ssafy.kickcap.dashboard.dto.*;
 import com.ssafy.kickcap.region.repository.RegionCodeRepositoryImpl;
 import com.ssafy.kickcap.report.repository.AccidentReportRepositoryImpl;
 import com.ssafy.kickcap.report.repository.ReportRepository;
@@ -35,21 +32,10 @@ public class DashboardService {
     ZonedDateTime startOfLastWeek = now.minusDays(7).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
     ZonedDateTime startOfToday = now.toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
 
-    // 전국의 일주일간 데이터를 조회합니다.
-    public WeekResponse searchNationwideWeekData() {
-        List<Long> stationIdxList = regionCodeRepositoryImpl.findStationIdxByRegion("", ""); // 해당 시도와 구군에 해당하는 stationIdx 목록 조회
-        return getWeekDataByRegion(stationIdxList);
-    }
-
-    // 특정 시도의 일주일간 데이터를 조회합니다.
-    public WeekResponse searchSidoWeekData(String sido) {
-        List<Long> stationIdxList = regionCodeRepositoryImpl.findStationIdxByRegion(sido, ""); // 해당 시도와 구군에 해당하는 stationIdx 목록 조회
-        return getWeekDataByRegion(stationIdxList);
-    }
-
-    // 특정 시도의 특정 구군의 일주일간 데이터를 조회합니다.
-    public WeekResponse searchGugunWeekData(String sido, String gugun) {
+    // 일주일간 데이터를 조회합니다.
+    public WeekResponse searchWeekData(String sido, String gugun) {
         List<Long> stationIdxList = regionCodeRepositoryImpl.findStationIdxByRegion(sido, gugun); // 해당 시도와 구군에 해당하는 stationIdx 목록 조회
+        System.out.println(stationIdxList);
         return getWeekDataByRegion(stationIdxList);
     }
 
@@ -57,13 +43,13 @@ public class DashboardService {
         List<DayTotalResponse> dayTotalResponses = getDayTotalData(stationIdxList);
         List<TimeCrackdownResponse> timeCrackdownResponses = getTimeCrackdown(stationIdxList);
 
-        Long noHead = getNoHelmetCrackdownCount(stationIdxList);
-        Long peoples = getRideTogetherCrackdownCount(stationIdxList);
-        Long p = getIllegalParkingReportCount(stationIdxList);
-        Long n = getNoHelmetReportCount(stationIdxList);
-        Long h = getRideTogetherReportCount(stationIdxList);
-        Long d = getSidewalkDrivingReportCount(stationIdxList);
-        Long w = getDesignatedLaneReportCount(stationIdxList);
+        Long noHead = getCrackdownCountByViolationType(stationIdxList, 3L);
+        Long peoples = getCrackdownCountByViolationType(stationIdxList, 1L);
+        Long p = getReportCountByViolationType(stationIdxList,4L);
+        Long n = getReportCountByViolationType(stationIdxList,3L);
+        Long h = getReportCountByViolationType(stationIdxList,1L);
+        Long d = getReportCountByViolationType(stationIdxList,2L);
+        Long w = getReportCountByViolationType(stationIdxList,5L);
 
         return WeekResponse.builder()
                 .dayTotalResponses(dayTotalResponses)
@@ -86,10 +72,6 @@ public class DashboardService {
         List<Long> crackdownCounts = crackdownRepositoryImpl.countCrackdownsByDateRangeAndRegion(stationIdxList, startOfLastWeek, startOfToday); // 날짜별 단속 건수 조회
         List<Long> reportCounts = reportRepositoryImpl.countReportsByDateRangeAndRegion(stationIdxList, startOfLastWeek, startOfToday); // 날짜별 신고 건수 조회
         List<Long> accidentCounts = accidentReportRepositoryImpl.countAccidentsByDateRangeAndRegion(stationIdxList, startOfLastWeek, startOfToday); // 날짜별 사고 건수 조회
-
-        System.out.println("crackdownCounts : " + crackdownCounts);
-        System.out.println("reportCounts : " + reportCounts);
-        System.out.println("accidentCounts : " + accidentCounts);
 
         for (int i = 0; i < 7; i++) {
             DayTotalResponse response = DayTotalResponse.builder()
@@ -129,31 +111,57 @@ public class DashboardService {
         return timeCrackdownList; // 결과 리스트 반환
     }
 
-    public Long getNoHelmetCrackdownCount(List<Long> stationIdxList) {
-        return crackdownRepositoryImpl.getCrackdownCountByViolationType(stationIdxList, startOfLastWeek, startOfToday,3L);
+    public Long getCrackdownCountByViolationType(List<Long> stationIdxList, Long n) {
+        return crackdownRepositoryImpl.getCrackdownCountByViolationType(stationIdxList, startOfLastWeek, startOfToday,n);
     }
 
-    public Long getRideTogetherCrackdownCount(List<Long> stationIdxList) {
-        return crackdownRepositoryImpl.getCrackdownCountByViolationType(stationIdxList, startOfLastWeek, startOfToday,1L);
+    public Long getReportCountByViolationType(List<Long> stationIdxList, Long n) {
+        return reportRepositoryImpl.getReportCountByViolationType(stationIdxList, startOfLastWeek, startOfToday,n);
     }
 
-    public Long getIllegalParkingReportCount(List<Long> stationIdxList) {
-        return reportRepositoryImpl.getReportCountByViolationType(stationIdxList, startOfLastWeek, startOfToday,4L);
+
+    /////////////////////////////////// 하단 데이터 ////////////////////////////////
+    public BottomDateResponse searchBottomData(String sido, String gugun) {
+        List<Long> stationIdxList = regionCodeRepositoryImpl.findStationIdxByRegion(sido, gugun); // 해당 시도와 구군에 해당하는 stationIdx 목록 조회
+        return getBottomDataByRegion(stationIdxList);
     }
 
-    public Long getNoHelmetReportCount(List<Long> stationIdxList) {
-        return reportRepositoryImpl.getReportCountByViolationType(stationIdxList, startOfLastWeek, startOfToday,3L);
+    private BottomDateResponse getBottomDataByRegion(List<Long> stationIdxList) {
+        ZonedDateTime startDay = now.minusDays(1).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime endDay = now.toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+
+        Long tCrack = getCrackdownCountOfDay(stationIdxList,startDay,endDay);    // 오늘 단속 수
+        Long tReport = getReportCountOfDay(stationIdxList,startDay,endDay);   // 오늘 신고 수
+        Long tAccident = getAccidentCountOfDay(stationIdxList,startDay,endDay); // 오늘 사고 수
+
+        startDay = now.minusDays(2).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+        endDay = now.minusDays(1).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+
+        Long yCrack = getCrackdownCountOfDay(stationIdxList,startDay,endDay);    // 전일 단속 수
+        Long yReport = getReportCountOfDay(stationIdxList,startDay,endDay);   // 전일 신고 수
+        Long yAccident = getAccidentCountOfDay(stationIdxList,startDay,endDay); // 전일 사고 수
+
+        return BottomDateResponse.builder()
+                .tCrack(tCrack)
+                .tReport(tReport)
+                .tAccident(tAccident)
+                .yCrack(yCrack)
+                .yReport(yReport)
+                .yAccident(yAccident)
+                .build();
     }
 
-    public Long getRideTogetherReportCount(List<Long> stationIdxList) {
-        return reportRepositoryImpl.getReportCountByViolationType(stationIdxList, startOfLastWeek, startOfToday,1L);
+    public Long getCrackdownCountOfDay(List<Long> stationIdxList, ZonedDateTime startDay, ZonedDateTime endDay) {
+        return crackdownRepositoryImpl.getCrackdownCountOfDay(stationIdxList, startDay, endDay);
     }
 
-    public Long getSidewalkDrivingReportCount(List<Long> stationIdxList) {
-        return reportRepositoryImpl.getReportCountByViolationType(stationIdxList, startOfLastWeek, startOfToday,2L);
+    public Long getReportCountOfDay(List<Long> stationIdxList, ZonedDateTime startDay, ZonedDateTime endDay) {
+        return reportRepositoryImpl.getReportCountOfDay(stationIdxList, startDay, endDay);
     }
 
-    public Long getDesignatedLaneReportCount(List<Long> stationIdxList) {
-        return reportRepositoryImpl.getReportCountByViolationType(stationIdxList, startOfLastWeek, startOfToday,5L);
+    public Long getAccidentCountOfDay(List<Long> stationIdxList, ZonedDateTime startDay, ZonedDateTime endDay) {
+        return accidentReportRepositoryImpl.getAccidentCountOfDay(stationIdxList, startDay, endDay);
     }
+
+
 }
