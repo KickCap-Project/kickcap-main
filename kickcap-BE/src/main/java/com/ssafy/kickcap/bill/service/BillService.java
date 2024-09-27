@@ -105,6 +105,7 @@ public class BillService {
                 .police(police.getName())
                 .isFlag(bill.getPaidStatus().toString())
                 .isObjection(setObjection(bill))
+                .imageSrc(report.getImageSrc())
                 .build();
     }
 

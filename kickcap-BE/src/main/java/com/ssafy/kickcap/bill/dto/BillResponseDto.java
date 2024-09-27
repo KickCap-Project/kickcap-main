@@ -33,4 +33,6 @@ public class BillResponseDto {
 
     private int isObjection; // 이의 여부
 
+    private String imageSrc;
+
 }
