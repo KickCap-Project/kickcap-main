@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-// EXIF to ISO8601
+// EXIF to ISO8601(+09:00)
 export const convertExifToISO = (exifDate) => {
   // EXIF 메타데이터 시간 포맷: "YYYY:MM:DD HH:mm:ss"
   const exifFormat = 'yyyy:MM:dd HH:mm:ss';
@@ -13,7 +13,8 @@ export const convertExifToISO = (exifDate) => {
   return isoString;
 };
 
-// ISO8601 to Korean
+// ISO8601(Z) to Korean
+// violation
 export const convertToKoreanTimeString = (isoString) => {
   // Luxon으로 ISO 문자열을 DateTime 객체로 변환
   const dateTime = DateTime.fromISO(isoString, { zone: 'Asia/Seoul' });
