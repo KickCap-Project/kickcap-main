@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectReportNav } from '../../store/page';
 import { useNavigate } from 'react-router';
 import Button from './../Common/Button';
 import Input from './../Common/Input';
+import { getReportEndList, getReportEndTotalCount, getReportList, getReportTotalCount } from '../../lib/api/report-api';
+import moment from 'moment';
+import Pagination from 'react-js-pagination';
 
 const s = {
   Container: styled.div`
     width: 90%;
+
     margin: 0 auto;
   `,
   TypeArea: styled.div`
@@ -73,7 +77,7 @@ const s = {
     cursor: pointer;
   `,
   BtnArea: styled.div`
-    width: fit-content;
+    width: 150px;
     height: 30px;
     display: flex;
     justify-content: center;
@@ -90,8 +94,16 @@ const s = {
 const ReportList = () => {
   const type = useAppSelector(selectReportNav);
   const dispatch = useAppDispatch();
+  const [violationType, setViolationType] = useState(4);
+  const [totalPage, setTotalPage] = useState(0);
+  const [pageNo, setPageNo] = useState(1);
+  const [isEnd, setIsEnd] = useState(false);
+  const [data, setData] = useState([]);
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeReportType(mode));
+    setViolationType(
+      mode === 'park' ? 4 : mode === 'helmet' ? 3 : mode === 'peoples' ? 1 : mode === 'sideWalk' ? 2 : 5,
+    ); // 마커 타입 설정
   };
 
   const getColor = (mode) => {
@@ -105,6 +117,56 @@ const ReportList = () => {
   const handleMovePage = () => {
     navigate('read');
   };
+
+  const handleClickPage = (pageNo) => {
+    setPageNo(pageNo);
+  };
+
+  useEffect(() => {
+    if (isEnd) {
+      // 완료
+      getReportEndTotalCount(
+        violationType,
+        (resp) => {
+          setTotalPage(resp.data.totalCount);
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
+      getReportEndList(
+        violationType,
+        pageNo,
+        (resp) => {
+          setData(resp.data);
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
+    } else {
+      // 일반
+      getReportTotalCount(
+        violationType,
+        (resp) => {
+          setTotalPage(resp.data.totalCount);
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
+      getReportList(
+        violationType,
+        pageNo,
+        (resp) => {
+          setData(resp.data);
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
+    }
+  }, [violationType, isEnd, pageNo]);
   return (
     <s.Container>
       <s.TypeArea>
@@ -134,62 +196,29 @@ const ReportList = () => {
             </s.Tr>
           </s.Thead>
           <s.Tbody>
-            <s.Tr onClick={() => handleMovePage()}>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
+            {data.map((d, index) => (
+              <s.Tr key={index} onClick={() => handleMovePage()}>
+                <s.Td>{d.idx}</s.Td>
+                <s.Td>{d.addr}</s.Td>
+                <s.Td>{moment(d.reportTime).format('YY-MM-DD')}</s.Td>
+              </s.Tr>
+            ))}
           </s.Tbody>
         </s.Table>
       </s.TableArea>
       <s.PageFooter>
         <s.BtnArea></s.BtnArea>
-        <s.pageArea></s.pageArea>
+        <s.pageArea>
+          {/* <Pagination
+            activePage={pageNo} // 현재 페이지
+            itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
+            totalItemsCount={totalPage} // 총 아이템 갯수
+            pageRangeDisplayed={10} // paginator의 페이지 범위
+            prevPageText={'‹'} // "이전"을 나타낼 텍스트
+            nextPageText={'›'} // "다음"을 나타낼 텍스트
+            onChange={handleClickPage} // 페이지 변경을 핸들링하는 함수
+          /> */}
+        </s.pageArea>
         <s.BtnArea>
           <Input
             type={'checkBox'}
@@ -199,6 +228,8 @@ const ReportList = () => {
             id={'ok'}
             width={'20px'}
             height={'20px'}
+            checked={isEnd}
+            onChange={() => setIsEnd(!isEnd)}
           />
           <s.Label htmlFor="ok">완료 건 조회</s.Label>
         </s.BtnArea>

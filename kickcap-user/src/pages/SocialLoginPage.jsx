@@ -34,13 +34,13 @@ const SocialLoginPage = () => {
       { fcmToken, refreshToken },
       (resp) => {
         localStorage.setItem('Info', JSON.stringify({ name: resp.data.name, demerit: resp.data.demerit }));
-        alert(resp.data.name);
-        alert(resp.data.demerit);
         navigate('/main');
       },
       (error) => {
         alert('잠시 후 다시 시도해주세요.');
-        // navigate('/login');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        navigate('/');
       },
     );
   }, []);

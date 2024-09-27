@@ -35,11 +35,12 @@ const s = {
 
 const SplashPage = () => {
   const navigate = useNavigate();
-
   const setFcmToken = async () => {
     const fcmToken = await requestPermission();
-    localStorage.setItem('fcmToken', fcmToken);
-    navigate('/login');
+    if (fcmToken) {
+      localStorage.setItem('fcmToken', fcmToken);
+      navigate('/login');
+    }
   };
   useEffect(() => {
     setFcmToken();

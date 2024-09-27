@@ -27,7 +27,7 @@ export async function requestPermission() {
 
   const permission = await Notification.requestPermission();
   if (permission === 'denied') {
-    alert('알림이 차단되어 있습니다. 알림 권한을 허용해주세요.');
+    alert('알림이 차단되어 있습니다. 알림 권한을 수동으로 허용해주세요.');
     return;
   }
 

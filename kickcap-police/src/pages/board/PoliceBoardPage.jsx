@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BoardHeader from '../../components/Board/BoardHeader';
 import WeekChart from '../../components/Board/WeekChart';
@@ -10,7 +10,8 @@ import { Outlet } from 'react-router';
 import { usePageNavHook } from '../../lib/hook/usePageNavHook';
 import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
-import { chart1, chart2, etc } from '../../lib/data/ChartData';
+import { chart1, chart2, etc, bottomData } from '../../lib/data/ChartData';
+import { useSearchParams } from 'react-router-dom';
 
 const s = {
   Container: styled.div`
@@ -64,6 +65,15 @@ const s = {
 };
 
 const PoliceBoardPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [sido, setSido] = useState(searchParams.get('sido'));
+  const [gugun, setGugun] = useState(searchParams.get('gugun'));
+
+  useEffect(() => {
+    console.log(searchParams.get('sido'));
+    console.log(searchParams.get('gugun'));
+  }, [searchParams]);
+
   const crackLabel = ['안전모 미착용', '다인 승차'];
   const reportLabel = ['불법 주차', '안전모 미착용', '다인 승차', '보도 주행', '지정차로 위반'];
 
@@ -80,6 +90,11 @@ const PoliceBoardPage = () => {
     (etc.d / (etc.p + etc.n + etc.h + etc.d + etc.w)) * 100,
     (etc.w / (etc.p + etc.n + etc.h + etc.d + etc.w)) * 100,
   ];
+
+  const cCrack = ((bottomData.tCrack - bottomData.yCrack) / bottomData.yCrack) * 100;
+  const cReport = ((bottomData.tReport - bottomData.yReport) / bottomData.yReport) * 100;
+  const cAccident = ((bottomData.tAccident - bottomData.yAccident) / bottomData.yAccident) * 100;
+
   const times = chart2.map((item) => {
     return item.timeIndex === 0
       ? ' 0-2'
@@ -107,7 +122,7 @@ const PoliceBoardPage = () => {
       <s.Container>
         <s.MainArea>
           <s.MapArea>
-            <Outlet />
+            <Outlet context={{ setSido, setGugun, searchParams, setSearchParams }} />
           </s.MapArea>
           <s.DataArea>
             <s.ChartArea1>
@@ -123,12 +138,12 @@ const PoliceBoardPage = () => {
           </s.DataArea>
         </s.MainArea>
         <s.FooterArea>
-          <DayInfo title="일일 단속" data={'2,000'} />
-          <DayInfo title="일일 신고" data={'20,000'} />
-          <DayInfo title="일일 이의제기" data={'2,000'} />
-          <CompareInfo title={'전일 대비 단속'} data={'30.2'} />
-          <CompareInfo title={'전일 대비 신고'} data={'-35.2'} />
-          <CompareInfo title={'전일 대비 이의'} data={'2.4'} />
+          <DayInfo title="일일 단속" data={bottomData.tCrack.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+          <DayInfo title="일일 신고" data={bottomData.tReport.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+          <DayInfo title="일일 사고" data={bottomData.tAccident.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+          <CompareInfo title={'전일 대비 단속'} data={cCrack.toFixed(1)} />
+          <CompareInfo title={'전일 대비 신고'} data={cReport.toFixed(1)} />
+          <CompareInfo title={'전일 대비 사고'} data={cAccident.toFixed(1)} />
         </s.FooterArea>
       </s.Container>
     </>

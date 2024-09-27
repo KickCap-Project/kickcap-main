@@ -39,39 +39,32 @@ export const localAxios = () => {
       const originalRequest = error.config;
 
       // 401 에러 (액세스 토큰 만료 등)
-      if (error.response && error.response.status === 401) {
+      if (error.response && error.response.status === 500) {
         const refresh = getRefreshToken(); // 스토리지에서 리프레시 토큰 가져오기
 
-        // if (refresh) {
-        //   try {
-        //     const toeknRefreshResult = await instance.post(`/auth/login/refresh`, refresh, {
-        //       headers: {
-        //         'Content-Type': 'application/text',
-        //       },
-        //     });
-        //     const { accessToken, refreshToken } = toeknRefreshResult.data;
-        //     // 리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급받음
-        //     // const newAccessToken = await refreshAccessToken(refreshToken);
+        if (refresh) {
+          try {
+            const tokenRefreshResult = await instance.post(`/token/refresh`, refresh);
+            const { accessToken } = tokenRefreshResult.data;
 
-        //     // 새로운 액세스 토큰을 스토리지에 저장
-        //     setAccessToken(accessToken);
+            // 새로운 액세스 토큰을 스토리지에 저장
+            setAccessToken(accessToken);
 
-        //     // 실패한 요청을 새 액세스 토큰과 함께 재전송
-        //     originalRequest.headers.Authorization = `${accessToken}`;
-        //     originalRequest.headers.RefreshToken = `${refreshToken}`;
-        //     return axios(originalRequest);
-        //   } catch (refreshError) {
-        //     // 리프레시 토큰이 만료되었거나 오류가 발생한 경우 로그아웃 처리
-        //     removeTokens(); // 토큰 제거
-        //     window.location.href = '/login'; // 로그인 페이지로 리다이렉트
-        //     return Promise.reject(refreshError);
-        //   }
-        // } else {
-        //   // 리프레시 토큰이 없으면 로그아웃 처리
-        //   removeTokens();
-        //   window.location.href = '/login'; // 로그인 페이지로 리다이렉트
-        //   return Promise.reject(error);
-        // }
+            // 실패한 요청을 새 액세스 토큰과 함께 재전송
+            originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+            return axios(originalRequest);
+          } catch (refreshError) {
+            // 리프레시 토큰이 만료되었거나 오류가 발생한 경우 로그아웃 처리
+            removeTokens(); // 토큰 제거
+            window.location.href = '/login'; // 로그인 페이지로 리다이렉트
+            return Promise.reject(refreshError);
+          }
+        } else {
+          // 리프레시 토큰이 없으면 로그아웃 처리
+          removeTokens();
+          window.location.href = '/login'; // 로그인 페이지로 리다이렉트
+          return Promise.reject(error);
+        }
       }
 
       return Promise.reject(error);

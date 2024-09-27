@@ -38,6 +38,7 @@ const Input = ({
   onChange,
   onClick,
   onKeyPress,
+  checked,
 }) => {
   return (
     <>
@@ -57,6 +58,7 @@ const Input = ({
           placeColor={placeColor}
           placeholder={placeholder}
           InputColor={InputColor}
+          checked={checked}
           readOnly
         />
       ) : (
@@ -77,6 +79,7 @@ const Input = ({
           InputColor={InputColor}
           onClick={onClick}
           onChange={onChange}
+          checked={checked}
           onKeyPress={onKeyPress}
         />
       )}
