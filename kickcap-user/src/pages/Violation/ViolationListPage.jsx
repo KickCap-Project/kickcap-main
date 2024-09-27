@@ -78,72 +78,72 @@ const IndexComponent = ({ color, title }) => {
 const ViolationListPage = () => {
   // dummy data
 
-  // const [vList, setVList] = useState([]);
-  const [vList, setVList] = useState([
-    {
-      idx: 1,
-      date: '2024-08-03T03:12:12Z',
-      violationType: 1,
-      deadLine: '2024-09-02T14:59:59Z',
-      isFlag: 3,
-    },
-    {
-      idx: 2,
-      date: '2024-08-03T03:12:12Z',
-      violationType: 2,
-      deadLine: '2024-09-02T14:59:59Z',
-      isFlag: 2,
-    },
-    {
-      idx: 3,
-      date: '2024-08-03T03:12:12Z',
-      violationType: 3,
-      deadLine: '2024-09-02T14:59:59Z',
-      isFlag: 1,
-    },
-    {
-      idx: 4,
-      date: '2024-08-03T03:12:12Z',
-      violationType: 4,
-      deadLine: '2024-09-02T14:59:59Z',
-      isFlag: 0,
-    },
-    {
-      idx: 5,
-      date: '2024-08-03T03:12:12Z',
-      violationType: 5,
-      deadLine: '2024-09-02T14:59:59Z',
-      isFlag: 0,
-    },
-    {
-      idx: 6,
-      date: '2024-08-03T03:12:12Z',
-      violationType: 1,
-      deadLine: '2024-09-02T14:59:59Z',
-      isFlag: 0,
-    },
-    {
-      idx: 7,
-      date: '2024-08-03T03:12:12Z',
-      violationType: 1,
-      deadLine: '2024-09-02T14:59:59Z',
-      isFlag: 0,
-    },
-    {
-      idx: 8,
-      date: '2024-08-03T03:12:12Z',
-      violationType: 1,
-      deadLine: '2024-09-02T14:59:59Z',
-      isFlag: 0,
-    },
-    {
-      idx: 9,
-      date: '2024-08-03T03:12:12Z',
-      violationType: 1,
-      deadLine: '2024-09-02T14:59:59Z',
-      isFlag: 0,
-    },
-  ]);
+  const [vList, setVList] = useState([]);
+  // const [vList, setVList] = useState([
+  //   {
+  //     idx: 1,
+  //     date: '2024-08-03T03:12:12Z',
+  //     violationType: 1,
+  //     deadLine: '2024-09-02T14:59:59Z',
+  //     isFlag: 3,
+  //   },
+  //   {
+  //     idx: 2,
+  //     date: '2024-08-03T03:12:12Z',
+  //     violationType: 2,
+  //     deadLine: '2024-09-02T14:59:59Z',
+  //     isFlag: 2,
+  //   },
+  //   {
+  //     idx: 3,
+  //     date: '2024-08-03T03:12:12Z',
+  //     violationType: 3,
+  //     deadLine: '2024-09-02T14:59:59Z',
+  //     isFlag: 1,
+  //   },
+  //   {
+  //     idx: 4,
+  //     date: '2024-08-03T03:12:12Z',
+  //     violationType: 4,
+  //     deadLine: '2024-09-02T14:59:59Z',
+  //     isFlag: 0,
+  //   },
+  //   {
+  //     idx: 5,
+  //     date: '2024-08-03T03:12:12Z',
+  //     violationType: 5,
+  //     deadLine: '2024-09-02T14:59:59Z',
+  //     isFlag: 0,
+  //   },
+  //   {
+  //     idx: 6,
+  //     date: '2024-08-03T03:12:12Z',
+  //     violationType: 1,
+  //     deadLine: '2024-09-02T14:59:59Z',
+  //     isFlag: 0,
+  //   },
+  //   {
+  //     idx: 7,
+  //     date: '2024-08-03T03:12:12Z',
+  //     violationType: 1,
+  //     deadLine: '2024-09-02T14:59:59Z',
+  //     isFlag: 0,
+  //   },
+  //   {
+  //     idx: 8,
+  //     date: '2024-08-03T03:12:12Z',
+  //     violationType: 1,
+  //     deadLine: '2024-09-02T14:59:59Z',
+  //     isFlag: 0,
+  //   },
+  //   {
+  //     idx: 9,
+  //     date: '2024-08-03T03:12:12Z',
+  //     violationType: 1,
+  //     deadLine: '2024-09-02T14:59:59Z',
+  //     isFlag: 0,
+  //   },
+  // ]);
 
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
