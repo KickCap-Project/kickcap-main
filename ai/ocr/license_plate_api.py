@@ -4,7 +4,7 @@ from pydantic import BaseModel
 import cv2
 import numpy as np
 import re
-import redis
+import redis.asyncio as aioredis
 import pytz
 from datetime import datetime, timedelta
 import psycopg2
@@ -55,7 +55,7 @@ app.add_middleware(
 KST = pytz.timezone('Asia/Seoul')
 
 # Redis 클라이언트 설정
-redis_client = redis.Redis(host='localhost', port=5555, db=0)
+redis_client = aioredis.Redis(host='localhost', port=5555, db=0)
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
@@ -201,7 +201,7 @@ async def ocr_endpoint(request: OCRRequests):
             key = f"{request.camera_idx}_{request.type}_{result.result_text}"
 
             print(key)
-            if redis_client.exists(key):
+            if await redis_client.exists(key):
                 print(redis_client.ttl(key))
                 raise HTTPException(status_code=200, detail=f"Duplicate License Plate {redis_client.ttl(key)}")
 
