@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ViolationType, isFlagType, ViolationDetailType } from '../../lib/data/Violation';
+import { isFlagDetailType, ViolationDetailType } from '../../lib/data/Violation';
+import { convertToKoreanTimeString } from '../../lib/data/ConvertTime';
 
 const s = {
   TableWrapper: styled.div`
@@ -32,25 +33,18 @@ const s = {
 };
 
 const ViolationDetail = ({ detail }) => {
-  const formatDate = (dateString) => {
-    const [datePart, ampmPart, timePart] = dateString.split(' ');
-    const [year, month, day] = datePart.split('-');
-    return `${year}. ${month}. ${day}`;
-  };
-
   const renderTableData = (key, value) => {
     switch (key) {
       case 'date':
       case 'deadLine':
-        return formatDate(value);
+        return convertToKoreanTimeString(value);
       case 'demerit':
         return `${value} 점`;
-      case 'type':
-        return ViolationType[value].type;
-      case 'money':
+      case 'fine':
+      case 'totalBill':
         return `${value.toLocaleString()} 원`;
       case 'isFlag':
-        return isFlagType[value].status;
+        return isFlagDetailType[value];
       default:
         return value;
     }
@@ -62,7 +56,8 @@ const ViolationDetail = ({ detail }) => {
         <tbody>
           {Object.entries(detail).map(
             ([key, value], idx) =>
-              key !== 'isReq' && (
+              key !== 'isReq' &&
+              ViolationDetailType[key] && (
                 <s.Tr key={idx}>
                   <s.Th>{ViolationDetailType[key]}</s.Th>
                   <s.Td>{renderTableData(key, value)}</s.Td>

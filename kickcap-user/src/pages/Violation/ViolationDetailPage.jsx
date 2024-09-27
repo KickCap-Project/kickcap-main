@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Button from '../../components/Common/Button';
@@ -6,6 +6,7 @@ import Button from '../../components/Common/Button';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ViolationDetail from '../../components/Violation/ViolationDetail';
+import { getBillDetail, getImgFile } from '../../lib/api/violation-api';
 import { useLocation, useNavigate } from 'react-router';
 
 const s = {
@@ -38,7 +39,8 @@ const s = {
   ImgWrapper: styled.img`
     border: 1px solid black;
     width: 80%;
-    height: 250px;
+    /* height: 250px; */
+    max-height: 300px;
     margin-top: 0.5rem;
   `,
   ButtonWrapper: styled.div`
@@ -52,20 +54,9 @@ const s = {
 };
 
 const ViolationDetailPage = () => {
-  // dummy data
-  const detail = {
-    idx: 1,
-    kickBoard: '000-P0000',
-    date: '2024-08-03 오후 12:12:12',
-    place: '대전시 유성구 학하대로',
-    type: 3,
-    demerit: 3,
-    money: 20000,
-    deadLine: '2024-09-02 오후 23:59:59',
-    police: '대전 유성 경찰서',
-    isFlag: 0,
-    isReq: 0,
-  };
+  const [detail, setDetail] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [imgFile, setImgFile] = useState(null);
 
   const navigate = useNavigate();
   const id = useLocation().state?.idx || null;
@@ -84,15 +75,32 @@ const ViolationDetailPage = () => {
     navigate('', { state: { id } });
   };
 
+  useEffect(() => {
+    (async () => {
+      if (!isLoading) {
+        setIsLoading(true);
+        const detailReturn = await getBillDetail(id);
+        setDetail(detailReturn);
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    const imgSrc = detail.imageSrc;
+    const imgFileResponse = (async () => await getImgFile(imgSrc))();
+    setImgFile(imgFileResponse);
+  }, [detail]);
+
   return (
     <s.Container>
       <Header title={'나의 단속 내역'} />
       <s.MainArea>
         <s.BillWrapper>
-          <s.ImgWrapper></s.ImgWrapper>
+          <s.ImgWrapper src={imgFile}></s.ImgWrapper>
           <ViolationDetail detail={detail} />
           <s.ButtonWrapper>
-            {detail.isReq === 0 ? (
+            {detail.isObjection === 0 ? (
               <Button
                 width={'120px'}
                 height={'30px'}

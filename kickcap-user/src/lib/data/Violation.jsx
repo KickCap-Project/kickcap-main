@@ -40,14 +40,21 @@ export const isFlagType = {
   },
 };
 
+export const isFlagDetailType = {
+  UNPAID: '미납',
+  PAID: '완납',
+  CANCEL: '이의제기 승인',
+};
+
 export const ViolationDetailType = {
   idx: '고지서 번호',
-  kickBoard: '킥보드 번호',
+  kickboardNumber: '킥보드 번호',
   date: '위반 일시',
-  place: '위반 장소',
-  type: '위반 내역',
+  address: '위반 장소',
+  violationType: '위반 내역',
   demerit: '벌점',
-  money: '범칙금',
+  fine: '범칙금',
+  totalBill: '총 납부금액',
   deadLine: '납부 기한',
   police: '관할 경찰서',
   isFlag: '납부 상태',

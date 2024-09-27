@@ -227,7 +227,7 @@ const ReportMisuseForm = () => {
     try {
       const response = await axiosInstance.post('/reports/real-time', {
         violationType: typeRequest,
-        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/upload/type${typeRequest}/${imgUrl}`,
+        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/type${typeRequest}/${imgUrl}`,
         description: description,
         kickboardNumber: kickboardNumber,
         lat: latitude,
