@@ -18,10 +18,10 @@ import java.util.List;
 public class CrackdownRepositoryImpl {
 
     private final JPAQueryFactory queryFactory;
+    private final QCrackdown crackdown = QCrackdown.crackdown;
+    private final QCCTVInfo cctvInfo = QCCTVInfo.cCTVInfo;
 
     public List<Long> countCrackdownsByDateRangeAndRegion(List<Long> stationIdxList, ZonedDateTime startDate, ZonedDateTime endDate) {
-        QCrackdown crackdown = QCrackdown.crackdown;
-        QCCTVInfo cctvInfo = QCCTVInfo.cCTVInfo;
 
         // DATE() 함수로 변환한 crackdownTime을 사용하여 LocalDate로 비교합니다.
         DateTemplate<LocalDate> crackdownDate = Expressions.dateTemplate(LocalDate.class, "DATE({0})", crackdown.crackdownTime);
@@ -34,13 +34,12 @@ public class CrackdownRepositoryImpl {
                 .where(cctvInfo.policeId.in(stationIdxList)
                         .and(crackdown.crackdownTime.between(startDate, endDate))) // LocalDate 비교를 사용
                 .groupBy(crackdownDate)
+                .orderBy(crackdownDate.asc())
                 .fetch();
     }
 
     // 특정 지역(stationIdxList) 내에서 주어진 시간대(startHour~endHour) 동안 발생한 단속 건수를 집계합니다.
     public Long countCrackdownsByTimeRangeAndRegion(List<Long> stationIdxList, ZonedDateTime startDate, ZonedDateTime endDate, int startHour, int endHour) {
-        QCrackdown crackdown = QCrackdown.crackdown;
-        QCCTVInfo cctvInfo = QCCTVInfo.cCTVInfo;
 
         return queryFactory
                 .select(crackdown.count())
@@ -55,9 +54,6 @@ public class CrackdownRepositoryImpl {
 
     // 특정 시도 및 구군의 특정 타입별 단속 건수를 조회합니다.
     public Long getCrackdownCountByViolationType(List<Long> stationIdxList, ZonedDateTime startDate, ZonedDateTime endDate, Long n) {
-        System.out.println("No helmet crackdown count!!!!!!!!!!!!!");
-        QCrackdown crackdown = QCrackdown.crackdown;
-        QCCTVInfo cctvInfo = QCCTVInfo.cCTVInfo;
 
         return queryFactory
                 .select(crackdown.count())
@@ -69,4 +65,14 @@ public class CrackdownRepositoryImpl {
                 .fetchOne();
     }
 
+    public Long getCrackdownCountOfDay(List<Long> stationIdxList, ZonedDateTime startDay, ZonedDateTime endDay) {
+
+        return queryFactory
+                .select(crackdown.count())
+                .from(crackdown)
+                .join(crackdown.cctvInfo, cctvInfo)
+                .where(cctvInfo.policeId.in(stationIdxList)
+                        .and(crackdown.crackdownTime.between(startDay, endDay)))
+                .fetchOne();
+    }
 }
