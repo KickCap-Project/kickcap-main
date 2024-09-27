@@ -4,6 +4,7 @@ import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
 import com.ssafy.kickcap.report.dto.ParkingReportRequestDto;
 import com.ssafy.kickcap.report.dto.RedisRequestDto;
 import com.ssafy.kickcap.report.dto.ReportListResponseDto;
+import com.ssafy.kickcap.report.dto.ReportResponseDto;
 import com.ssafy.kickcap.report.service.ParkingReportService;
 import com.ssafy.kickcap.report.service.RealTimeReportService;
 import com.ssafy.kickcap.report.service.ReportService;
@@ -85,6 +86,15 @@ public class ReportController {
         List<ReportListResponseDto> reportList = reportService.getCompletedReports(violationType, police, pageNo);
 
         return ResponseEntity.ok(reportList); 
+    }
+
+    @GetMapping("/{reportId}")
+    @Operation(summary = "신고 상세 조회")
+    public ResponseEntity<ReportResponseDto> getReport(@AuthenticationPrincipal User user, @PathVariable Long reportId) {
+        Police police = policeService.findByPoliceId(user.getUsername());
+        ReportResponseDto responseDto = reportService.getReport(police, reportId);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping("/{reportId}/approve")
