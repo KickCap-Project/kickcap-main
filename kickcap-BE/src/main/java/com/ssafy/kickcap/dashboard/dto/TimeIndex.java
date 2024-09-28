@@ -33,7 +33,13 @@ public enum TimeIndex {
     }
 
     public static int fromTime(String time) {
+        // "HH:mm" 형식일 경우 초 부분을 "00"으로 추가합니다.
+        if (time.length() == 5) {
+            time = time + ":00";
+        }
+        
         for (TimeIndex timeIndex : values()) {
+            System.out.println(timeIndex.getStartTime());
             if (time.compareTo(timeIndex.getStartTime()) >= 0 && time.compareTo(timeIndex.getEndTime()) <= 0) {
                 return timeIndex.index;
             }

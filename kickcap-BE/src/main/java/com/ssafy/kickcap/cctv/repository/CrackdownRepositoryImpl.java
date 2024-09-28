@@ -3,8 +3,11 @@ package com.ssafy.kickcap.cctv.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
+import com.ssafy.kickcap.cctv.entity.CCTVInfo;
 import com.ssafy.kickcap.cctv.entity.QCCTVInfo;
 import com.ssafy.kickcap.cctv.entity.QCrackdown;
+import com.ssafy.kickcap.dashboard.dto.CamDataResponse;
+import com.ssafy.kickcap.dashboard.dto.TimeIndex;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.dsl.DateTimeExpression;
@@ -74,5 +77,29 @@ public class CrackdownRepositoryImpl {
                 .where(cctvInfo.policeId.in(stationIdxList)
                         .and(crackdown.crackdownTime.between(startDay, endDay)))
                 .fetchOne();
+    }
+
+
+    public List<CCTVInfo> findCCTVsByStationIdx(List<Long> stationIdxList) {
+
+        return queryFactory.selectFrom(cctvInfo)
+                .where(cctvInfo.policeId.in(stationIdxList))
+                .fetch();
+    }
+
+    public Long[] countCrackdownsByCCTVAndTimeRange(Long cctvIdx, ZonedDateTime startDate, ZonedDateTime endDate) {
+        Long[] counts = new Long[8];
+
+        for (TimeIndex timeIndex : TimeIndex.values()) {
+            counts[timeIndex.getIndex()] = queryFactory.select(crackdown.count())
+                    .from(crackdown)
+                    .where(crackdown.cctvInfo.id.eq(cctvIdx)
+                            .and(crackdown.crackdownTime.between(startDate, endDate)) // LocalDate 비교를 사용
+                            .and(crackdown.crackdownTime.hour().goe(Integer.parseInt(timeIndex.getStartTime().split(":")[0])))
+                            .and(crackdown.crackdownTime.hour().lt(Integer.parseInt(timeIndex.getEndTime().split(":")[0]) + 1)))
+                    .fetchOne();
+        }
+
+        return counts;
     }
 }
