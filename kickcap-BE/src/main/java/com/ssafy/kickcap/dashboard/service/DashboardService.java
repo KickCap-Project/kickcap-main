@@ -1,9 +1,12 @@
 package com.ssafy.kickcap.dashboard.service;
 
+import com.ssafy.kickcap.cctv.entity.CCTVInfo;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepositoryImpl;
 import com.ssafy.kickcap.dashboard.dto.*;
 import com.ssafy.kickcap.region.repository.RegionCodeRepositoryImpl;
+import com.ssafy.kickcap.report.entity.AccidentReport;
+import com.ssafy.kickcap.report.entity.Report;
 import com.ssafy.kickcap.report.repository.AccidentReportRepositoryImpl;
 import com.ssafy.kickcap.report.repository.ReportRepository;
 import com.ssafy.kickcap.report.repository.ReportRepositoryImpl;
@@ -35,7 +38,7 @@ public class DashboardService {
     // 일주일간 데이터를 조회합니다.
     public WeekResponse searchWeekData(String sido, String gugun) {
         List<Long> stationIdxList = regionCodeRepositoryImpl.findStationIdxByRegion(sido, gugun); // 해당 시도와 구군에 해당하는 stationIdx 목록 조회
-        System.out.println(stationIdxList);
+//        System.out.println(stationIdxList);
         return getWeekDataByRegion(stationIdxList);
     }
 
@@ -163,5 +166,86 @@ public class DashboardService {
         return accidentReportRepositoryImpl.getAccidentCountOfDay(stationIdxList, startDay, endDay);
     }
 
+
+    ///////////////////////////////////////구군 마커 데이터 조회////////////////////////////////////////////
+    public MarkersDataReponse searchGugunMarkerDate(String sido, String gugun) {
+        List<Long> stationIdxList = regionCodeRepositoryImpl.findStationIdxByRegion(sido, gugun); // 해당 시도와 구군에 해당하는 stationIdx 목록 조회
+        return getMarkerDataByRegion(stationIdxList);
+    }
+
+    private MarkersDataReponse getMarkerDataByRegion(List<Long> stationIdxList) {
+        List<CamDataResponse> camDataResponses = getCamData(stationIdxList);
+        List<PointDataResponse> pointDataResponses = getPointData(stationIdxList);
+        
+        return MarkersDataReponse.builder()
+                .camDataResponses(camDataResponses)
+                .pointDataResponses(pointDataResponses)
+                .build();
+    }
+
+    private List<CamDataResponse> getCamData(List<Long> stationIdxList) {
+        List<CCTVInfo> cctvInfos = crackdownRepositoryImpl.findCCTVsByStationIdx(stationIdxList);
+        List<CamDataResponse> camDataResponses = new ArrayList<>();
+
+        for (CCTVInfo cctvInfo : cctvInfos) {
+            Long[] crackdownCounts = crackdownRepositoryImpl.countCrackdownsByCCTVAndTimeRange(cctvInfo.getId(), startOfLastWeek, startOfToday);
+
+            CamDataResponse response = CamDataResponse.builder()
+                    .lat(cctvInfo.getLatitude())
+                    .lng(cctvInfo.getLongitude())
+                    .zero(crackdownCounts[0])
+                    .one(crackdownCounts[1])
+                    .two(crackdownCounts[2])
+                    .three(crackdownCounts[3])
+                    .four(crackdownCounts[4])
+                    .five(crackdownCounts[5])
+                    .six(crackdownCounts[6])
+                    .seven(crackdownCounts[7])
+                    .idx(cctvInfo.getId())
+                    .build();
+
+            camDataResponses.add(response);
+        }
+
+        return camDataResponses;
+    }
+
+
+    private List<PointDataResponse> getPointData(List<Long> stationIdxList) {
+        List<Report> reports = reportRepositoryImpl.findReportsByStationIdxAndDateRange(stationIdxList, startOfLastWeek, startOfToday);
+
+        List<PointDataResponse> pointDataResponses = new ArrayList<>();
+
+        for (Report report : reports) {
+            System.out.println(report.getReportTime().toLocalTime().toString());
+            int timeIndex = TimeIndex.fromTime(report.getReportTime().toLocalTime().toString());
+
+            PointDataResponse response = PointDataResponse.builder()
+                    .lat(report.getLatitude())
+                    .lng(report.getLongitude())
+                    .type(report.getViolationType().getId())
+                    .timeIndex(timeIndex)
+                    .build();
+
+            pointDataResponses.add(response);
+        }
+
+        List<AccidentReport> accidentReports = accidentReportRepositoryImpl.findReportsByStationIdxAndDateRange(stationIdxList, startOfLastWeek, startOfToday);
+
+        for (AccidentReport report : accidentReports) {
+            int timeIndex = TimeIndex.fromTime(report.getReportTime().toLocalTime().toString());
+
+            PointDataResponse response = PointDataResponse.builder()
+                    .lat(report.getLatitude())
+                    .lng(report.getLongitude())
+                    .type(6L)
+                    .timeIndex(timeIndex)
+                    .build();
+
+            pointDataResponses.add(response);
+        }
+
+        return pointDataResponses;
+    }
 
 }
