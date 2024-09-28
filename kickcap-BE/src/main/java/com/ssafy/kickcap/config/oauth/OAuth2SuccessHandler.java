@@ -40,10 +40,16 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String email = (String) oAuth2User.getAttributes().get("email");
+        String phone = (String) oAuth2User.getAttributes().get("mobile");
+        if (phone == null) {
+            phone = (String) oAuth2User.getAttributes().get("phoneNumber");
+        }
+        String name = (String) oAuth2User.getAttributes().get("name");
 
+        System.out.println("phone: "+phone);
+        System.out.println("name: "+name);
         // 이메일을 사용해 Member 엔티티를 가져옴
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByNameAndPhone(name, phone);
 
 //        // 클라이언트로부터 FCM 토큰을 받아서 처리
 //        String fcmToken = request.getHeader("Fcm-Token");

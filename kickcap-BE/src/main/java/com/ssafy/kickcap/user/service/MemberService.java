@@ -37,6 +37,11 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
     }
 
+    public Member findByNameAndPhone(String name, String phone) {
+        return memberRepository.findMemberByNameAndPhone(name, phone)
+                .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
+    }
+
     public void updateNameAndPhone(Long userId, RegisterDto registerDto) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
@@ -89,5 +94,6 @@ public class MemberService {
                 .history(history)
                 .build();
     }
+
 
 }
