@@ -1,9 +1,11 @@
 package com.ssafy.kickcap.cctv.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.ssafy.kickcap.cctv.entity.CCTVInfo;
+import com.ssafy.kickcap.cctv.entity.Crackdown;
 import com.ssafy.kickcap.cctv.entity.QCCTVInfo;
 import com.ssafy.kickcap.cctv.entity.QCrackdown;
 import com.ssafy.kickcap.dashboard.dto.CamDataResponse;
@@ -15,6 +17,8 @@ import com.querydsl.core.types.dsl.DateTimeExpression;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,22 +28,29 @@ public class CrackdownRepositoryImpl {
     private final QCrackdown crackdown = QCrackdown.crackdown;
     private final QCCTVInfo cctvInfo = QCCTVInfo.cCTVInfo;
 
-    public List<Long> countCrackdownsByDateRangeAndRegion(List<Long> stationIdxList, ZonedDateTime startDate, ZonedDateTime endDate) {
+    // 수정된 쿼리 메서드들 (Map<LocalDate, Long> 반환)
+    public Map<LocalDate, Long> countCrackdownsByDateRangeAndRegion(List<Long> stationIdxList, ZonedDateTime startDate, ZonedDateTime endDate) {
+        // java.sql.Date 사용
+        DateTemplate<java.sql.Date> crackdownDate = Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", crackdown.crackdownTime);
 
-        // DATE() 함수로 변환한 crackdownTime을 사용하여 LocalDate로 비교합니다.
-        DateTemplate<LocalDate> crackdownDate = Expressions.dateTemplate(LocalDate.class, "DATE({0})", crackdown.crackdownTime);
-
-        // 실제 쿼리 실행 부분
-        return queryFactory
-                .select(crackdown.count())
+        List<Tuple> results = queryFactory
+                .select(crackdownDate, crackdown.count())
                 .from(crackdown)
                 .join(crackdown.cctvInfo, cctvInfo)
                 .where(cctvInfo.policeId.in(stationIdxList)
-                        .and(crackdown.crackdownTime.between(startDate, endDate))) // LocalDate 비교를 사용
+                        .and(crackdown.crackdownTime.between(startDate, endDate)))
                 .groupBy(crackdownDate)
                 .orderBy(crackdownDate.asc())
                 .fetch();
+
+        return results.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(crackdownDate).toLocalDate(), // java.sql.Date를 LocalDate로 변환
+                        tuple -> tuple.get(crackdown.count())
+                ));
     }
+
+
 
     // 특정 지역(stationIdxList) 내에서 주어진 시간대(startHour~endHour) 동안 발생한 단속 건수를 집계합니다.
     public Long countCrackdownsByTimeRangeAndRegion(List<Long> stationIdxList, ZonedDateTime startDate, ZonedDateTime endDate, int startHour, int endHour) {
