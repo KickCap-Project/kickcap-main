@@ -2,6 +2,7 @@ package com.ssafy.kickcap.dashboard.controller;
 
 import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
 import com.ssafy.kickcap.dashboard.dto.BottomDateResponse;
+import com.ssafy.kickcap.dashboard.dto.MarkersDataReponse;
 import com.ssafy.kickcap.dashboard.dto.WeekResponse;
 import com.ssafy.kickcap.dashboard.service.DashboardService;
 import com.ssafy.kickcap.report.repository.ReportRepository;
@@ -67,8 +68,14 @@ public class DashboardController {
         return ResponseEntity.ok().body(bottomDateResponse);
     }
 
-//    @GetMapping("/policeStations")
-//    @Operation(summary = "구군 마커 데이터 조회", description = "특정 시도의 특정 구군의 cctv와 신고 데이터를 조회합니다.")
+    @GetMapping("/markers")
+    @Operation(summary = "구군 마커 데이터 조회", description = "특정 시도의 특정 구군의 cctv와 신고 데이터를 조회합니다.")
+    public ResponseEntity<MarkersDataReponse> getMarkersData(@RequestParam String sido,
+                                                             @RequestParam String gugun){
+
+        MarkersDataReponse markersDataReponse = dashboardService.searchGugunMarkerDate(sido, gugun);
+        return ResponseEntity.ok().body(markersDataReponse);
+    }
 
 
 }

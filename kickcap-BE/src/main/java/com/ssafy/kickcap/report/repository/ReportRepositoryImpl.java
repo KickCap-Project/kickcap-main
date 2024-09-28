@@ -3,7 +3,9 @@ package com.ssafy.kickcap.report.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
+import com.ssafy.kickcap.dashboard.dto.PointDataResponse;
 import com.ssafy.kickcap.report.entity.QReport;
+import com.ssafy.kickcap.report.entity.Report;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -58,5 +60,12 @@ public class ReportRepositoryImpl {
                 .where(report.police.id.in(stationIdxList)
                         .and(report.reportTime.between(startDay, endDay)))
                 .fetchOne();
+    }
+
+    public List<Report> findReportsByStationIdxAndDateRange(List<Long> stationIdxList, ZonedDateTime startDate, ZonedDateTime endDate) {
+        return queryFactory.selectFrom(report)
+                .where(report.police.id.in(stationIdxList)
+                        .and(report.reportTime.between(startDate, endDate)))
+                .fetch();
     }
 }
