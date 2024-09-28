@@ -18,6 +18,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -72,21 +73,30 @@ public class DashboardService {
 
         List<DayTotalResponse> weekData = new ArrayList<>();
 
-        List<Long> crackdownCounts = crackdownRepositoryImpl.countCrackdownsByDateRangeAndRegion(stationIdxList, startOfLastWeek, startOfToday); // 날짜별 단속 건수 조회
-        List<Long> reportCounts = reportRepositoryImpl.countReportsByDateRangeAndRegion(stationIdxList, startOfLastWeek, startOfToday); // 날짜별 신고 건수 조회
-        List<Long> accidentCounts = accidentReportRepositoryImpl.countAccidentsByDateRangeAndRegion(stationIdxList, startOfLastWeek, startOfToday); // 날짜별 사고 건수 조회
+        // 수정된 쿼리 메서드 호출
+        Map<LocalDate, Long> crackdownMap = crackdownRepositoryImpl.countCrackdownsByDateRangeAndRegion(stationIdxList, startOfLastWeek, startOfToday);
+        Map<LocalDate, Long> reportMap = reportRepositoryImpl.countReportsByDateRangeAndRegion(stationIdxList, startOfLastWeek, startOfToday);
+        Map<LocalDate, Long> accidentMap = accidentReportRepositoryImpl.countAccidentsByDateRangeAndRegion(stationIdxList, startOfLastWeek, startOfToday);
 
+        // 지난 일주일 동안의 날짜 리스트 생성
+        List<LocalDate> dateList = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
-            DayTotalResponse response = DayTotalResponse.builder()
-                    .crackDown(crackdownCounts.get(i).intValue()) // 단속 건수 설정
-                    .report(reportCounts.get(i).intValue()) // 신고 건수 설정
-                    .accident(accidentCounts.get(i).intValue()) // 사고 건수 설정
-                    .date(startOfLastWeek.plusDays(i).toString()) // 날짜 설정
-                    .build();
-            weekData.add(response); // 리스트에 추가
+            LocalDate date = startOfLastWeek.toLocalDate().plusDays(i);
+            dateList.add(date);
         }
 
-        return weekData; // 결과 리스트 반환
+        // 날짜별로 카운트를 설정하고, 없는 경우 0으로 채움
+        for (LocalDate date : dateList) {
+            DayTotalResponse response = DayTotalResponse.builder()
+                    .crackDown(crackdownMap.getOrDefault(date, 0L).intValue())
+                    .report(reportMap.getOrDefault(date, 0L).intValue())
+                    .accident(accidentMap.getOrDefault(date, 0L).intValue())
+                    .date(date.toString())
+                    .build();
+            weekData.add(response);
+        }
+
+        return weekData;
     }
 
     // 주어진 시도와 구군에 해당하는 단속 데이터를 시간대별로 집계하여 반환합니다.
