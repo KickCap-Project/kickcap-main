@@ -11,11 +11,12 @@ import cam2 from '../../asset/cam2.png';
 import cam3 from '../../asset/cam3.png';
 import cam4 from '../../asset/cam4.png';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { markerData } from '../../lib/data/BoardData.js';
 import BoardCameraModal from '../Modal/BoardCameraModal.jsx';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook.js';
 import { modalActions, selectIsCamera } from '../../store/modal.js';
 import { pageActions, selectBoardNav } from '../../store/page.js';
+import { getMarkerData } from '../../lib/api/board-api.js';
+import { useSearchParams } from 'react-router-dom';
 
 const s = {
   Container: styled.div`
@@ -81,15 +82,33 @@ const CameraMap = ({ point }) => {
   const [markerType, setMarkerType] = useState(4); // 추가된 상태
   const [timeType, setTimeType] = useState(0);
   const [markers, setMarkers] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [mapData, setMapData] = useState({});
+
+  //데이터 받기
+  useEffect(() => {
+    const sido = searchParams.get('sido');
+    const gugun = searchParams.get('gugun');
+    getMarkerData(
+      sido,
+      gugun,
+      (resp) => {
+        setMapData(resp.data);
+      },
+      (error) => {
+        alert('데이터를 불러오는 도중 에러가 발생했습니다.');
+      },
+    );
+  }, [searchParams]);
 
   // 카메라 배열 전처리
   const calculateRatios = (data) => {
     const sum = Array(8).fill(0);
-
+    const indexName = ['zero', 'one', 'tow', 'three', 'four', 'five', 'six', 'seven'];
     // 각 카메라 데이터에서 키(0~7)의 값들을 합산
     data.forEach((camera) => {
       for (let i = 0; i < 8; i++) {
-        sum[i] += camera[i];
+        sum[i] += camera[indexName[i]];
       }
     });
 
@@ -101,13 +120,11 @@ const CameraMap = ({ point }) => {
       }
       return ratioObj;
     });
-
     return ratios;
   };
 
-  const result = calculateRatios(markerData.camera);
-  console.log(result);
-  ////////
+  // const result = calculateRatios(markerData.camera);
+  const result = mapData.camDataResponses !== undefined ? calculateRatios(mapData.camDataResponses) : [];
 
   const handleChangeTimeType = (e) => {
     setTimeType(e.target.value);
@@ -120,7 +137,7 @@ const CameraMap = ({ point }) => {
       return;
     }
     const container = document.getElementById('map');
-    const options = { center: new kakao.maps.LatLng(data.lat, data.lng), level: 4 };
+    const options = { center: new kakao.maps.LatLng(data.lat, data.lng), level: 6 };
     const kakaoMap = new kakao.maps.Map(container, options);
     setMap(kakaoMap);
 
@@ -156,24 +173,8 @@ const CameraMap = ({ point }) => {
     };
 
     const newMarkers = [];
-
-    // markerData.camera.map((data, index) => {
-    //   const marker = new kakao.maps.Marker({
-    //     position: new kakao.maps.LatLng(data.lat, data.lng),
-    //     title: data.idx,
-    //     map: kakaoMap,
-    //     image: data.level === 0 ? cam1Img : data.level === 1 ? cam2Img : data.level === 2 ? cam3Img : cam4Img,
-    //   });
-
-    //   // 클릭 이벤트 추가
-    //   kakao.maps.event.addListener(marker, 'click', () => {
-    //     setCameraIdx(data.idx);
-    //     handleOpenCamera(true);
-    //   });
-
-    //   newMarkers.push(marker);
-    // });
     result.map((data, index) => {
+      console.log('rr');
       const marker = new kakao.maps.Marker({
         position: new kakao.maps.LatLng(data.lat, data.lng),
         title: data.idx,
@@ -190,37 +191,45 @@ const CameraMap = ({ point }) => {
       newMarkers.push(marker);
     });
 
-    markerData.point.map((data, index) => {
-      if (markerType === data.type && timeType == data.timeIndex) {
-        const marker = new kakao.maps.Marker({
-          position: new kakao.maps.LatLng(data.lat, data.lng),
-          map: kakaoMap,
-          image:
-            data.type === 1
-              ? peopleImg
-              : data.type === 2
-              ? sidewalkImg
-              : data.type === 3
-              ? helmetImg
-              : data.type === 4
-              ? noparkImg
-              : data.type === 5
-              ? roadImg
-              : accidentImg,
-        });
-
-        // 클릭 이벤트 추가
-        kakao.maps.event.addListener(marker, 'click', () => {
-          alert(`Point Type ${data.type} clicked!`);
-        });
-
-        newMarkers.push(marker);
-      }
-    });
+    console.log(mapData.pointDataResponses);
+    mapData.pointDataResponses &&
+      mapData.pointDataResponses.map((data, index) => {
+        if (markerType === data.type && timeType == data.timeIndex) {
+          const marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(data.lat, data.lng),
+            map: kakaoMap,
+            title:
+              data.type === 1
+                ? '다인 승차'
+                : data.type === 2
+                ? '보도 주행'
+                : data.type === 3
+                ? '안전모 미착용'
+                : data.type === 4
+                ? '불법 주차'
+                : data.type === 5
+                ? '지정차로 위반'
+                : '사고 지점',
+            image:
+              data.type === 1
+                ? peopleImg
+                : data.type === 2
+                ? sidewalkImg
+                : data.type === 3
+                ? helmetImg
+                : data.type === 4
+                ? noparkImg
+                : data.type === 5
+                ? roadImg
+                : accidentImg,
+          });
+          newMarkers.push(marker);
+        }
+      });
 
     // 새 마커 설정
     setMarkers(newMarkers);
-  }, [data, markerType, timeType]);
+  }, [data, markerType, timeType, mapData]);
 
   const type = useAppSelector(selectBoardNav);
   const handleClickIcon = (mode) => {
