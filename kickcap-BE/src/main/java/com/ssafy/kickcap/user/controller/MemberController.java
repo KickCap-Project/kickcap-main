@@ -1,25 +1,19 @@
 package com.ssafy.kickcap.user.controller;
 
+import com.ssafy.kickcap.config.jwt.TokenProvider;
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
 import com.ssafy.kickcap.user.dto.*;
 import com.ssafy.kickcap.user.entity.Member;
-import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.service.DeviceInfoService;
 import com.ssafy.kickcap.user.service.MemberService;
-import com.ssafy.kickcap.config.jwt.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Duration;
 
 @RequiredArgsConstructor
 @RestController
@@ -80,8 +74,8 @@ public class MemberController {
 
     @GetMapping("/{memberId}/info")
     @Operation(summary = "단속자 정보 조회", description = "신고페이지에서 단속자 정보를 조회합니다.")
-    public ResponseEntity<MemberInfoResponseDto> getMemberInfo(@PathVariable Long memberId, @RequestBody MemberInfoReqeustDto reqeustDto) {
-        MemberInfoResponseDto memberInfo = memberService.getMemberInfo(memberId, reqeustDto.getReportIdx());
+    public ResponseEntity<MemberInfoResponseDto> getMemberInfo(@PathVariable Long memberId, @RequestParam Long reportId) {
+        MemberInfoResponseDto memberInfo = memberService.getMemberInfo(memberId, reportId);
         return ResponseEntity.ok(memberInfo);
     }
 }
