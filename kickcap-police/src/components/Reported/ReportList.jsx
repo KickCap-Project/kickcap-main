@@ -14,7 +14,9 @@ import {
 } from '../../lib/api/report-api';
 import moment from 'moment';
 import Pagination from 'react-js-pagination';
+import ReactPaginate from 'react-paginate';
 import { useSearchParams } from 'react-router-dom';
+import '../../styles/Pagination.css';
 
 const s = {
   Container: styled.div`
@@ -96,6 +98,9 @@ const s = {
     height: 40px;
     border: 1px solid red;
     margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `,
 };
 
@@ -103,9 +108,10 @@ const ReportList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const type = useAppSelector(selectReportNav);
   const dispatch = useAppDispatch();
+  const [test, setTest] = useState(1);
   const [violationType, setViolationType] = useState(searchParams.get('violationType'));
   const [totalPage, setTotalPage] = useState(0);
-  const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
+  const [pageNo, setPageNo] = useState(Number(searchParams.get('pageNo')));
   const [isEnd, setIsEnd] = useState(false);
   const [data, setData] = useState([]);
   const handleClickIcon = (mode) => {
@@ -116,8 +122,9 @@ const ReportList = () => {
   };
 
   useEffect(() => {
+    // alert(pageNo);
     setViolationType(searchParams.get('violationType'));
-    setPageNo(pageNo);
+    setPageNo(Number(searchParams.get('pageNo')));
     const newViolationType =
       searchParams.get('violationType') == 4
         ? 'park'
@@ -140,11 +147,13 @@ const ReportList = () => {
 
   const navigate = useNavigate();
   const handleMovePage = (reportId) => {
-    navigate(`read?violationType=${violationType}&detail=${reportId}`);
+    navigate(`read?violationType=${violationType}&detail=${reportId}`, { state: { pageNo } });
   };
 
   const handleClickPage = (pageNo) => {
     setPageNo(pageNo);
+    setTest(pageNo);
+    setSearchParams({ violationType, pageNo });
   };
 
   useEffect(() => {
@@ -153,7 +162,7 @@ const ReportList = () => {
       getReportEndTotalCount(
         violationType,
         (resp) => {
-          setTotalPage(resp.data.totalCount);
+          setTotalPage(resp.data);
         },
         (error) => {
           alert('잠시 후 다시 시도해주세요.');
@@ -174,7 +183,7 @@ const ReportList = () => {
       getReportTotalCount(
         violationType,
         (resp) => {
-          setTotalPage(resp.data.totalCount);
+          setTotalPage(resp.data);
         },
         (error) => {
           alert('잠시 후 다시 시도해주세요.');
@@ -234,7 +243,7 @@ const ReportList = () => {
       <s.PageFooter>
         <s.BtnArea></s.BtnArea>
         <s.pageArea>
-          {/* <Pagination
+          <Pagination
             activePage={pageNo} // 현재 페이지
             itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
             totalItemsCount={totalPage} // 총 아이템 갯수
@@ -242,6 +251,14 @@ const ReportList = () => {
             prevPageText={'‹'} // "이전"을 나타낼 텍스트
             nextPageText={'›'} // "다음"을 나타낼 텍스트
             onChange={handleClickPage} // 페이지 변경을 핸들링하는 함수
+          />
+          {/* <ReactPaginate
+            pageCount={totalPage}
+            previousLabel={'<'}
+            nextLabel={'>'}
+            onPageChange={handleClickPage}
+            pageRangeDisplayed={10}
+            renderOnZeroPageCount={null}
           /> */}
         </s.pageArea>
         <s.BtnArea>

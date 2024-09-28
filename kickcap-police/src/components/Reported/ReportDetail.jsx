@@ -10,7 +10,7 @@ import ReportParkModal from './../Modal/ReportParkModal';
 import { useModalExitHook } from './../../lib/hook/useModalExitHook';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions, selectIsReportInfo, selectIsReportPark } from '../../store/modal';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { getCrackInfo, getListDetail, getParkData, postApprove, postReject } from '../../lib/api/report-api';
 import moment from 'moment';
@@ -69,7 +69,7 @@ const s = {
   BtnArea: styled.div`
     width: 800px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin: 30px auto;
   `,
 };
@@ -79,6 +79,7 @@ const ReportDetail = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const reportId = searchParams.get('detail');
   const violationType = searchParams.get('violationType');
+  const pageNo = useLocation().state?.pageNo;
   const [reportData, setReportData] = useState({});
   const [crackInfo, setCrackInfo] = useState({});
   const [park, setPark] = useState([]);
@@ -94,7 +95,7 @@ const ReportDetail = () => {
 
   const navigate = useNavigate();
   const handleMoveList = () => {
-    navigate('..');
+    navigate(`../../report?violationType=${violationType}&pageNo=${pageNo ? pageNo : 1}`);
   };
 
   const handleReportAccess = async () => {
@@ -216,6 +217,8 @@ const ReportDetail = () => {
           width={'150px'}
           size={'20px'}
           onClick={handleMoveList}
+          display={'block'}
+          margin={'0 10px'}
         />
         {violationType === '4' ? (
           <Button
@@ -225,6 +228,8 @@ const ReportDetail = () => {
             width={'150px'}
             size={'20px'}
             onClick={() => handleOpenParkModal(true)}
+            display={'block'}
+            margin={'0 10px'}
           />
         ) : (
           ''
@@ -236,26 +241,44 @@ const ReportDetail = () => {
           width={'150px'}
           size={'20px'}
           onClick={() => handleOpenInfoModal(true)}
+          display={'block'}
+          margin={'0 10px'}
+          // onClick={test}
         />
-        <Button
-          bold={'700'}
-          children={'반 려'}
-          height={'40px'}
-          width={'150px'}
-          size={'20px'}
-          onClick={handleReportReject}
-        />
-        <Button
-          bold={'700'}
-          children={'고지서 전송'}
-          height={'40px'}
-          width={'150px'}
-          size={'20px'}
-          onClick={handleReportAccess}
-        />
+        {reportData.isEnd == 0 ? (
+          <>
+            <Button
+              bold={'700'}
+              children={'반 려'}
+              height={'40px'}
+              width={'150px'}
+              size={'20px'}
+              onClick={handleReportReject}
+              display={'block'}
+              margin={'0 10px'}
+            />
+            <Button
+              bold={'700'}
+              children={'고지서 전송'}
+              height={'40px'}
+              width={'150px'}
+              size={'20px'}
+              onClick={handleReportAccess}
+              display={'block'}
+              margin={'0 10px'}
+            />
+          </>
+        ) : (
+          ''
+        )}
       </s.BtnArea>
-      <ReportParkModal open={isPark} toggleModal={handleOpenParkModal} />
-      <ReportInfoModal open={isInfo} toggleModal={handleOpenInfoModal} />
+      <ReportParkModal
+        open={isPark}
+        toggleModal={handleOpenParkModal}
+        kick={{ lat: reportData.lat, lng: reportData.lng }}
+        park={park}
+      />
+      <ReportInfoModal open={isInfo} toggleModal={handleOpenInfoModal} data={crackInfo} />
     </s.Container>
   );
 };
