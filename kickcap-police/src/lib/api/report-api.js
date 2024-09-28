@@ -27,14 +27,17 @@ export const getListDetail = async (reportId, success, fail) => {
   await local.get(`/reports/${reportId}`).then(success).catch(fail);
 };
 
-export const getCrackInfo = async (memberId, reportIdx, success, fail) => {
+export const getCrackInfo = async (memberId, reportId, success, fail) => {
   // 단속자 정보 조회
-  await local.get(`/members/${memberId}/info`, reportIdx).then(success).catch(fail);
+  await local.get(`/members/${memberId}/info`, { params: { reportId } }).then(success).catch(fail);
 };
 
-export const getParkData = async (param, success, fail) => {
+export const getParkData = async (data, success, fail) => {
   // 주차장 정보 조회
-  await local.get(`/parking-data`, param).then(success).catch(fail);
+  await local
+    .get(`/parking-data`, { params: { lat: data.lat, lng: data.lng } })
+    .then(success)
+    .catch(fail);
 };
 
 export const postApprove = async (reportId, success, fail) => {
