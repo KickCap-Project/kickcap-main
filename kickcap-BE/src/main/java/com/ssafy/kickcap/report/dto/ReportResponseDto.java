@@ -27,4 +27,6 @@ public class ReportResponseDto {
 
     private float lng;
 
+    private int isEnd;  // 0 = 미완료, 1 = 완료
+
 }
