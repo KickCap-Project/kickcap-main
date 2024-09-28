@@ -96,7 +96,7 @@ const Header = ({ title, subTitle }) => {
   const handleClickIcon = (mode) => {
     dispatch(navActions.change(mode));
     if (mode === 'board') {
-      navigate(`/${mode}?sido=전국`);
+      navigate(`/${mode}`);
     } else if (mode === 'complaint') {
       navigate(`/${mode}?state=receipt&pageNo=1`);
     } else {

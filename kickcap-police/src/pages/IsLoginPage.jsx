@@ -19,7 +19,7 @@ export const PublicRoute = () => {
   const checkLogin = !!localStorage.getItem('accessToken');
   const location = useLocation();
   if (checkLogin && location.pathname === '/') {
-    return <Navigate replace to="/board?sido=전국" />;
+    return <Navigate replace to="/board" />;
   }
   return checkLogin ? <Navigate to={'*'} /> : <Outlet />;
 };
