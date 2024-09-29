@@ -8,6 +8,8 @@ import Footer from '../../components/Footer';
 import ObjectionList from '../../components/Objection/ObjectionList';
 import ObjectionEmpty from '../../components/Objection/ObjectionEmpty';
 
+import { getObjectionList } from '../../lib/api/objection-api';
+
 const s = {
   Container: styled.div`
     display: flex;
@@ -108,42 +110,35 @@ const ObjectionListPage = () => {
       title: '다시 검토해주세요',
     },
   ]);
-  const [isSelected, setIsSelected] = useState(true);
 
   // 접수완료 : status = 0
   // 답변완료 : status = 1
-
-  // 페이지 진입 시 접수완료 목록 보이기
-  useEffect(() => {
-    axios
-      .get('', {
-        params: {
-          status: 0,
-        },
-      })
-      .then((response) => {
-        setObjectionList(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  const [status, setStatus] = useState(0);
 
   // 접수완료, 답변완료 버튼 클릭 시 isSelected 변경 및 axios 요청
   const onClickControl = (item) => {
-    console.log(item);
-
-    // axios get
+    setStatus(item);
   };
+  
+  const loadData = async (status) => {
+    const response = await getObjectionList(status);
+    setObjectionList(response)
+  }
+  
+  // 페이지 진입 시 접수완료 목록 보이기
+  // status에 따라 API 요청을 보내 목록 받기
+  useEffect(() => {
+    loadData(status);
+  }, [status]);
 
   return (
     <s.Container>
       <Header title="나의 이의 내역" />
       <s.ControlBar>
-        <s.ControlItem isSelected={'true'} onClick={() => onClickControl('ProcessingList')}>
+        <s.ControlItem isSelected={status === 0} onClick={() => onClickControl(0)}>
           접수 내역
         </s.ControlItem>
-        <s.ControlItem onClick={() => onClickControl('CompletedList')}>완료 내역</s.ControlItem>
+        <s.ControlItem isSelected={status === 1} onClick={() => onClickControl(1)}>완료 내역</s.ControlItem>
       </s.ControlBar>
       {objectionList.length !== 0 ? (
         <s.MainArea>
