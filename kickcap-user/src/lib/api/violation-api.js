@@ -9,6 +9,8 @@ export const getBillList = async (pageNo) => {
       params: { pageNo },
     });
 
+    console.log(`response.status: ${response.status}`);
+
     if (response.status === 200) {
       return response.data;
     } else {
@@ -63,6 +65,7 @@ export const getImgFile = async (imgSrc) => {
     const response = await axios.get(imgSrc, { responseType: 'blob' });
 
     if (response.status === 200) {
+      console.log('이미지 파일을 불러오는 데 성공했습니다.');
       return response.data;
     }
 
