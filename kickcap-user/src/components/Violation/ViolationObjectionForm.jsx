@@ -7,6 +7,8 @@ import TextArea from '../Common/TextArea';
 import Button from '../Common/Button';
 import { useNavigate } from 'react-router';
 
+import { submitObjection } from '../../lib/api/violation-api';
+
 const s = {
   Container: styled.div`
     width: 100%;
@@ -22,13 +24,13 @@ const s = {
   `,
 };
 
-const ViolationObjectionForm = () => {
+const ViolationObjectionForm = ({ id }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title && !content) {
@@ -46,8 +48,18 @@ const ViolationObjectionForm = () => {
     console.log(`title: ${title}`);
     console.log(`content: ${content}`);
 
-    navigate('success');
-    // axios post 요청 입력
+    try {
+      const response = await submitObjection(id, title, content);
+
+      console.log(`response.status: ${response.status}`);
+
+      if (response.status === 200) {
+        navigate('success');
+      }
+    } catch (err) {
+      console.log(`이의제기 제출 중 오류 발생: ${err}`)
+      setError('이의제기 제출에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
   };
 
   return (

@@ -129,13 +129,15 @@ const ReportIllegalParkingForm = () => {
     // 신고 - 불법주차 신고
     // axios.post
     try {
-      const response = await axiosInstance.post('/reports/parking', {
+      const payload = {
         violationType: 4,
         image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/type4/${imgUrl}`,
         description: description,
         kickboardNumber: kickboardNumber,
         reportTime: date,
-      });
+      };
+
+      const response = await axiosInstance.post('/reports/parking', payload);
 
       if (response.status === 201) {
         navigate('/report/parking/success');

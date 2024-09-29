@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 
+import { convertToKoreanTimeString } from '../../lib/data/ConvertTime';
+
 const s = {
   Container: styled.div`
     display: flex;
@@ -44,12 +46,6 @@ const s = {
 const ObjectionList = ({ objectionList }) => {
   const TEXTLINE_MARGIN = '12px';
 
-  const onClickCardFunction = (objection) => {
-    console.log(`onClick: ${objection.idx}`);
-
-    // navigate
-  };
-
   const navigate = useNavigate();
   const handleMovePage = (idx) => {
     navigate('detail', { state: { idx } });
@@ -65,7 +61,7 @@ const ObjectionList = ({ objectionList }) => {
             <s.CardTitle>제 목</s.CardTitle>
           </s.CardColumn>
           <s.CardColumn type="content">
-            <s.CardContent margin={TEXTLINE_MARGIN}>{objection.date}</s.CardContent>
+            <s.CardContent margin={TEXTLINE_MARGIN}>{convertToKoreanTimeString(objection.date)}</s.CardContent>
             <s.CardContent>{objection.title}</s.CardContent>
           </s.CardColumn>
         </s.Card>

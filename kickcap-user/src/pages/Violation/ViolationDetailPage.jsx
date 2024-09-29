@@ -83,8 +83,9 @@ const ViolationDetailPage = () => {
         try {
           const detailResponse = await getBillDetail(id);
           setDetail(detailResponse);
+          console.log('세부 항목을 불러오는 데 성공했습니다.');
 
-          const imgSrc = detail.imageaSrc;
+          const imgSrc = detail.imageSrc;
           const imgFileResponse = (async () => await getImgFile(imgSrc))();
           setImgFile(imgFileResponse);
         } catch (error) {

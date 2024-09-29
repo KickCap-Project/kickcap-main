@@ -225,7 +225,7 @@ const ReportMisuseForm = () => {
     // 신고 - 실시간 이용 신고
     // axios.post
     try {
-      const response = await axiosInstance.post('/reports/real-time', {
+      const payload = {
         violationType: typeRequest,
         image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/type${typeRequest}/${imgUrl}`,
         description: description,
@@ -235,7 +235,9 @@ const ReportMisuseForm = () => {
         addr: address,
         code: code,
         reportTime: date,
-      });
+      };
+
+      const response = await axiosInstance.post('/reports/real-time', payload);
 
       if (response.status === 201) {
         navigate('/report/real-time/success');
