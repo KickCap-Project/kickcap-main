@@ -227,7 +227,7 @@ const ReportMisuseForm = () => {
     try {
       const response = await axiosInstance.post('/reports/real-time', {
         violationType: typeRequest,
-        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/upload/type${typeRequest}/${imgUrl}`,
+        image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/type${typeRequest}/${imgUrl}`,
         description: description,
         kickboardNumber: kickboardNumber,
         lat: latitude,
@@ -245,7 +245,7 @@ const ReportMisuseForm = () => {
     } catch (error) {
       // 신고 제출 오류
       console.log('신고 제출 중 오류 발생: ' + error);
-      alert('킥보드 번호판 정보를 다시 한 번 확인해주세요.');
+      alert('입력 정보를 다시 한 번 확인해주세요.');
     }
   };
 

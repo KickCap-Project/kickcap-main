@@ -46,11 +46,6 @@ const s = {
 };
 
 const ViolationList = ({ vList }) => {
-  // onClick event handler function
-  const onClickCardFunction = (violation) => {
-    console.log(`onClick: ${violation.idx}`);
-  };
-
   const navigate = useNavigate();
   const handleMovePage = (idx) => {
     navigate('detail', { state: { idx } });
@@ -58,23 +53,19 @@ const ViolationList = ({ vList }) => {
 
   return (
     <s.Container>
-      {vList.map((violation) => (
-        <s.Card
-          key={violation.idx}
-          color={isFlagType[violation.isFlag].color}
-          onClick={() => handleMovePage(violation.idx)}
-        >
+      {vList.map((v) => (
+        <s.Card key={v.idx} color={isFlagType[v.isFlag].color} onClick={() => handleMovePage(v.idx)}>
           <s.CardRow>
             <s.CardRowTitle>위반일시</s.CardRowTitle>
-            <s.CardRowContent>{convertToKoreanTimeString(violation.date)}</s.CardRowContent>
+            <s.CardRowContent>{convertToKoreanTimeString(v.date)}</s.CardRowContent>
           </s.CardRow>
           <s.CardRow>
             <s.CardRowTitle>위반내용</s.CardRowTitle>
-            <s.CardRowContent>{ViolationType[violation.violationType].type}</s.CardRowContent>
+            <s.CardRowContent>{ViolationType[v.violationType].type}</s.CardRowContent>
           </s.CardRow>
           <s.CardRow>
             <s.CardRowTitle>납부기한</s.CardRowTitle>
-            <s.CardRowContent>{violation.deadLine}</s.CardRowContent>
+            <s.CardRowContent>{convertToKoreanTimeString(v.deadLine)}</s.CardRowContent>
           </s.CardRow>
         </s.Card>
       ))}
