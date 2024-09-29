@@ -76,3 +76,19 @@ export const getImgFile = async (imgSrc) => {
     return null;
   }
 };
+
+export const submitObjection = async (billId, title, content) => {
+  try {
+    const response = await axiosInstance.post(`/bills/${billId}/objections`, {
+      title,
+      content,
+    });
+
+    if (response.status === 200) {
+      console.log('이의제기 POST 요청 성공');
+      return response;
+    }
+  } catch (err) {
+    console.log(`이의제기 POST 요청 실패: ${err}`);
+  } 
+};
