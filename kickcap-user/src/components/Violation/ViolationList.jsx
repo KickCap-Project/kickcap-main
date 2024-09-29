@@ -46,7 +46,6 @@ const s = {
 };
 
 const ViolationList = ({ vList }) => {
-  console.log(vList);
   const navigate = useNavigate();
   const handleMovePage = (idx) => {
     navigate('detail', { state: { idx } });

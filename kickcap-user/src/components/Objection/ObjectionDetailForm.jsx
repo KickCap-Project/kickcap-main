@@ -7,6 +7,8 @@ import TextArea from './../Common/TextArea';
 import Button from './../Common/Button';
 import { useLocation, useNavigate } from 'react-router';
 
+import { deleteObjectionDetail, putObjectionDetail } from '../../lib/api/objection-api';
+
 const s = {
   Container: styled.div`
     width: 100%;
@@ -77,6 +79,8 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   const [responseContent, setResponseContent] = useState(objectionDetail.responseContent);
   const [responseDate, setResponseDate] = useState(objectionDetail.responseDate);
 
+  const id = useLocation().state?.idx || null;
+
   const inputProps = (type) => {
     return modifyMode
       ? {
@@ -93,24 +97,66 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
 
   const navigate = useNavigate();
 
+  // 삭제 요청
+  const toDelete = async (objectionId) => {
+    try {
+      const response = await deleteObjectionDetail(objectionId);
+
+      console.log(`response.status: ${response.status}`);
+
+      if (response.status === 204) {
+        alert('삭제되었습니다.');
+        navigate('/objection');
+      } else {
+        console.log(`response.status: ${response.status}`);
+        alert(`이의제기 삭제 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.`);
+      }
+    } catch (err) {
+      console.log(`이의제기 삭제 중 문제 발생: ${err}`);
+      alert(`이의제기 삭제 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.`);
+    }
+  };
+
+  // 수정 후 put 요청
+  const toModifyComplete = async (objectionId, title, content) => {
+    try {
+      const response = await putObjectionDetail(objectionId, title, content);
+
+      console.log(`response.status: ${response.status}`);
+
+      if (response.status === 200) {
+        alert('수정이 정상적으로 완료되었습니다.');
+
+        // 수정 완료 후 objectionId를 sessionStorage에 저장
+        sessionStorage.setItem('objectionId', objectionId);
+        window.location.reload();
+      }
+    } catch (err) {
+      console.log(`이의제기 삭제 중 문제 발생: ${err}`);
+      alert(`이의제기 수정 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.`);
+    }
+  };
+
   const onClickButton = (type) => {
+    console.log(type);
     // axios
     switch (type) {
       case 'delete':
         // 경고창 띄운 후 delete 요청
         if (window.confirm('정말 삭제하시겠습니까?')) {
-          alert('삭제되었습니다.');
-          navigate('/objection');
+          toDelete(id);
         }
         break;
       case 'modify':
-        console.log('modify');
+        // 수정 모드로 변경
         setModifyMode(true);
         break;
       case 'complete':
         // 수정 내용 put 요청 후 get 요청을 보내 response를 modifyMode false로 페이지 다시 받기
-        console.log('complete');
-        setModifyMode(false);
+        if (window.confirm('수정하시겠습니까?')) {
+          setModifyMode(false);
+          toModifyComplete(id, title, content);
+        }
         break;
       default:
         break;
