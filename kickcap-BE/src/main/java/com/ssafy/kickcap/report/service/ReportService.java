@@ -3,6 +3,7 @@ package com.ssafy.kickcap.report.service;
 import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.bill.entity.PaidStatus;
 import com.ssafy.kickcap.bill.repository.BillRepository;
+import com.ssafy.kickcap.bill.service.BillService;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.report.dto.ReportListResponseDto;
@@ -34,6 +35,7 @@ public class ReportService {
     private final ViolationTypeRepository violationTypeRepository;
     private final BillRepository billRepository;
     private final MemberRepository memberRepository;
+    private final BillService billService;
     private static final int DEFAULT_PAGE_SIZE = 10;
     private static final List<ApproveStatus> COMPLETED_STATUSES = Arrays.asList(ApproveStatus.APPROVED, ApproveStatus.REJECTED);
 
@@ -128,18 +130,7 @@ public class ReportService {
         memberRepository.save(member);
 
         // 고지서 생성
-        Bill bill = Bill.builder()
-                .reportId(reportId)
-                .police(police)
-                .member(report.getMember())
-                .fine(report.getViolationType().getFine())
-                .totalBill(report.getViolationType().getFine()) // 처음 고지서가 만들어질 때는 벌금 금액이 default 로 들어감.
-                .deadline(ZonedDateTime.now().plusDays(10)) // 납부기한을 현재로부터 10일 후로 설정
-                .paidStatus(PaidStatus.UNPAID)
-                .isObjection("N")
-                .build();
-
-        billRepository.save(bill);
+        billService.createBillFromReport(report, police);
     }
 
     public void rejectReport(Police police, Long reportId) {

@@ -26,13 +26,20 @@ public class CrackdownController {
     private final CrackdownService crackdownService;
     private final PoliceService policeService;
 
-    @GetMapping()
-    @Operation(summary = "cctv 단속 목록 조회", description = "관할 경찰서 cctv 단속 목록을 조회합니다. type = 0(안전모), 1(다인) ")
-    public ResponseEntity<List<CrackdownListResponseDto>> getCrackdownList(@AuthenticationPrincipal User user, @RequestParam int pageNo, @RequestParam int type) {
+    @GetMapping("/count")
+    @Operation(summary = "관할 경찰서 cctv 단속 데이터 개수 조회",  description = "관할 경찰서 cctv 단속 데이터 개수를 조회합니다. violationType = 1(다인), 2(안전모)")
+    public ResponseEntity<Long> getCrackdownCount(@AuthenticationPrincipal User user, @RequestParam Long violationType) {
         Police police = policeService.findByPoliceId(user.getUsername());
-
-        List<CrackdownListResponseDto> crackdownList = crackdownService.getCrackdownList(police, pageNo, type);
-        return ResponseEntity.ok(crackdownList);
+        Long count = crackdownService.getCrackdownCount(police, violationType);
+        return ResponseEntity.ok(count);
     }
 
+    @GetMapping()
+    @Operation(summary = "cctv 단속 목록 조회", description = "관할 경찰서 cctv 단속 목록을 조회합니다. violationType = 1(다인), 2(안전모)")
+    public ResponseEntity<List<CrackdownListResponseDto>> getCrackdownList(@AuthenticationPrincipal User user, @RequestParam int pageNo, @RequestParam Long violationType) {
+        Police police = policeService.findByPoliceId(user.getUsername());
+
+        List<CrackdownListResponseDto> crackdownList = crackdownService.getCrackdownList(police, pageNo, violationType);
+        return ResponseEntity.ok(crackdownList);
+    }
 }
