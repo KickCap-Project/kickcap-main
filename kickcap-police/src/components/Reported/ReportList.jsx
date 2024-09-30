@@ -5,9 +5,19 @@ import { pageActions, selectReportNav } from '../../store/page';
 import { useNavigate } from 'react-router';
 import Button from './../Common/Button';
 import Input from './../Common/Input';
-import { getReportEndList, getReportEndTotalCount, getReportList, getReportTotalCount } from '../../lib/api/report-api';
+import {
+  getListDetail,
+  getReportEndList,
+  getReportEndTotalCount,
+  getReportList,
+  getReportTotalCount,
+} from '../../lib/api/report-api';
 import moment from 'moment';
 import Pagination from 'react-js-pagination';
+import ReactPaginate from 'react-paginate';
+import { useSearchParams } from 'react-router-dom';
+import '../../styles/Pagination.css';
+import Text from './../Common/Text';
 
 const s = {
   Container: styled.div`
@@ -36,6 +46,7 @@ const s = {
   `,
   TableArea: styled.div`
     width: 100%;
+    height: 480px;
     border-radius: 10px;
     border-left: 4px solid rgba(0, 0, 0, 0.2);
     border-right: 4px solid rgba(0, 0, 0, 0.2);
@@ -59,6 +70,9 @@ const s = {
     vertical-align: middle;
     border-bottom: 1px solid ${(props) => props.theme.btnOff};
   `,
+  noData: styled.td`
+    vertical-align: middle;
+  `,
   Th: styled.th`
     font-weight: 700;
     color: ${(props) => props.theme.mainColor};
@@ -73,7 +87,7 @@ const s = {
   `,
   Label: styled.label`
     font-weight: 700;
-    font-size: 20px;
+    font-size: 15px;
     cursor: pointer;
   `,
   BtnArea: styled.div`
@@ -88,22 +102,26 @@ const s = {
     height: 40px;
     border: 1px solid red;
     margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `,
 };
 
 const ReportList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const type = useAppSelector(selectReportNav);
   const dispatch = useAppDispatch();
-  const [violationType, setViolationType] = useState(4);
+  const [violationType, setViolationType] = useState(searchParams.get('violationType'));
   const [totalPage, setTotalPage] = useState(0);
-  const [pageNo, setPageNo] = useState(1);
+  const [pageNo, setPageNo] = useState(Number(searchParams.get('pageNo')));
   const [isEnd, setIsEnd] = useState(false);
   const [data, setData] = useState([]);
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeReportType(mode));
-    setViolationType(
-      mode === 'park' ? 4 : mode === 'helmet' ? 3 : mode === 'peoples' ? 1 : mode === 'sideWalk' ? 2 : 5,
-    ); // 마커 타입 설정
+    const newViolationType =
+      mode === 'park' ? 4 : mode === 'helmet' ? 3 : mode === 'peoples' ? 1 : mode === 'sideWalk' ? 2 : 5;
+    setSearchParams({ violationType: newViolationType, pageNo: 1 });
   };
 
   const getColor = (mode) => {
@@ -113,13 +131,31 @@ const ReportList = () => {
     return type === mode ? '30px' : undefined;
   };
 
+  useEffect(() => {
+    // alert(pageNo);
+    setViolationType(searchParams.get('violationType'));
+    setPageNo(Number(searchParams.get('pageNo')));
+    const newViolationType =
+      searchParams.get('violationType') == 4
+        ? 'park'
+        : searchParams.get('violationType') == 3
+        ? 'helmet'
+        : searchParams.get('violationType') == 1
+        ? 'peoples'
+        : searchParams.get('violationType') == 2
+        ? 'sideWalk'
+        : 'read';
+    dispatch(pageActions.changeReportType(newViolationType));
+  }, [searchParams]);
+
   const navigate = useNavigate();
-  const handleMovePage = () => {
-    navigate('read');
+  const handleMovePage = (reportId) => {
+    navigate(`read?violationType=${violationType}&detail=${reportId}`, { state: { pageNo } });
   };
 
   const handleClickPage = (pageNo) => {
     setPageNo(pageNo);
+    setSearchParams({ violationType, pageNo });
   };
 
   useEffect(() => {
@@ -128,7 +164,7 @@ const ReportList = () => {
       getReportEndTotalCount(
         violationType,
         (resp) => {
-          setTotalPage(resp.data.totalCount);
+          setTotalPage(resp.data);
         },
         (error) => {
           alert('잠시 후 다시 시도해주세요.');
@@ -149,7 +185,7 @@ const ReportList = () => {
       getReportTotalCount(
         violationType,
         (resp) => {
-          setTotalPage(resp.data.totalCount);
+          setTotalPage(resp.data);
         },
         (error) => {
           alert('잠시 후 다시 시도해주세요.');
@@ -170,14 +206,14 @@ const ReportList = () => {
   return (
     <s.Container>
       <s.TypeArea>
-        <s.TypeText onClick={() => handleClickIcon('park')} color={getColor('park')} size={getSize('park')}>
-          불법 주차
-        </s.TypeText>
         <s.TypeText onClick={() => handleClickIcon('helmet')} color={getColor('helmet')} size={getSize('helmet')}>
           안전모 미착용
         </s.TypeText>
         <s.TypeText onClick={() => handleClickIcon('peoples')} color={getColor('peoples')} size={getSize('peoples')}>
           다인 승차
+        </s.TypeText>
+        <s.TypeText onClick={() => handleClickIcon('park')} color={getColor('park')} size={getSize('park')}>
+          불법 주차
         </s.TypeText>
         <s.TypeText onClick={() => handleClickIcon('sideWalk')} color={getColor('sideWalk')} size={getSize('sideWalk')}>
           보도 주행
@@ -196,20 +232,26 @@ const ReportList = () => {
             </s.Tr>
           </s.Thead>
           <s.Tbody>
-            {data.map((d, index) => (
-              <s.Tr key={index} onClick={() => handleMovePage()}>
-                <s.Td>{d.idx}</s.Td>
-                <s.Td>{d.addr}</s.Td>
-                <s.Td>{moment(d.reportTime).format('YY-MM-DD')}</s.Td>
+            {data.length !== 0 ? (
+              data.map((d, index) => (
+                <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
+                  <s.Td>{d.idx}</s.Td>
+                  <s.Td>{d.addr}</s.Td>
+                  <s.Td>{moment(d.createTime).format('YY-MM-DD')}</s.Td>
+                </s.Tr>
+              ))
+            ) : (
+              <s.Tr>
+                <s.noData colSpan={3}>내역이 존재하지 않습니다.</s.noData>
               </s.Tr>
-            ))}
+            )}
           </s.Tbody>
         </s.Table>
       </s.TableArea>
       <s.PageFooter>
         <s.BtnArea></s.BtnArea>
         <s.pageArea>
-          {/* <Pagination
+          <Pagination
             activePage={pageNo} // 현재 페이지
             itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
             totalItemsCount={totalPage} // 총 아이템 갯수
@@ -217,6 +259,14 @@ const ReportList = () => {
             prevPageText={'‹'} // "이전"을 나타낼 텍스트
             nextPageText={'›'} // "다음"을 나타낼 텍스트
             onChange={handleClickPage} // 페이지 변경을 핸들링하는 함수
+          />
+          {/* <ReactPaginate
+            pageCount={totalPage}
+            previousLabel={'<'}
+            nextLabel={'>'}
+            onPageChange={handleClickPage}
+            pageRangeDisplayed={10}
+            renderOnZeroPageCount={null}
           /> */}
         </s.pageArea>
         <s.BtnArea>
@@ -231,7 +281,7 @@ const ReportList = () => {
             checked={isEnd}
             onChange={() => setIsEnd(!isEnd)}
           />
-          <s.Label htmlFor="ok">완료 건 조회</s.Label>
+          <s.Label htmlFor="ok">처리완료건 조회</s.Label>
         </s.BtnArea>
       </s.PageFooter>
     </s.Container>

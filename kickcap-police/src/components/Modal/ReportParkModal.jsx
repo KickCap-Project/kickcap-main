@@ -24,25 +24,17 @@ const s = {
   MapArea: styled.div`
     width: 80%;
     height: 65%;
-    border: 1px solid red;
     margin: 20px auto;
   `,
   BtnArea: styled.div`
     width: 50%;
-    border: 1px solid red;
     display: flex;
     justify-content: space-around;
     margin: 0 auto;
   `,
 };
 
-const ReportParkModal = ({ open, toggleModal }) => {
-  const kickBoard = { lat: 33.451, lng: 127.571, title: '킥보드 위치' };
-  const Park = [
-    { lat: 33.453, lng: 126.573, title: '주차장 1' },
-    { lat: 33.454, lng: 126.574, title: '주차장 2' },
-    // 추가 주차장 위치
-  ];
+const ReportParkModal = ({ open, toggleModal, kick, park }) => {
   return (
     <ReactModal
       isOpen={open}
@@ -62,8 +54,27 @@ const ReportParkModal = ({ open, toggleModal }) => {
             color={'textBasic2'}
           />
         </s.Header>
+        <Text
+          children={'마커 위에 마우스를 올리면 마커 정보를 볼 수 있습니다.'}
+          textalian={'center'}
+          display={'block'}
+          size={'15px'}
+          bold={'700'}
+          color={'textBasic2'}
+          width={'100%'}
+          margin={'5px auto'}
+        />
+        <Text
+          children={'제공되는 주차장 정보는 차이가 있을 수 있으니 참고용으로 확인하시기 바랍니다.'}
+          textalian={'center'}
+          display={'block'}
+          size={'15px'}
+          bold={'700'}
+          color={'textBasic2'}
+          width={'100%'}
+        />
         <s.MapArea>
-          <ParkingMap Park={Park} kickBoard={kickBoard} />
+          <ParkingMap Park={park} kickBoard={kick} />
         </s.MapArea>
         <s.BtnArea>
           <Button

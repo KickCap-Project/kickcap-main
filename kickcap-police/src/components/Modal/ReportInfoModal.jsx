@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
 import '../../styles/modal.css';
@@ -28,7 +28,7 @@ const s = {
   `,
 };
 
-const ReportInfoModal = ({ open, toggleModal }) => {
+const ReportInfoModal = ({ open, toggleModal, data }) => {
   return (
     <ReactModal
       isOpen={open}
@@ -49,7 +49,7 @@ const ReportInfoModal = ({ open, toggleModal }) => {
           />
         </s.Header>
         <s.MainArea>
-          <CrackInfoTable />
+          <CrackInfoTable data={data} />
         </s.MainArea>
         <Button
           bold={'700'}

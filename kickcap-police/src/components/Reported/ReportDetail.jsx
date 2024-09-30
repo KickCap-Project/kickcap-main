@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import test from '../../asset/policeLogo.png';
 import CrackInfoTable from '../Common/CrackInfoTable';
@@ -10,7 +10,10 @@ import ReportParkModal from './../Modal/ReportParkModal';
 import { useModalExitHook } from './../../lib/hook/useModalExitHook';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions, selectIsReportInfo, selectIsReportPark } from '../../store/modal';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { useSearchParams } from 'react-router-dom';
+import { getCrackInfo, getListDetail, getParkData, postApprove, postReject } from '../../lib/api/report-api';
+import moment from 'moment';
 const s = {
   Container: styled.main`
     width: 90%;
@@ -66,14 +69,20 @@ const s = {
   BtnArea: styled.div`
     width: 800px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin: 30px auto;
   `,
 };
 
 const ReportDetail = () => {
   useModalExitHook();
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const reportId = searchParams.get('detail');
+  const violationType = searchParams.get('violationType');
+  const pageNo = useLocation().state?.pageNo;
+  const [reportData, setReportData] = useState({});
+  const [crackInfo, setCrackInfo] = useState({});
+  const [park, setPark] = useState([]);
   const dispatch = useAppDispatch();
   const isInfo = useAppSelector(selectIsReportInfo);
   const isPark = useAppSelector(selectIsReportPark);
@@ -86,24 +95,76 @@ const ReportDetail = () => {
 
   const navigate = useNavigate();
   const handleMoveList = () => {
-    navigate('..');
+    navigate(`../../report?violationType=${violationType}&pageNo=${pageNo ? pageNo : 1}`);
   };
 
-  const handleReportAccess = () => {
-    const message = '산고 대상자에게 단속고지서를 발부되었습니다.';
+  const handleReportAccess = async () => {
     if (window.confirm('승인하시겠습니까?')) {
-      alert('고지서가 발부되었습니다.');
-      navigate('..');
+      await postApprove(
+        reportId,
+        (resp) => {
+          alert('고지서가 발부되었습니다.');
+          navigate(`../../report?violationType=${violationType}&pageNo=1`);
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
     }
   };
 
-  const handleReportReject = () => {
-    const message = '해당 신고는 검토 결과 반려되었습니다.';
+  const handleReportReject = async () => {
     if (window.confirm('반려하시겠습니까?')) {
-      alert('신고가 반려되었습니다.');
-      navigate('..');
+      await postReject(
+        reportId,
+        (resp) => {
+          alert('신고가 반려되었습니다.');
+          navigate(`../../report?violationType=${violationType}&pageNo=1`);
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
     }
   };
+
+  // 데이터 받기
+  useEffect(() => {
+    getListDetail(
+      reportId,
+      (resp) => {
+        setReportData(resp.data);
+        getCrackInfo(
+          resp.data.memberId,
+          reportId,
+          (resp) => {
+            setCrackInfo(resp.data);
+          },
+          (error) => {
+            alert('잠시 후 다시 시도해주세요.');
+          },
+        );
+        if (violationType === '4') {
+          getParkData(
+            {
+              lat: resp.data.lat,
+              lng: resp.data.lng,
+            },
+            (resp) => {
+              setPark(resp.data);
+            },
+            (error) => {
+              alert('잠시 후 다시 시도해주세요.');
+            },
+          );
+        }
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+  }, []);
+
   return (
     <s.Container>
       <s.TableArea>
@@ -118,16 +179,16 @@ const ReportDetail = () => {
           </s.Thead>
           <s.Tbody>
             <s.Tr>
-              <s.Td>10</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
+              <s.Td>{reportData.idx}</s.Td>
+              <s.Td>{reportData.addr}</s.Td>
+              <s.Td>{reportData.violationType}</s.Td>
+              <s.Td>{moment(reportData.createTime).format('YY-MM-DD')}</s.Td>
             </s.Tr>
           </s.Tbody>
         </s.Table>
       </s.TableArea>
       <s.MainArea>
-        <s.Img src={test} />
+        <s.Img src={reportData.imageSrc} />
         <s.InfoArea>
           <Text
             children={'내용'}
@@ -138,7 +199,14 @@ const ReportDetail = () => {
             color={'textBasic2'}
             margin={'20px 0 10px 0'}
           />
-          <TextArea mode={'read'} display={'block'} width={'100%'} height={'100%'} size={'20px'} />
+          <TextArea
+            mode={'read'}
+            display={'block'}
+            width={'100%'}
+            height={'100%'}
+            size={'20px'}
+            value={reportData.description}
+          />
         </s.InfoArea>
       </s.MainArea>
       <s.BtnArea>
@@ -149,15 +217,23 @@ const ReportDetail = () => {
           width={'150px'}
           size={'20px'}
           onClick={handleMoveList}
+          display={'block'}
+          margin={'0 10px'}
         />
-        <Button
-          bold={'700'}
-          children={'주차 확인'}
-          height={'40px'}
-          width={'150px'}
-          size={'20px'}
-          onClick={() => handleOpenParkModal(true)}
-        />
+        {violationType === '4' ? (
+          <Button
+            bold={'700'}
+            children={'주차 확인'}
+            height={'40px'}
+            width={'150px'}
+            size={'20px'}
+            onClick={() => handleOpenParkModal(true)}
+            display={'block'}
+            margin={'0 10px'}
+          />
+        ) : (
+          ''
+        )}
         <Button
           bold={'700'}
           children={'단속자 정보'}
@@ -165,26 +241,44 @@ const ReportDetail = () => {
           width={'150px'}
           size={'20px'}
           onClick={() => handleOpenInfoModal(true)}
+          display={'block'}
+          margin={'0 10px'}
+          // onClick={test}
         />
-        <Button
-          bold={'700'}
-          children={'반 려'}
-          height={'40px'}
-          width={'150px'}
-          size={'20px'}
-          onClick={handleReportReject}
-        />
-        <Button
-          bold={'700'}
-          children={'고지서 전송'}
-          height={'40px'}
-          width={'150px'}
-          size={'20px'}
-          onClick={handleReportAccess}
-        />
+        {reportData.isEnd == 0 ? (
+          <>
+            <Button
+              bold={'700'}
+              children={'반 려'}
+              height={'40px'}
+              width={'150px'}
+              size={'20px'}
+              onClick={handleReportReject}
+              display={'block'}
+              margin={'0 10px'}
+            />
+            <Button
+              bold={'700'}
+              children={'고지서 전송'}
+              height={'40px'}
+              width={'150px'}
+              size={'20px'}
+              onClick={handleReportAccess}
+              display={'block'}
+              margin={'0 10px'}
+            />
+          </>
+        ) : (
+          ''
+        )}
       </s.BtnArea>
-      <ReportParkModal open={isPark} toggleModal={handleOpenParkModal} />
-      <ReportInfoModal open={isInfo} toggleModal={handleOpenInfoModal} />
+      <ReportParkModal
+        open={isPark}
+        toggleModal={handleOpenParkModal}
+        kick={{ lat: reportData.lat, lng: reportData.lng }}
+        park={park}
+      />
+      <ReportInfoModal open={isInfo} toggleModal={handleOpenInfoModal} data={crackInfo} />
     </s.Container>
   );
 };

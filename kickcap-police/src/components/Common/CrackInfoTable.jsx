@@ -28,33 +28,29 @@ const s = {
   `,
 };
 
-const CrackInfoTable = () => {
+const CrackInfoTable = ({ data }) => {
   return (
     <s.Table>
       <s.Tbody>
         <s.Tr>
-          <s.Th>CCTV 번호</s.Th>
-          <s.Td>1111</s.Td>
-        </s.Tr>
-        <s.Tr>
           <s.Th>킥보드 번호</s.Th>
-          <s.Td>000-D0000</s.Td>
+          <s.Td>{data.kick}</s.Td>
         </s.Tr>
         <s.Tr>
           <s.Th>사용자 이름</s.Th>
-          <s.Td>홍길동</s.Td>
+          <s.Td>{data.name}</s.Td>
         </s.Tr>
         <s.Tr>
           <s.Th>연락처</s.Th>
-          <s.Td>010-1111-1111</s.Td>
+          <s.Td>{data.phone}</s.Td>
         </s.Tr>
         <s.Tr>
           <s.Th>사용자 벌점</s.Th>
-          <s.Td>5점</s.Td>
+          <s.Td>{data.demerit}점</s.Td>
         </s.Tr>
         <s.Tr>
           <s.Th>최근 단속 정보</s.Th>
-          <s.Td>2024. 09. 02 / 안전모 미착용</s.Td>
+          <s.Td>{data.history !== null ? data.history : '없음'}</s.Td>
         </s.Tr>
       </s.Tbody>
     </s.Table>

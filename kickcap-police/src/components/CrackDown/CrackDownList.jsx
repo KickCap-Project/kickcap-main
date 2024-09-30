@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectCrackNav } from '../../store/page';
 import { useNavigate } from 'react-router';
+import { useSearchParams } from 'react-router-dom';
+import Pagination from 'react-js-pagination';
+import '../../styles/Pagination.css';
+import { getCrackList, getCrackTotalCount } from './../../lib/api/crack-api';
+import moment from 'moment';
 
 const s = {
   Container: styled.div`
@@ -30,6 +35,7 @@ const s = {
   `,
   TableArea: styled.div`
     width: 100%;
+    height: 480px;
     border-radius: 10px;
     border-left: 4px solid rgba(0, 0, 0, 0.2);
     border-right: 4px solid rgba(0, 0, 0, 0.2);
@@ -53,6 +59,9 @@ const s = {
     vertical-align: middle;
     border-bottom: 1px solid ${(props) => props.theme.btnOff};
   `,
+  noData: styled.td`
+    vertical-align: middle;
+  `,
   Th: styled.th`
     font-weight: 700;
     color: ${(props) => props.theme.mainColor};
@@ -63,14 +72,32 @@ const s = {
     height: 40px;
     border: 1px solid red;
     margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `,
 };
 
 const CrackDownList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const type = useAppSelector(selectCrackNav);
   const dispatch = useAppDispatch();
+  const [violationType, setViolationType] = useState(searchParams.get('violationType'));
+  const [totalPage, setTotalPage] = useState(0);
+  const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    setViolationType(searchParams.get('violationType'));
+    setPageNo(Number(pageNo));
+    const newViolationType = searchParams.get('violationType') == 3 ? 'helmet' : 'peoples';
+    dispatch(pageActions.changeCrackType(newViolationType));
+  }, [searchParams]);
+
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeCrackType(mode));
+    const newViolationType = mode === 'helmet' ? 3 : 1;
+    setSearchParams({ violationType: newViolationType, pageNo: 1 });
   };
 
   const getColor = (mode) => {
@@ -81,9 +108,38 @@ const CrackDownList = () => {
   };
 
   const navigate = useNavigate();
-  const handleMovePage = () => {
+  const handleMovePage = (crackId) => {
     navigate('read');
+    navigate(`read?violationType=${violationType}&detail=${crackId}`, { state: { pageNo } });
   };
+
+  const handleClickPage = (pageNo) => {
+    setPageNo(pageNo);
+    setSearchParams({ violationType, pageNo });
+  };
+
+  useEffect(() => {
+    getCrackTotalCount(
+      violationType,
+      (resp) => {
+        setTotalPage(resp.data);
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+    getCrackList(
+      violationType,
+      pageNo,
+      (resp) => {
+        setData(resp.data);
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+  }, [violationType, pageNo]);
+
   return (
     <s.Container>
       <s.TypeArea>
@@ -105,70 +161,34 @@ const CrackDownList = () => {
             </s.Tr>
           </s.Thead>
           <s.Tbody>
-            <s.Tr onClick={() => handleMovePage()}>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
+            {data.length !== 0 ? (
+              data.map((d, index) => (
+                <s.Tr key={index} onClick={() => handleMovePage()}>
+                  <s.Td>{d.idx}</s.Td>
+                  <s.Td>{d.addr}</s.Td>
+                  <s.Td>{d.type}</s.Td>
+                  <s.Td>{moment(d.date).format('YY-MM-DD')}</s.Td>
+                </s.Tr>
+              ))
+            ) : (
+              <s.Tr>
+                <s.noData colSpan={4}>내역이 존재하지 않습니다.</s.noData>
+              </s.Tr>
+            )}
           </s.Tbody>
         </s.Table>
       </s.TableArea>
-      <s.pageArea></s.pageArea>
+      <s.pageArea>
+        <Pagination
+          activePage={pageNo} // 현재 페이지
+          itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
+          totalItemsCount={totalPage} // 총 아이템 갯수
+          pageRangeDisplayed={10} // paginator의 페이지 범위
+          prevPageText={'‹'} // "이전"을 나타낼 텍스트
+          nextPageText={'›'} // "다음"을 나타낼 텍스트
+          onChange={handleClickPage} // 페이지 변경을 핸들링하는 함수
+        />
+      </s.pageArea>
     </s.Container>
   );
 };
