@@ -2,8 +2,10 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import logo from '../asset/svg/logo.svg';
 import Text from './../components/Common/Text';
+import { ReactComponent as police } from '../asset/svg/police.svg';
 import { requestPermission } from '../firebaseCloudMessaging';
 import { useNavigate } from 'react-router';
+import IconSvg from '../components/Common/IconSvg';
 
 const s = {
   Container: styled.div`
@@ -31,8 +33,12 @@ const SplashPage = () => {
   const navigate = useNavigate();
   const setFcmToken = async () => {
     const fcmToken = await requestPermission();
-    localStorage.setItem('fcmToken', fcmToken);
-    navigate('/login');
+    // localStorage.setItem('fcmToken', fcmToken);
+    // navigate('/login');
+    if (fcmToken) {
+      localStorage.setItem('fcmToken', fcmToken);
+      navigate('/login');
+    }
   };
   useEffect(() => {
     setFcmToken();
@@ -40,7 +46,7 @@ const SplashPage = () => {
   return (
     <s.Container>
       <s.MainArea>
-        <s.Img src={logo} />
+        <IconSvg Ico={police} width={'250px'} display={'block'} margin={'20px auto'} />
         <Text size={'20px'} bold={'800'}>
           로딩 중 입니다.
         </Text>

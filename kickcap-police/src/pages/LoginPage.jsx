@@ -57,15 +57,6 @@ const LoginPage = () => {
     fcmToken,
   });
 
-  // const setFcmToken = async () => {
-  //   const fcmToken = await requestPermission();
-  //   localStorage.setItem('fcmToken', fcmToken);
-  //   setLogin({ ...login, fcmToken });
-  // };
-  // useEffect(() => {
-  //   setFcmToken();
-  // }, []);
-
   const handleChangeLogin = (e) => {
     setLogin({
       ...login,
@@ -89,11 +80,17 @@ const LoginPage = () => {
       },
     );
   };
+
+  useEffect(() => {
+    if (!localStorage.getItem('fcmToken')) {
+      navigate('/');
+    }
+  }, []);
   return (
     <>
       <s.Container>
         <s.LoginArea>
-          <IconSvg Ico={logo} width={'250px'} display={'block'} margin={'0 auto'} />
+          <IconSvg Ico={police} width={'250px'} display={'block'} margin={'20px auto'} />
           <s.FormArea>
             <Input
               width={'100%'}
@@ -122,9 +119,7 @@ const LoginPage = () => {
         </s.LoginArea>
 
         <s.FooterArea>
-          <s.IconArea>
-            <IconSvg Ico={police} width={'60px'} display={'block'} margin={'0 auto'} />
-          </s.IconArea>
+          <s.IconArea>{/* <IconSvg Ico={police} width={'60px'} display={'block'} margin={'0 auto'} /> */}</s.IconArea>
           <s.TextArea>
             <Text
               children={'킥보드 자동화 단속 시스템'}
