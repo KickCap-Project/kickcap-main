@@ -4,8 +4,11 @@ import com.ssafy.kickcap.cctv.dto.CrackdownListResponseDto;
 import com.ssafy.kickcap.cctv.entity.CCTVInfo;
 import com.ssafy.kickcap.cctv.entity.Crackdown;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
+import com.ssafy.kickcap.exception.ErrorCode;
+import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.violationtype.entity.ViolationType;
+import com.ssafy.kickcap.violationtype.repository.ViolationTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,24 +23,18 @@ import java.util.stream.Collectors;
 public class CrackdownService {
 
     private final CrackdownRepository crackdownRepository;
+    private final ViolationTypeRepository violationTypeRepository;
 
     private static final int DEFAULT_PAGE_SIZE = 10;
 
-    public List<CrackdownListResponseDto> getCrackdownList(Police police, int pageNo, int type) {
+    public List<CrackdownListResponseDto> getCrackdownList(Police police, int pageNo, Long violationTypeId) {
         // 페이지 요청 객체 생성 (첫 페이지는 0부터 시작)
         Pageable pageable = PageRequest.of(pageNo - 1, DEFAULT_PAGE_SIZE); // 페이지 크기: 10
 
-        Long violationIdx;
+        ViolationType type = violationTypeRepository.findById(violationTypeId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        if (type == 0) {
-            violationIdx = 3L;
-        } else if(type == 1) {
-            violationIdx = 1L;
-        } else {
-            throw new IllegalArgumentException("잘못된 type 값입니다.");
-        }
-
-        Page<Crackdown> crackdownPage = crackdownRepository.findCrackdownsByPoliceIdAndViolationType(police.getId(), violationIdx, pageable);
+        Page<Crackdown> crackdownPage = crackdownRepository.findCrackdownsByPoliceIdAndViolationType(police.getId(), type, pageable);
 
         // Crackdown 데이터를 DTO로 변환
         return crackdownPage.stream()
@@ -54,5 +51,10 @@ public class CrackdownService {
 
                 })
                 .collect(Collectors.toList());
+    }
+
+    public Long getCrackdownCount(Police police, Long violationTypeId) {
+        ViolationType violationType = violationTypeRepository.findById(violationTypeId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        return crackdownRepository.countByPoliceAndViolationType(police.getId(), violationType);
     }
 }
