@@ -54,6 +54,7 @@ public class BillController {
     @Operation(summary = "고지서 이의 제기")
     public ResponseEntity<Void> createObjectionFromBill(@AuthenticationPrincipal CustomOAuth2User principal, @PathVariable Long billId, @RequestBody BillObjectionDto billObjectionDto) {
         Member member = memberService.findById(principal.getId());
+        System.out.println(member);
         billService.createObjectionFromBill(member, billId, billObjectionDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
