@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   crack: 'helmet',
-  report: 'park',
+  report: 'helmet',
   complaint: 'progress',
   board: 'park',
 };

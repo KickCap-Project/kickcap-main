@@ -40,11 +40,11 @@ export const localAxios = () => {
 
       // 401 에러 (액세스 토큰 만료 등)
       if (error.response && error.response.status === 500) {
-        const refresh = getRefreshToken(); // 스토리지에서 리프레시 토큰 가져오기
+        const refreshToken = getRefreshToken(); // 스토리지에서 리프레시 토큰 가져오기
 
-        if (refresh) {
+        if (refreshToken) {
           try {
-            const tokenRefreshResult = await instance.post(`/token/refresh`, refresh);
+            const tokenRefreshResult = await instance.post(`/tokens/refresh`, refreshToken);
             const { accessToken } = tokenRefreshResult.data;
 
             // 새로운 액세스 토큰을 스토리지에 저장

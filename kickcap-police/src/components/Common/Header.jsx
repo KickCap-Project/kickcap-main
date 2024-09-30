@@ -68,14 +68,6 @@ const s = {
     border-bottom: 3px solid ${(props) => props.color || props.theme.textBasic};
     cursor: pointer;
   `,
-  nameArea: styled.div`
-    font-size: 10px;
-    color: ${(props) => props.theme.textBasic2};
-    display: flex;
-    align-items: center;
-    height: 100%;
-    margin-left: 10px;
-  `,
   Btn: styled.button`
     width: 55px;
     font-size: 10px;
@@ -90,15 +82,17 @@ const s = {
 
 const Header = ({ title, subTitle }) => {
   const navigate = useNavigate();
-  const policeName = sessionStorage.getItem('police');
+  const policeName = localStorage.getItem('police');
   const type = useAppSelector(selectNav);
   const dispatch = useAppDispatch();
   const handleClickIcon = (mode) => {
     dispatch(navActions.change(mode));
     if (mode === 'board') {
-      navigate(`/${mode}?sido=전국`);
+      navigate(`/${mode}`);
+    } else if (mode === 'complaint') {
+      navigate(`/${mode}?state=receipt&pageNo=1`);
     } else {
-      navigate(`/${mode}?pageNo=1`);
+      navigate(`/${mode}?violationType=3&pageNo=1`);
     }
   };
 
@@ -107,14 +101,14 @@ const Header = ({ title, subTitle }) => {
   };
 
   const handleLogout = async () => {
-    const fcmToken = sessionStorage.getItem('fcmToken');
+    const fcmToken = localStorage.getItem('fcmToken');
     await logout(
       fcmToken,
       (resp) => {
-        sessionStorage.removeItem('fcmToken');
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
-        sessionStorage.removeItem('police');
+        localStorage.removeItem('fcmToken');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('police');
         navigate('/');
       },
       (error) => {
@@ -129,7 +123,7 @@ const Header = ({ title, subTitle }) => {
           <s.TitleArea>
             <IconSvg Ico={logo} width={'30px'} margin={'0 10px 0 0'} />
             <s.Title>
-              킥보드 자동화 단속 플랫폼<s.nameArea>({policeName})</s.nameArea>
+              {policeName}
               <s.Btn onClick={handleLogout}>로그아웃</s.Btn>
             </s.Title>
           </s.TitleArea>

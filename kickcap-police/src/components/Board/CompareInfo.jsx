@@ -39,12 +39,12 @@ const CompareInfo = ({ title, data }) => {
         />
       ) : data > 0 ? (
         <Text
-          children={data + '%'}
+          children={'+' + data + '%'}
           size={'30px'}
           bold={'600'}
           textalian={'center'}
           width={'100%'}
-          color={'positive'}
+          color={'negative'}
           display={'block'}
           margin={'5px auto'}
         />
@@ -55,7 +55,7 @@ const CompareInfo = ({ title, data }) => {
           bold={'600'}
           textalian={'center'}
           width={'100%'}
-          color={'negative'}
+          color={'positive'}
           display={'block'}
           margin={'5px auto'}
         />
