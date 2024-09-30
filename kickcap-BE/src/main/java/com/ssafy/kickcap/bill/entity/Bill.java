@@ -77,4 +77,11 @@ public class Bill {
     public void updatePaidStatus(PaidStatus paidStatus) {
         this.paidStatus = paidStatus;
     }
+
+    public void updateIsObjection() {
+        if(this.isObjection.equals("N"))
+            this.isObjection = "Y";
+        else
+            this.isObjection = "N";
+    }
 }

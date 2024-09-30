@@ -1,6 +1,7 @@
 package com.ssafy.kickcap.cctv.controller;
 
 import com.ssafy.kickcap.cctv.dto.CrackdownListResponseDto;
+import com.ssafy.kickcap.cctv.dto.CrackdownResponseDto;
 import com.ssafy.kickcap.cctv.service.CrackdownService;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.service.PoliceService;
@@ -10,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,5 +39,13 @@ public class CrackdownController {
 
         List<CrackdownListResponseDto> crackdownList = crackdownService.getCrackdownList(police, pageNo, violationType);
         return ResponseEntity.ok(crackdownList);
+    }
+
+    @GetMapping("/{crackdownId}")
+    @Operation(summary = "cctv 단속 상세정보 조회", description = "관할 경찰서 cctv 단속 상세정보를 조회")
+    public ResponseEntity<CrackdownResponseDto> getCrackdown(@AuthenticationPrincipal User user, @PathVariable Long crackdownId) {
+        Police police = policeService.findByPoliceId(user.getUsername());
+        CrackdownResponseDto crackdown = crackdownService.getCrackdown(police, crackdownId);
+        return ResponseEntity.ok(crackdown);
     }
 }

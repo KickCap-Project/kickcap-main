@@ -1,6 +1,7 @@
 package com.ssafy.kickcap.bill.service;
 
 import com.ssafy.kickcap.bill.dto.BillListResponseDto;
+import com.ssafy.kickcap.bill.dto.BillObjectionDto;
 import com.ssafy.kickcap.bill.dto.BillResponseDto;
 import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.bill.entity.PaidStatus;
@@ -11,6 +12,8 @@ import com.ssafy.kickcap.cctv.entity.Crackdown;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
+import com.ssafy.kickcap.objection.entity.Objection;
+import com.ssafy.kickcap.objection.repository.ObjectionRepository;
 import com.ssafy.kickcap.report.entity.Report;
 import com.ssafy.kickcap.report.repository.ReportRepository;
 import com.ssafy.kickcap.user.entity.Member;
@@ -39,6 +42,7 @@ public class BillService {
     private final ViolationTypeRepository violationTypeRepository;
     private final PoliceRepository policeRepository;
     private final CrackdownRepository crackdownRepository;
+    private final ObjectionRepository objectionRepository;
 
     public List<BillListResponseDto> getBillList(Long memberId, int pageNo) {
         // 페이지 요청 객체 생성 (첫 페이지는 0부터 시작)
@@ -110,7 +114,7 @@ public class BillService {
                     .date(report.getReportTime().toString())
                     .address(report.getAddress())
                     .violationType(violationType.getName())
-                    .demerit(member.getDemerit())
+                    .demerit(violationType.getScore())
                     .fine(bill.getFine())
                     .totalBill(bill.getTotalBill())
                     .deadLine(bill.getDeadline().toString())
@@ -129,7 +133,7 @@ public class BillService {
                     .date(crackdown.getCrackdownTime().toString())
                     .address(crackdown.getCctvInfo().getLocation())
                     .violationType(violationType.getName())
-                    .demerit(member.getDemerit())
+                    .demerit(violationType.getScore())
                     .fine(bill.getFine())
                     .totalBill(bill.getTotalBill())
                     .deadLine(bill.getDeadline().toString())
@@ -216,5 +220,20 @@ public class BillService {
             member.updateDemerit(demerit - 10);
         }
         memberRepository.save(member);
+    }
+
+    public void createObjectionFromBill(Member member, Long billId, BillObjectionDto billObjectionDto) {
+        Bill bill = billRepository.findById(billId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+
+        objectionRepository.save(Objection.builder()
+                        .policeIdx(bill.getPolice().getId())
+                        .title(billObjectionDto.getTitle())
+                        .content(billObjectionDto.getContent())
+                        .member(member)
+                        .bill(bill)
+                .build());
+
+        bill.updateIsObjection();
+        billRepository.save(bill);
     }
 }

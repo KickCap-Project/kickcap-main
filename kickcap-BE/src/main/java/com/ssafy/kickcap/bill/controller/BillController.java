@@ -1,9 +1,13 @@
 package com.ssafy.kickcap.bill.controller;
 
 import com.ssafy.kickcap.bill.dto.BillListResponseDto;
+import com.ssafy.kickcap.bill.dto.BillObjectionDto;
 import com.ssafy.kickcap.bill.dto.BillResponseDto;
+import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.bill.service.BillService;
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
+import com.ssafy.kickcap.user.entity.Member;
+import com.ssafy.kickcap.user.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,7 @@ import java.util.List;
 public class BillController {
 
     private final BillService billService;
+    private final MemberService memberService;
 
     @GetMapping()
     @Operation(summary = "고지서 목록 조회", description = "isFlag = 0미납(0), 납부(1), 이의 중(2), 마감 2일전(3)")
@@ -42,6 +47,15 @@ public class BillController {
     @Operation(summary = "cctv 단속 정보를 통해 고지서를 생성하는 API")
     public ResponseEntity<Void> createBillFromCrackdown(@PathVariable Long crackdownId) {
         billService.createBillFromCrackdown(crackdownId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/{billId}/objections")
+    @Operation(summary = "고지서 이의 제기")
+    public ResponseEntity<Void> createObjectionFromBill(@AuthenticationPrincipal CustomOAuth2User principal, @PathVariable Long billId, @RequestBody BillObjectionDto billObjectionDto) {
+        Member member = memberService.findById(principal.getId());
+        System.out.println(member);
+        billService.createObjectionFromBill(member, billId, billObjectionDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
