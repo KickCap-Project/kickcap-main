@@ -73,4 +73,8 @@ public class Bill {
 
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
     private List<Objection> objections = new ArrayList<>();
+
+    public void updatePaidStatus(PaidStatus paidStatus) {
+        this.paidStatus = paidStatus;
+    }
 }
