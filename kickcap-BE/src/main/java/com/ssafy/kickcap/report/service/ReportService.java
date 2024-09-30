@@ -125,7 +125,7 @@ public class ReportService {
         Member member = report.getMember();
 
         // 단속 유형에 따른 벌점 update , 고지서 생성될 때마다 update
-        member.updateDemerit(report.getViolationType().getScore());
+        member.updateDemerit(member.getDemerit() + report.getViolationType().getScore());
 
         memberRepository.save(member);
 
