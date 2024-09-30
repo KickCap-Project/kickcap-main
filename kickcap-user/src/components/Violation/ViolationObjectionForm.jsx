@@ -57,8 +57,8 @@ const ViolationObjectionForm = ({ id }) => {
         navigate('success');
       }
     } catch (err) {
-      console.log(`이의제기 제출 중 오류 발생: ${err}`)
-      setError('이의제기 제출에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      console.log(`이의제기 제출 중 오류 발생: ${err}`);
+      setError('이의제기 제출에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
