@@ -71,12 +71,13 @@ const ViolationDetailPage = () => {
   const objectionEventHandler = () => {
     navigate('../objection', { state: { id } });
   };
+
   const paymentEventHandler = () => {
     navigate('', { state: { id } });
   };
 
   useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
       if (!isLoading) {
         setIsLoading(true);
 
@@ -84,21 +85,35 @@ const ViolationDetailPage = () => {
           const detailResponse = await getBillDetail(id);
           setDetail(detailResponse);
           console.log('세부 항목을 불러오는 데 성공했습니다.');
-
-          const imageSrc = detail.imageSrc;
-          const imgFileResponse = await getImgFile(imageSrc);
-
-          // blob를 이미지 URL로 변환
-          const imgFileURL = URL.createObjectURL(imgFileResponse);
-          setImgFile(imgFileURL);
-        } catch (error) {
-          console.error('Error fetching data: ', error);
+        } catch (err) {
+          console.error(`Error fetching detail data: ${err}`);
         } finally {
           setIsLoading(false);
         }
       }
-    })();
-  }, []);
+    };
+
+    fetchData();
+  }, [id]);
+
+  useEffect(() => {
+    // detail.imageSrc가 있을 때만 이미지 불러오기
+    const fetchImage = async () => {
+      if (detail.imageSrc) {
+        try {
+          const imgFileResponse = await getImgFile(detail.imageSrc);
+
+          // blob를 이미지 URL로 변환
+          const imgFileURL = URL.createObjectURL(imgFileResponse);
+          setImgFile(imgFileURL);
+        } catch (err) {
+          console.error(`Error fetching image data: ${err}`);
+        }
+      }
+    };
+
+    fetchImage();
+  }, [detail.imageSrc]);
 
   return (
     <s.Container>
