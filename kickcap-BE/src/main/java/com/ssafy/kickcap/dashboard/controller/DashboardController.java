@@ -2,6 +2,7 @@ package com.ssafy.kickcap.dashboard.controller;
 
 import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
 import com.ssafy.kickcap.dashboard.dto.BottomDateResponse;
+import com.ssafy.kickcap.dashboard.dto.CctvInfoReponse;
 import com.ssafy.kickcap.dashboard.dto.MarkersDataReponse;
 import com.ssafy.kickcap.dashboard.dto.WeekResponse;
 import com.ssafy.kickcap.dashboard.service.DashboardService;
@@ -77,5 +78,12 @@ public class DashboardController {
         return ResponseEntity.ok().body(markersDataReponse);
     }
 
+    @GetMapping("/cctv")
+    @Operation(summary = "cctv 상세정보 조회", description = "특정 cctv의 특정 시간대의 단속 정보를 조회할 수 있습니다.")
+    public ResponseEntity<CctvInfoReponse> getCctvData(@RequestParam(required = false) Long idx,
+                                                             @RequestParam(required = false) int time){
 
+        CctvInfoReponse cctvInfoReponse = dashboardService.searchCctvInfoByTime(idx, time);
+        return ResponseEntity.ok().body(cctvInfoReponse);
+    }
 }

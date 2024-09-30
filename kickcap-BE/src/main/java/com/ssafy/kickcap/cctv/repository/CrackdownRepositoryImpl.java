@@ -8,11 +8,9 @@ import com.ssafy.kickcap.cctv.entity.CCTVInfo;
 import com.ssafy.kickcap.cctv.entity.Crackdown;
 import com.ssafy.kickcap.cctv.entity.QCCTVInfo;
 import com.ssafy.kickcap.cctv.entity.QCrackdown;
-import com.ssafy.kickcap.dashboard.dto.CamDataResponse;
 import com.ssafy.kickcap.dashboard.dto.TimeIndex;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import com.querydsl.core.types.dsl.DateTimeExpression;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -113,4 +111,15 @@ public class CrackdownRepositoryImpl {
 
         return counts;
     }
+
+    public List<Crackdown> getCrackdownByCctv(Long idx, int startHour, int endHour, ZonedDateTime startDay, ZonedDateTime endDay) {
+        return queryFactory.select(crackdown)
+                .from(crackdown)
+                .where(crackdown.cctvInfo.id.eq(idx)
+                        .and(crackdown.crackdownTime.between(startDay, endDay)) // 조회 시간으로부터 일주일을 필터링
+                        .and(crackdown.crackdownTime.hour().goe(startHour)) // 시작 시간 이후 발생한 단속을 필터링합니다.
+                        .and(crackdown.crackdownTime.hour().loe(endHour))) // 종료 시간 이전에 발생한 단속을 필터링합니다.
+                .fetch();
+    }
+
 }
