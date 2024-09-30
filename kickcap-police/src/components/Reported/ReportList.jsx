@@ -17,6 +17,7 @@ import Pagination from 'react-js-pagination';
 import ReactPaginate from 'react-paginate';
 import { useSearchParams } from 'react-router-dom';
 import '../../styles/Pagination.css';
+import Text from './../Common/Text';
 
 const s = {
   Container: styled.div`
@@ -69,6 +70,9 @@ const s = {
     vertical-align: middle;
     border-bottom: 1px solid ${(props) => props.theme.btnOff};
   `,
+  noData: styled.td`
+    vertical-align: middle;
+  `,
   Th: styled.th`
     font-weight: 700;
     color: ${(props) => props.theme.mainColor};
@@ -83,7 +87,7 @@ const s = {
   `,
   Label: styled.label`
     font-weight: 700;
-    font-size: 20px;
+    font-size: 15px;
     cursor: pointer;
   `,
   BtnArea: styled.div`
@@ -108,7 +112,6 @@ const ReportList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const type = useAppSelector(selectReportNav);
   const dispatch = useAppDispatch();
-  const [test, setTest] = useState(1);
   const [violationType, setViolationType] = useState(searchParams.get('violationType'));
   const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(Number(searchParams.get('pageNo')));
@@ -119,6 +122,13 @@ const ReportList = () => {
     const newViolationType =
       mode === 'park' ? 4 : mode === 'helmet' ? 3 : mode === 'peoples' ? 1 : mode === 'sideWalk' ? 2 : 5;
     setSearchParams({ violationType: newViolationType, pageNo: 1 });
+  };
+
+  const getColor = (mode) => {
+    return type === mode ? '#0054A6' : undefined;
+  };
+  const getSize = (mode) => {
+    return type === mode ? '30px' : undefined;
   };
 
   useEffect(() => {
@@ -138,13 +148,6 @@ const ReportList = () => {
     dispatch(pageActions.changeReportType(newViolationType));
   }, [searchParams]);
 
-  const getColor = (mode) => {
-    return type === mode ? '#0054A6' : undefined;
-  };
-  const getSize = (mode) => {
-    return type === mode ? '30px' : undefined;
-  };
-
   const navigate = useNavigate();
   const handleMovePage = (reportId) => {
     navigate(`read?violationType=${violationType}&detail=${reportId}`, { state: { pageNo } });
@@ -152,7 +155,6 @@ const ReportList = () => {
 
   const handleClickPage = (pageNo) => {
     setPageNo(pageNo);
-    setTest(pageNo);
     setSearchParams({ violationType, pageNo });
   };
 
@@ -230,13 +232,19 @@ const ReportList = () => {
             </s.Tr>
           </s.Thead>
           <s.Tbody>
-            {data.map((d, index) => (
-              <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
-                <s.Td>{d.idx}</s.Td>
-                <s.Td>{d.addr}</s.Td>
-                <s.Td>{moment(d.reportTime).format('YY-MM-DD')}</s.Td>
+            {data.length !== 0 ? (
+              data.map((d, index) => (
+                <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
+                  <s.Td>{d.idx}</s.Td>
+                  <s.Td>{d.addr}</s.Td>
+                  <s.Td>{moment(d.createTime).format('YY-MM-DD')}</s.Td>
+                </s.Tr>
+              ))
+            ) : (
+              <s.Tr>
+                <s.noData colSpan={3}>내역이 존재하지 않습니다.</s.noData>
               </s.Tr>
-            ))}
+            )}
           </s.Tbody>
         </s.Table>
       </s.TableArea>
@@ -273,7 +281,7 @@ const ReportList = () => {
             checked={isEnd}
             onChange={() => setIsEnd(!isEnd)}
           />
-          <s.Label htmlFor="ok">완료 건 조회</s.Label>
+          <s.Label htmlFor="ok">처리완료건 조회</s.Label>
         </s.BtnArea>
       </s.PageFooter>
     </s.Container>

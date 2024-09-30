@@ -4,6 +4,8 @@ import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectComplaintNav } from '../../store/page';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
+import '../../styles/Pagination.css';
+import Pagination from 'react-js-pagination';
 
 const s = {
   Container: styled.div`
@@ -55,6 +57,9 @@ const s = {
     vertical-align: middle;
     border-bottom: 1px solid ${(props) => props.theme.btnOff};
   `,
+  noData: styled.td`
+    vertical-align: middle;
+  `,
   Th: styled.th`
     font-weight: 700;
     color: ${(props) => props.theme.mainColor};
@@ -65,6 +70,9 @@ const s = {
     height: 40px;
     border: 1px solid red;
     margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `,
 };
 
@@ -76,13 +84,6 @@ const ComplaintList = () => {
   const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
   const [data, setData] = useState([]);
-
-  useEffect(() => {
-    setState(searchParams.get('state'));
-    setPageNo(pageNo);
-    const newViolationType = searchParams.get('state') === 'receipt' ? 'progress' : 'finish';
-    dispatch(pageActions.changeComplaintType(newViolationType));
-  }, [searchParams]);
 
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeComplaintType(mode));
@@ -97,10 +98,25 @@ const ComplaintList = () => {
     return type === mode ? '30px' : undefined;
   };
 
+  useEffect(() => {
+    setState(searchParams.get('state'));
+    setPageNo(Number(pageNo));
+    const newViolationType = searchParams.get('state') === 'receipt' ? 'progress' : 'finish';
+    dispatch(pageActions.changeComplaintType(newViolationType));
+  }, [searchParams]);
+
   const navigate = useNavigate();
-  const handleMovePage = () => {
-    navigate('read');
+  const handleMovePage = (complaintId) => {
+    navigate(`read?state=${state}&detail=${complaintId}`, { state: { pageNo } });
   };
+
+  const handleClickPage = (pageNo) => {
+    setPageNo(pageNo);
+    setSearchParams({ state, pageNo });
+  };
+
+  useEffect(() => {}, [state, pageNo]);
+
   return (
     <s.Container>
       <s.TypeArea>
@@ -143,7 +159,17 @@ const ComplaintList = () => {
           </s.Tbody>
         </s.Table>
       </s.TableArea>
-      <s.pageArea></s.pageArea>
+      <s.pageArea>
+        <Pagination
+          activePage={pageNo} // 현재 페이지
+          itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
+          totalItemsCount={totalPage} // 총 아이템 갯수
+          pageRangeDisplayed={10} // paginator의 페이지 범위
+          prevPageText={'‹'} // "이전"을 나타낼 텍스트
+          nextPageText={'›'} // "다음"을 나타낼 텍스트
+          onChange={handleClickPage} // 페이지 변경을 핸들링하는 함수
+        />
+      </s.pageArea>
     </s.Container>
   );
 };
