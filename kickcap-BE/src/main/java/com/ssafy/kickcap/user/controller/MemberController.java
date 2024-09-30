@@ -25,14 +25,6 @@ public class MemberController {
     private final DeviceInfoService deviceInfoService;
     private final MemberService memberService;
 
-
-    // OAuth 로그인 후 Access Token, Refresh Token, FCM 토큰 저장하는 API
-    @PostMapping("/login")
-    @Operation(summary = "일반 시민 로그인", description = "시민 사용자의 소셜 로그인입니다.")
-    public ResponseEntity<?> oauthLogin() {
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
     @PostMapping("/fcm")
     @Operation(summary = "토큰 전송", description = "시민 사용자의 fcm 토큰과 refresh 토큰 전송")
     public ResponseEntity<SocialLoginResponse> saveTokens(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody TokenRequest tokenRequest) {
@@ -41,20 +33,11 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).body(socialLoginResponse);
     }
 
-    @PutMapping("/register")
-    @Operation(summary = "일반 시민 추가 정보 입력", description = "시민 사용자 휴대폰 번호와 이름을 입력받아 저장합니다.")
-    public ResponseEntity<RegisterDto> registerMember(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody RegisterDto registerDto) {
-        Long id = principal.getId();
-        memberService.updateNameAndPhone(id, registerDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(registerDto);
-    }
-
-    @PutMapping("")
-    @Operation(summary = "개인정보 수정", description = "이름과 휴대폰번호를 수정합니다.")
-    public ResponseEntity<RegisterDto> editMember(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody RegisterDto registerDto) {
-        Long id = principal.getId();
-        memberService.updateNameAndPhone(id, registerDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(registerDto);
+    @GetMapping("/demerit")
+    @Operation(summary = "벌점 조회", description = "시민 사용자의 벌점 내역 조회")
+    public ResponseEntity<Integer> getDemerit(@AuthenticationPrincipal CustomOAuth2User principal) {
+        Member member = memberService.findById(principal.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(member.getDemerit());
     }
 
     // 로그아웃 API
@@ -63,6 +46,10 @@ public class MemberController {
     public ResponseEntity<String> logout(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody LogoutRequest logoutRequest) {
 
         Long id = principal.getId(); // 현재 인증된 사용자의 이메일 가져오기
+        Member member = memberService.findById(id);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user");
+        }
 
         // FCM 토큰에 해당하는 리프레시 토큰 삭제
         deviceInfoService.deleteRefreshToken(id, logoutRequest);
