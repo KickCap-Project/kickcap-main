@@ -28,10 +28,8 @@ const s = {
     width: 90%;
     height: 550px;
     margin: 20px auto;
-    border: 1px solid blue;
     display: flex;
     justify-content: space-between;
-    /* align-items: center; */
   `,
   Img: styled.img`
     width: 400px;
@@ -40,19 +38,17 @@ const s = {
   InfoArea: styled.div`
     width: 50%;
     height: 100%;
-    border: 1px solid green;
     overflow: auto;
   `,
   BtnArea: styled.div`
     width: 100%;
     display: flex;
     justify-content: end;
-    border: 1px solid orange;
     margin: 30px auto;
   `,
 };
 
-const BoardCameraModal = ({ open, toggleModal, idx }) => {
+const BoardCameraModal = ({ open, toggleModal, idx, data }) => {
   return (
     <ReactModal
       isOpen={open}
@@ -64,7 +60,7 @@ const BoardCameraModal = ({ open, toggleModal, idx }) => {
       <s.Container>
         <s.Header>
           <Text
-            children={`카메라주소 ` + idx}
+            children={data.addr}
             textalian={'center'}
             display={'block'}
             size={'25px'}
@@ -83,9 +79,7 @@ const BoardCameraModal = ({ open, toggleModal, idx }) => {
         <s.MainArea>
           <s.Img src={test} />
           <s.InfoArea>
-            {dummy.map((data, index) => (
-              <CameraCrackList key={index} data={data} />
-            ))}
+            {data.crackdown && data.crackdown.map((data, index) => <CameraCrackList key={index} data={data} />)}
           </s.InfoArea>
         </s.MainArea>
       </s.Container>
