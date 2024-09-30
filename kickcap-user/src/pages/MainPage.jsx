@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import HeaderMain from './../components/HeaderMain';
@@ -18,6 +18,8 @@ import PhoneSetModal from '../components/Modal/PhoneSetModal';
 import Text from '../components/Common/Text';
 import { useNavigate } from 'react-router';
 import InfoModal from '../components/Modal/InfoModal';
+
+import { localAxios } from '../util/axios-setting';
 
 const s = {
   Container: styled.div`
@@ -89,6 +91,36 @@ const MainPage = () => {
     navigate(path);
   };
   const Info = JSON.parse(localStorage.getItem('Info'));
+
+  // 메인 페이지로 접속, 혹은 돌아갈 때 demerit 새로 호출해 갱신, 오류 발생 시 기존 벌점으로
+  useEffect(() => {
+    const setDemerit = async () => {
+      const axiosInstance = localAxios();
+
+      const storedInfo = JSON.parse(localStorage.getItem('Info'));
+
+      if (!storedInfo) {
+        console.log(`사용자 정보를 확인해주세요.`);
+        return;
+      }
+
+      try {
+        const response = await axiosInstance.get('/members/demerit');
+
+        if (response.status === 200) {
+          storedInfo.demerit = response.data;
+          localStorage.setItem('Info', JSON.stringify(storedInfo));
+          console.log(`벌점이 성공적으로 갱신되었습니다: ${response.status}`);
+        } else {
+          console.log(`벌점 조회 중 문제가 발생했습니다: ${response.status}`);
+        }
+      } catch (err) {
+        console.log(`벌점 조회 중 오류 발생: ${err}`);
+      }
+    };
+
+    setDemerit();
+  }, []);
 
   return (
     <s.Container>
