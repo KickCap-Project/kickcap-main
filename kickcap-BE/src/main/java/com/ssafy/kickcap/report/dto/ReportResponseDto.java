@@ -17,7 +17,7 @@ public class ReportResponseDto {
 
     private String description;
 
-    private String reportTime;
+    private String createTime;
 
     private String addr;
 
