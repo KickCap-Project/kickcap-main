@@ -51,23 +51,20 @@ export const localAxios = () => {
 
             // 새로운 액세스 토큰을 스토리지에 저장
             setAccessToken(accessToken);
-            console.log('토큰 재발급 성공');
             // 실패한 요청을 새 액세스 토큰과 함께 재전송
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
             return axios(originalRequest);
           } catch (refreshError) {
             // 리프레시 토큰이 만료되었거나 오류가 발생한 경우 로그아웃 처리
-            // removeTokens(); // 토큰 제거
-            // window.location.href = '/login'; // 로그인 페이지로 리다이렉트
+            removeTokens(); // 토큰 제거
+            window.location.href = '/login'; // 로그인 페이지로 리다이렉트
             console.log('이건가?');
             return Promise.reject(refreshError);
           }
         } else {
           // 리프레시 토큰이 없으면 로그아웃 처리
-          // removeTokens();
-          // window.location.href = '/login'; // 로그인 페이지로 리다이렉트
-          // alert('오류 2');
-          console.log('이거다!');
+          removeTokens();
+          window.location.href = '/login'; // 로그인 페이지로 리다이렉트
           return Promise.reject(error);
         }
       }
