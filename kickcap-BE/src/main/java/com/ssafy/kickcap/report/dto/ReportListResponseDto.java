@@ -12,13 +12,13 @@ public class ReportListResponseDto {
 
     private Long idx;
     private String addr;
-    private String reportTime;
+    private String createTime;
 
     public static ReportListResponseDto fromEntity(Report report) {
         return ReportListResponseDto.builder()
                 .idx(report.getId())
                 .addr(report.getAddress())
-                .reportTime(report.getReportTime().toString())
+                .createTime(report.getCreatedAt().toString())
                 .build();
     }
 }
