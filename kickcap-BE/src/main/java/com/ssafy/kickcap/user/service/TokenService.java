@@ -31,8 +31,7 @@ public class TokenService {
             return tokenProvider.generatePoliceToken(deviceInfo.getPolice(), Duration.ofSeconds(40));
         } else if (deviceInfo.getMember() != null) {
             // 사옹자 찾은 후 토큰 제공자의 새로운 액세스 토큰 생성
-//            return tokenProvider.generateMemberToken(deviceInfo.getMember(), Duration.ofHours(2));
-            return tokenProvider.generateMemberToken(deviceInfo.getMember(), Duration.ofSeconds(40));
+            return tokenProvider.generateMemberToken(deviceInfo.getMember(), Duration.ofHours(2));
         } else {
             throw new IllegalArgumentException("No user associated with this token");
         }
