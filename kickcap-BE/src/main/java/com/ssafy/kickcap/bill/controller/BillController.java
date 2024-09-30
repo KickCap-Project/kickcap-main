@@ -44,4 +44,12 @@ public class BillController {
         billService.createBillFromCrackdown(crackdownId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/{billId}/pay")
+    @Operation(summary = "고지서 납부 상태 완료로 변경")
+    public ResponseEntity<Void> updatePaidStatus(@PathVariable Long billId) {
+        // 벌금 납부하면 현재 벌점에서 -10 해준다.
+        billService.updatePaidStatus(billId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

@@ -192,11 +192,29 @@ public class BillService {
 
         // 벌점 업데이트
         Member member = crackdown.getMember();
-        member.updateDemerit(crackdown.getViolationType().getScore());
+        member.updateDemerit(member.getDemerit() + crackdown.getViolationType().getScore());
         memberRepository.save(member);
 
         // Bill 엔티티 저장
         billRepository.save(bill);
 
+    }
+
+    public void updatePaidStatus(Long billId) {
+        Bill bill = billRepository.findById(billId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        bill.updatePaidStatus(PaidStatus.PAID);
+        billRepository.save(bill);
+
+        Member member = memberRepository.findById(bill.getMember().getId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        int demerit = member.getDemerit();
+
+        // 벌점이 10 이하면 0으로 초기화
+        // 벌점이 10 초과라면 현재 벌점에서 -10 한 값을 넣어주기
+        if (demerit <= 10) {
+            member.updateDemerit(0);
+        } else {
+            member.updateDemerit(demerit - 10);
+        }
+        memberRepository.save(member);
     }
 }
