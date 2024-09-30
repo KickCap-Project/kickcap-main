@@ -44,7 +44,7 @@ const ViolationObjectionPage = () => {
     <s.Container>
       <Header title="단속 이의제기 신청" />
       <s.MainArea>
-        <ViolationObjectionForm />
+        <ViolationObjectionForm id={id} />
       </s.MainArea>
       <Footer />
     </s.Container>

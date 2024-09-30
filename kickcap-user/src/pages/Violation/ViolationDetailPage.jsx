@@ -83,10 +83,14 @@ const ViolationDetailPage = () => {
         try {
           const detailResponse = await getBillDetail(id);
           setDetail(detailResponse);
+          console.log('세부 항목을 불러오는 데 성공했습니다.');
 
-          const imgSrc = detail.imageaSrc;
-          const imgFileResponse = (async () => await getImgFile(imgSrc))();
-          setImgFile(imgFileResponse);
+          const imageSrc = detail.imageSrc;
+          const imgFileResponse = await getImgFile(imageSrc);
+
+          // blob를 이미지 URL로 변환
+          const imgFileURL = URL.createObjectURL(imgFileResponse);
+          setImgFile(imgFileURL);
         } catch (error) {
           console.error('Error fetching data: ', error);
         } finally {
@@ -101,7 +105,7 @@ const ViolationDetailPage = () => {
       <Header title={'나의 단속 내역'} />
       <s.MainArea>
         <s.BillWrapper>
-          <s.ImgWrapper src={imgFile}></s.ImgWrapper>
+          <s.ImgWrapper src={imgFile} alt="image" />
           <ViolationDetail detail={detail} />
           <s.ButtonWrapper>
             {detail.isObjection === 0 ? (
