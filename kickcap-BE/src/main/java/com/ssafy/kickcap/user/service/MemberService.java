@@ -42,13 +42,6 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
     }
 
-    public void updateNameAndPhone(Long userId, RegisterDto registerDto) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
-        member.update(registerDto.getName(), registerDto.getPhone());
-        memberRepository.save(member);
-    }
-
     public MemberInfoResponseDto getMemberInfo(Long memberId, Long reportId) {
 
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
