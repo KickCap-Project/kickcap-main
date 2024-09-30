@@ -102,7 +102,7 @@ public class ReportService {
                 .memberId(member.getId())
                 .violationType(violationType.getName())
                 .description(report.getDescription())
-                .reportTime(report.getReportTime().toString())
+                .createTime(report.getCreatedAt().toString())
                 .addr(report.getAddress())
                 .imageSrc(report.getImageSrc())
                 .lat(report.getLatitude())
