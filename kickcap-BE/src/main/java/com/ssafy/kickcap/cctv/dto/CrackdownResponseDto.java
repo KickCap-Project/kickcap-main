@@ -19,7 +19,9 @@ public class CrackdownResponseDto {
 
     private Long cctvIdx;
 
-    private String kickboardNumber;
+    private String img;
+
+    private String kick;
 
     private String name;
 
