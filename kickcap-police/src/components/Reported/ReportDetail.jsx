@@ -182,7 +182,7 @@ const ReportDetail = () => {
               <s.Td>{reportData.idx}</s.Td>
               <s.Td>{reportData.addr}</s.Td>
               <s.Td>{reportData.violationType}</s.Td>
-              <s.Td>{moment(reportData.reportTime).format('YY-MM-DD')}</s.Td>
+              <s.Td>{moment(reportData.createTime).format('YY-MM-DD')}</s.Td>
             </s.Tr>
           </s.Tbody>
         </s.Table>
