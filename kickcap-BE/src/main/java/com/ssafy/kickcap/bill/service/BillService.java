@@ -163,6 +163,11 @@ public class BillService {
                 .isObjection("N")
                 .build();
 
+        // 벌점 업데이트
+        Member member = crackdown.getMember();
+        member.updateDemerit(crackdown.getViolationType().getScore());
+        memberRepository.save(member);
+
         // Bill 엔티티 저장
         billRepository.save(bill);
 
