@@ -7,6 +7,7 @@ import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -37,4 +38,10 @@ public class BillController {
         return ResponseEntity.ok(bill);
     }
 
+    @PostMapping("/crackdown/{crackdownId}")
+    @Operation(summary = "cctv 단속 정보를 통해 고지서를 생성하는 API")
+    public ResponseEntity<Void> createBillFromCrackdown(@PathVariable Long crackdownId) {
+        billService.createBillFromCrackdown(crackdownId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

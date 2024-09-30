@@ -45,6 +45,10 @@ public class Bill {
     @Column(name = "paid_status", nullable = false)
     private PaidStatus paidStatus;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "report_type", nullable = false)
+    private ReportType reportType;
+
     @Column(name = "is_obj", nullable = false, length = 1)
     @ColumnDefault(value = "'N'")
     private String isObjection;
