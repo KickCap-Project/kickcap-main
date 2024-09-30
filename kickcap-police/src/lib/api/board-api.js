@@ -22,7 +22,7 @@ export const getMarkerData = async (sido, gugun, success, fail) => {
   await local.get(`/dashboard/markers`, { params: { sido, gugun } }).then(success).catch(fail);
 };
 
-export const getCCTVInfo = async (success, fail) => {
+export const getCCTVInfo = async (idx, time, success, fail) => {
   // cctv 상세
-  await local.get(``).then(success).catch(fail);
+  await local.get(`/dashboard/cctv`, { params: { idx, time } }).then(success).catch(fail);
 };
