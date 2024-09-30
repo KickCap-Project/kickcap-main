@@ -104,7 +104,10 @@ public class Member {
         return this;
     }
 
+//    public void updateDemerit(int demerit) {
+//        this.demerit += demerit;
+//    }
     public void updateDemerit(int demerit) {
-        this.demerit += demerit;
+        this.demerit = demerit;
     }
 }
