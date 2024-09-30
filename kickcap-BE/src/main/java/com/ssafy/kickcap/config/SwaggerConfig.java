@@ -29,7 +29,7 @@ public class SwaggerConfig {
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .servers(List.of(
-                        new Server().url("https://www.arraylist.xyz").description("Production server")
+                        new Server().url("https://www.arraylist.xyz").description("Production server") // HTTPS로 변경
                 ))
                 .info(apiInfo());
     }

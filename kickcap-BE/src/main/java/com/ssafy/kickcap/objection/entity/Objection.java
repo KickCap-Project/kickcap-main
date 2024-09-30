@@ -65,4 +65,9 @@ public class Objection {
 
     @OneToOne(mappedBy = "objection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Answer answer;
+
+    public void updateObjection(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

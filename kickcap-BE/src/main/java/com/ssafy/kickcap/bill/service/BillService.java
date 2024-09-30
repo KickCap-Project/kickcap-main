@@ -224,6 +224,7 @@ public class BillService {
 
     public void createObjectionFromBill(Member member, Long billId, BillObjectionDto billObjectionDto) {
         Bill bill = billRepository.findById(billId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+
         objectionRepository.save(Objection.builder()
                         .policeIdx(bill.getPolice().getId())
                         .title(billObjectionDto.getTitle())
@@ -231,5 +232,8 @@ public class BillService {
                         .member(member)
                         .bill(bill)
                 .build());
+
+        bill.updateIsObjection();
+        billRepository.save(bill);
     }
 }
