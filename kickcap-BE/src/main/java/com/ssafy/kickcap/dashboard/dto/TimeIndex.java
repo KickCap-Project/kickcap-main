@@ -32,6 +32,24 @@ public enum TimeIndex {
         return endTime;
     }
 
+    public static String startTimeOfIndex(int index){
+        for (TimeIndex timeIndex : values()) {
+            if (timeIndex.getIndex() == index) {
+                return timeIndex.getStartTime();
+            }
+        }
+        return null;
+    }
+
+    public static String endTimeOfIndex(int index){
+        for (TimeIndex timeIndex : values()) {
+            if (timeIndex.getIndex() == index) {
+                return timeIndex.getEndTime();
+            }
+        }
+        return null;
+    }
+
     public static int fromTime(String time) {
         // "HH:mm" 형식일 경우 초 부분을 "00"으로 추가합니다.
         if (time.length() == 5) {
