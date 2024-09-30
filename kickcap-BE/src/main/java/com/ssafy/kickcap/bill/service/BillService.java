@@ -4,7 +4,11 @@ import com.ssafy.kickcap.bill.dto.BillListResponseDto;
 import com.ssafy.kickcap.bill.dto.BillResponseDto;
 import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.bill.entity.PaidStatus;
+import com.ssafy.kickcap.bill.entity.ReportType;
 import com.ssafy.kickcap.bill.repository.BillRepository;
+import com.ssafy.kickcap.cctv.entity.CCTVInfo;
+import com.ssafy.kickcap.cctv.entity.Crackdown;
+import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.report.entity.Report;
@@ -34,6 +38,7 @@ public class BillService {
     private final ReportRepository reportRepository;
     private final ViolationTypeRepository violationTypeRepository;
     private final PoliceRepository policeRepository;
+    private final CrackdownRepository crackdownRepository;
 
     public List<BillListResponseDto> getBillList(Long memberId, int pageNo) {
         // 페이지 요청 객체 생성 (첫 페이지는 0부터 시작)
@@ -114,5 +119,52 @@ public class BillService {
             return 0;
         }
         return 1;
+    }
+
+    // USER 신고를 통한 고지서 생성
+    public void createBillFromReport(Report report, Police police) {
+        // Bill 엔티티 생성
+        Bill bill = Bill.builder()
+                .reportId(report.getId())
+                .police(police)
+                .member(report.getMember())
+                .fine(report.getViolationType().getFine())
+                .totalBill(report.getViolationType().getFine()) // 처음 고지서가 만들어질 때 벌금 금액이 기본값으로 들어감
+                .deadline(ZonedDateTime.now().plusDays(10)) // 납부 기한을 현재로부터 10일 후로 설정
+                .paidStatus(PaidStatus.UNPAID)
+                .reportType(ReportType.USER)
+                .isObjection("N")
+                .build();
+
+        // Bill 엔티티 저장
+        billRepository.save(bill);
+    }
+
+    // CCTV 단속을 통한 고지서 생성
+    public void createBillFromCrackdown(Long crackdownId) {
+        Crackdown crackdown = crackdownRepository.findById(crackdownId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+
+        CCTVInfo cctvInfo = crackdown.getCctvInfo();
+
+        Police police = policeRepository.findById(cctvInfo.getPoliceId())
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+
+        // Bill 엔티티 생성
+        Bill bill = Bill.builder()
+                .reportId(crackdown.getId())
+                .police(police)
+                .member(crackdown.getMember())
+                .fine(crackdown.getViolationType().getFine())
+                .totalBill(crackdown.getViolationType().getFine()) // 처음 고지서가 만들어질 때 벌금 금액이 기본값으로 들어감
+                .deadline(ZonedDateTime.now().plusDays(10)) // 납부 기한을 현재로부터 10일 후로 설정
+                .paidStatus(PaidStatus.UNPAID)
+                .reportType(ReportType.CCTV)
+                .isObjection("N")
+                .build();
+
+        // Bill 엔티티 저장
+        billRepository.save(bill);
+
     }
 }
