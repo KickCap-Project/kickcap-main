@@ -1,6 +1,5 @@
 package com.ssafy.kickcap.user.repository;
 
-import aj.org.objectweb.asm.commons.Remapper;
 import com.ssafy.kickcap.user.entity.DeviceInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -22,7 +21,11 @@ public interface DeviceInfoRepository extends JpaRepository<DeviceInfo, Long>{
 
     @Modifying
     @Query("UPDATE DeviceInfo d SET d.refreshToken = null WHERE d.police.id = :policeId AND d.fcmToken = :fcmToken")
-    void updateRefreshTokenToNull(@Param("policeId") Long policeId, @Param("fcmToken") String fcmToken);
+    void updatePoliceRefreshTokenToNull(@Param("policeId") Long policeId, @Param("fcmToken") String fcmToken);
+
+    @Modifying
+    @Query("UPDATE DeviceInfo d SET d.refreshToken = null WHERE d.member.id = :memberId AND d.fcmToken = :fcmToken")
+    void updateMemberRefreshTokenToNull(@Param("memberId") Long policeId, @Param("fcmToken") String fcmToken);
 
     Optional<DeviceInfo> findByMemberIdAndFcmToken(Long id, String fcmToken);
 }

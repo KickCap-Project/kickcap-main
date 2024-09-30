@@ -32,15 +32,6 @@ public class DeviceInfoService {
         deviceInfoRepository.save(deviceInfo);
     }
 
-    // 일반 시민 FCM 토큰과 리프레시 토큰 저장
-    public void saveDevice(Member member, String fcmToken, String refreshToken) {
-        DeviceInfo deviceInfo = (DeviceInfo) deviceInfoRepository.findByFcmToken(fcmToken)
-                .map(info -> info.updateRefreshToken(refreshToken))
-                .orElse(new DeviceInfo(member, fcmToken, refreshToken));
-
-        deviceInfoRepository.save(deviceInfo);
-    }
-
     // FCM 토큰으로 DeviceInfo 삭제
     @Transactional
     public void deleteByFcmToken(Long id, LogoutRequest logoutRequest) {
@@ -57,17 +48,20 @@ public class DeviceInfoService {
         }
     }
     @Transactional
-    public void deleteRefreshToken(Long policeId, LogoutRequest logoutRequest) {
+    public void deleteRefreshToken(Long id, LogoutRequest logoutRequest) {
         DeviceInfo deviceInfo = deviceInfoRepository.findByFcmToken(logoutRequest.getFcmToken())
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected token"));
 
-        if (deviceInfo != null && deviceInfo.getPolice() != null && deviceInfo.getPolice().getId().equals(policeId)) {
-            deviceInfoRepository.updateRefreshTokenToNull(policeId, logoutRequest.getFcmToken());
+        if (deviceInfo != null && deviceInfo.getPolice() != null && deviceInfo.getPolice().getId().equals(id)) {
+            deviceInfoRepository.updatePoliceRefreshTokenToNull(id, logoutRequest.getFcmToken());
+        } else if (deviceInfo != null && deviceInfo.getMember() != null && deviceInfo.getMember().getId().equals(id)) {
+            deviceInfoRepository.updateMemberRefreshTokenToNull(id, logoutRequest.getFcmToken());
         } else {
             System.out.println("No matching device found or device does not belong to the police user");
         }
     }
 
+    // 일반 시민 FCM 토큰과 리프레시 토큰 저장
     public SocialLoginResponse saveFcmAndRefresh(Member member, TokenRequest tokenRequest) {
         String fcmToken = tokenRequest.getFcmToken();
         String refreshToken = tokenRequest.getRefreshToken();
