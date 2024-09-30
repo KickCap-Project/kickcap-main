@@ -66,14 +66,6 @@ const s = {
     color: ${(props) => props.theme.textBasic};
     cursor: pointer;
   `,
-  nameArea: styled.div`
-    font-size: 10px;
-    color: ${(props) => props.theme.textBasic};
-    display: flex;
-    align-items: center;
-    height: 100%;
-    margin-left: 10px;
-  `,
   Btn: styled.button`
     width: 55px;
     font-size: 10px;
@@ -129,7 +121,7 @@ const BoardHeader = () => {
           <s.TitleArea>
             <IconSvg Ico={logo} width={'30px'} margin={'0 10px 0 0'} />
             <s.Title>
-              킥보드 자동화 단속 플랫폼<s.nameArea>({policeName})</s.nameArea>
+              {policeName}
               <s.Btn onClick={handleLogout}>로그아웃</s.Btn>
             </s.Title>
           </s.TitleArea>
