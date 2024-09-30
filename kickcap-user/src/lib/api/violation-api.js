@@ -44,6 +44,8 @@ export const getBillDetail = async (billId) => {
 };
 
 export const getImgFile = async (imageSrc) => {
+  console.log(`imageSrc: ${imageSrc}`);
+
   try {
     const response = await axios.get(imageSrc, { responseType: 'blob' });
 
