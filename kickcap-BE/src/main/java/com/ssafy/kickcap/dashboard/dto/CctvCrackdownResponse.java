@@ -11,4 +11,5 @@ public class CctvCrackdownResponse {
     private String img;
     private Long type;
     private String date;
+    private Long idx;
 }

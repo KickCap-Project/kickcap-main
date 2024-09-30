@@ -281,6 +281,7 @@ public class DashboardService {
                             .img(crackdown.getImageSrc())
                             .date(crackdown.getCrackdownTime().toLocalDate().toString())
                             .type(crackdown.getViolationType().getId())
+                            .idx(crackdown.getId())
                             .build());
         }
         return cctvCrackdownResponses;
