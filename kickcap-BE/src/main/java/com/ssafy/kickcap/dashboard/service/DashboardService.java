@@ -1,14 +1,14 @@
 package com.ssafy.kickcap.dashboard.service;
 
 import com.ssafy.kickcap.cctv.entity.CCTVInfo;
-import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
+import com.ssafy.kickcap.cctv.entity.Crackdown;
+import com.ssafy.kickcap.cctv.repository.CctvInfoRepository;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepositoryImpl;
 import com.ssafy.kickcap.dashboard.dto.*;
 import com.ssafy.kickcap.region.repository.RegionCodeRepositoryImpl;
 import com.ssafy.kickcap.report.entity.AccidentReport;
 import com.ssafy.kickcap.report.entity.Report;
 import com.ssafy.kickcap.report.repository.AccidentReportRepositoryImpl;
-import com.ssafy.kickcap.report.repository.ReportRepository;
 import com.ssafy.kickcap.report.repository.ReportRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +28,7 @@ public class DashboardService {
     private final CrackdownRepositoryImpl crackdownRepositoryImpl;
     private final ReportRepositoryImpl reportRepositoryImpl;
     private final AccidentReportRepositoryImpl accidentReportRepositoryImpl;
+    private final CctvInfoRepository cctvInfoRepository;
 
     // 현재 시간을 Asia/Seoul 타임존으로 가져오기
     ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
@@ -258,4 +259,30 @@ public class DashboardService {
         return pointDataResponses;
     }
 
+    //////////////// cctv info 조회///////////////////
+    public CctvInfoReponse searchCctvInfoByTime(Long idx, int time) {
+        CCTVInfo cctvInfo = cctvInfoRepository.findById(idx).orElseThrow(()-> new IllegalArgumentException("찾을 수 없는 cctv 번호입니다."));
+        List<CctvCrackdownResponse> cctvCrackdowns = getCrackdownByCctv(idx, time);
+        return CctvInfoReponse.builder()
+                .addr(cctvInfo.getLocation())
+                .crackdown(cctvCrackdowns)
+                .build();
+    }
+
+    private List<CctvCrackdownResponse> getCrackdownByCctv(Long idx, int time) {
+        int startHour = Integer.parseInt(TimeIndex.startTimeOfIndex(time).split(":")[0]); // 시작 시간 추출
+        int endHour = Integer.parseInt(TimeIndex.endTimeOfIndex(time).split(":")[0]);
+
+        List<Crackdown> crackdowns = crackdownRepositoryImpl.getCrackdownByCctv(idx, startHour, endHour, startOfLastWeek, startOfToday);
+        List<CctvCrackdownResponse> cctvCrackdownResponses = new ArrayList<>();
+        for (Crackdown crackdown : crackdowns) {
+            System.out.println(crackdown.getId());
+            cctvCrackdownResponses.add(CctvCrackdownResponse.builder()
+                            .img(crackdown.getImageSrc())
+                            .date(crackdown.getCrackdownTime().toLocalDate().toString())
+                            .type(crackdown.getViolationType().getId())
+                            .build());
+        }
+        return cctvCrackdownResponses;
+    }
 }
