@@ -42,7 +42,7 @@ public class BillService {
 
     public List<BillListResponseDto> getBillList(Long memberId, int pageNo) {
         // 페이지 요청 객체 생성 (첫 페이지는 0부터 시작)
-        Pageable pageable = PageRequest.of(pageNo -1, DEFAULT_PAGE_SIZE);
+        Pageable pageable = PageRequest.of(pageNo - 1, DEFAULT_PAGE_SIZE);
 
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
@@ -52,12 +52,18 @@ public class BillService {
         // Bill -> BillListResponseDto 변환
         return billPage.stream()
                 .map(bill -> {
-                    // Report 조회
-                    Report report = reportRepository.findById(bill.getReportId())
-                            .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
-
-                    // ViolationType 이름 가져오기
-                    String violationTypeName = report.getViolationType().getName();
+                    String violationTypeName = null;
+                    if (bill.getReportType().equals(ReportType.USER)) {
+                        // Report 조회
+                        Report report = reportRepository.findById(bill.getReportId())
+                                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+                        // ViolationType 이름 가져오기
+                        violationTypeName = report.getViolationType().getName();
+                    } else {
+                        Crackdown crackdown = crackdownRepository.findById(bill.getReportId())
+                                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+                        violationTypeName = crackdown.getViolationType().getName();
+                    }
 
                     // Bill -> BillListResponseDto 변환
                     return BillListResponseDto.builder()
@@ -74,12 +80,11 @@ public class BillService {
     private int setFlag(Bill bill) {
         if (bill.getPaidStatus() == PaidStatus.PAID) {
             return 1; // 납부
-        } else if(bill.getIsObjection().equals("Y") && bill.getPaidStatus() == PaidStatus.UNPAID){
+        } else if (bill.getIsObjection().equals("Y") && bill.getPaidStatus() == PaidStatus.UNPAID) {
             return 2; // 이의중
-        }
-        else if (bill.getDeadline().isBefore(ZonedDateTime.now().plusDays(2))) {
+        } else if (bill.getDeadline().isBefore(ZonedDateTime.now().plusDays(2))) {
             return 3; // 마감 2일전
-        } else if (bill.getIsObjection().equals("N") && bill.getPaidStatus() == PaidStatus.UNPAID){
+        } else if (bill.getIsObjection().equals("N") && bill.getPaidStatus() == PaidStatus.UNPAID) {
             return 0; // 미납
         }
         return 0; // 기본적으로 미납 상태 처리
@@ -93,25 +98,47 @@ public class BillService {
 
         Police police = policeRepository.findById(bill.getPolice().getId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        Report report = reportRepository.findById(bill.getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        if (bill.getReportType().equals(ReportType.USER)) {
 
-        ViolationType violationType = violationTypeRepository.findById(report.getViolationType().getId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+            Report report = reportRepository.findById(bill.getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        return BillResponseDto.builder()
-                .idx(bill.getId())
-                .kickboardNumber(report.getKickboardNumber())
-                .date(report.getReportTime().toString())
-                .address(report.getAddress())
-                .violationType(violationType.getName())
-                .demerit(member.getDemerit())
-                .fine(bill.getFine())
-                .totalBill(bill.getTotalBill())
-                .deadLine(bill.getDeadline().toString())
-                .police(police.getName())
-                .isFlag(bill.getPaidStatus().toString())
-                .isObjection(setObjection(bill))
-                .imageSrc(report.getImageSrc())
-                .build();
+            ViolationType violationType = violationTypeRepository.findById(report.getViolationType().getId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+
+            return BillResponseDto.builder()
+                    .idx(bill.getId())
+                    .kickboardNumber(report.getKickboardNumber())
+                    .date(report.getReportTime().toString())
+                    .address(report.getAddress())
+                    .violationType(violationType.getName())
+                    .demerit(member.getDemerit())
+                    .fine(bill.getFine())
+                    .totalBill(bill.getTotalBill())
+                    .deadLine(bill.getDeadline().toString())
+                    .police(police.getName())
+                    .isFlag(bill.getPaidStatus().toString())
+                    .isObjection(setObjection(bill))
+                    .imageSrc(report.getImageSrc())
+                    .build();
+        } else {
+            Crackdown crackdown = crackdownRepository.findById(bill.getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+
+            ViolationType violationType = violationTypeRepository.findById(crackdown.getViolationType().getId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+            return BillResponseDto.builder()
+                    .idx(bill.getId())
+                    .kickboardNumber(crackdown.getKickboardNumber())
+                    .date(crackdown.getCrackdownTime().toString())
+                    .address(crackdown.getCctvInfo().getLocation())
+                    .violationType(violationType.getName())
+                    .demerit(member.getDemerit())
+                    .fine(bill.getFine())
+                    .totalBill(bill.getTotalBill())
+                    .deadLine(bill.getDeadline().toString())
+                    .police(police.getName())
+                    .isFlag(bill.getPaidStatus().toString())
+                    .isObjection(setObjection(bill))
+                    .imageSrc(crackdown.getImageSrc())
+                    .build();
+        }
     }
 
     private int setObjection(Bill bill) {
