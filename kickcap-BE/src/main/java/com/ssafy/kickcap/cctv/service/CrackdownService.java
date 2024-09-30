@@ -92,11 +92,22 @@ public class CrackdownService {
         Optional<Bill> optionalBill = billRepository.findFirstByMemberIdOrderByCreatedAtDesc(member.getId());
 
         String history;
+        String image = "";
 
         // 고지서가 존재하는 경우
         if (optionalBill.isPresent()) {
             Bill bill = optionalBill.get();
             history = getHistory(bill);
+
+            if (bill.getReportType().equals(ReportType.USER)) {
+                Report billReport = reportRepository.findById(bill.getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+                image = billReport.getImageSrc();
+            }
+            else {
+                Crackdown billCrackdown = crackdownRepository.findById(bill.getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+                image = billCrackdown.getImageSrc();
+            }
+
         } else {
             // 고지서 조회안될 경우
             history = ""; // 빈 문자열로 초기화
@@ -108,13 +119,15 @@ public class CrackdownService {
                 .violationType(crackdown.getViolationType().getName())
                 .date(crackdown.getCreatedAt().toString())
                 .cctvIdx(cctvInfo.getId())
-                .kickboardNumber(crackdown.getKickboardNumber())
+                .img(image)
+                .kick(crackdown.getKickboardNumber())
                 .name(member.getName())
                 .phone(member.getPhone())
                 .demerit(member.getDemerit())
                 .history(history)
                 .build();
     }
+
     private String getHistory(Bill bill) {
         if (bill.getReportType().equals(ReportType.USER)) {
             Report billReport = reportRepository.findById(bill.getReportId())
