@@ -30,6 +30,9 @@ public class Crackdown {
     @Column(name = "crackdown_time", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime crackdownTime;
 
+    @Column(name = "kickboard_number", nullable = false, length = 10)
+    private String kickboardNumber;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
