@@ -36,8 +36,10 @@ public class MemberController {
     @GetMapping("/demerit")
     @Operation(summary = "벌점 조회", description = "시민 사용자의 벌점 내역 조회")
     public ResponseEntity<Integer> getDemerit(@AuthenticationPrincipal CustomOAuth2User principal) {
+        System.out.println("여기!!!!!! "+principal.getId());
         Member member = memberService.findById(principal.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(member.getDemerit());
+        System.out.println(member.getDemerit());
+        return ResponseEntity.ok(member.getDemerit());
     }
 
     // 로그아웃 API

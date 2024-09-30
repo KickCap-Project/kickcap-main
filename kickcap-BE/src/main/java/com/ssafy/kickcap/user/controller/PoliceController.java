@@ -55,15 +55,13 @@ public class PoliceController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // 4. 리프레시 토큰 생성
-//        String refreshToken = tokenProvider.generatePoliceToken(police, Duration.ofDays(14));
-        String refreshToken = tokenProvider.generatePoliceToken(police, Duration.ofMinutes(3));
+        String refreshToken = tokenProvider.generatePoliceToken(police, Duration.ofDays(14));
 
         // 5. DeviceInfo 엔티티 저장 또는 업데이트
         deviceInfoService.saveOrUpdateDevice(police, refreshToken, loginRequest.getFcmToken());
 
         // 6. 액세스 토큰 생성
-//        String accessToken = tokenProvider.generatePoliceToken(police, Duration.ofHours(2));
-        String accessToken = tokenProvider.generatePoliceToken(police, Duration.ofSeconds(10));
+        String accessToken = tokenProvider.generatePoliceToken(police, Duration.ofHours(2));
 
         // 7. 응답 반환
         return ResponseEntity.ok(new LoginResponse(police.getName(), accessToken, refreshToken));

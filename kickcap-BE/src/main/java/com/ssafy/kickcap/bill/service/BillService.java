@@ -52,12 +52,19 @@ public class BillService {
         // Bill -> BillListResponseDto 변환
         return billPage.stream()
                 .map(bill -> {
-                    // Report 조회
-                    Report report = reportRepository.findById(bill.getReportId())
-                            .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
-
-                    // ViolationType 이름 가져오기
-                    String violationTypeName = report.getViolationType().getName();
+                    String violationTypeName = null;
+                    if (bill.getReportType().equals(ReportType.USER)) {
+                        // Report 조회
+                        Report report = reportRepository.findById(bill.getReportId())
+                                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+                        // ViolationType 이름 가져오기
+                        violationTypeName = report.getViolationType().getName();
+                    }
+                    else {
+                        Crackdown crackdown = crackdownRepository.findById(bill.getReportId())
+                                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+                        violationTypeName = crackdown.getViolationType().getName();
+                    }
 
                     // Bill -> BillListResponseDto 변환
                     return BillListResponseDto.builder()
