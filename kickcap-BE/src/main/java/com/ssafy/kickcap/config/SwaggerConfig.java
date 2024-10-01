@@ -14,6 +14,7 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
+    @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .openapi("3.0.0")
@@ -31,13 +32,8 @@ public class SwaggerConfig {
                 .servers(List.of(
                         new Server().url("https://www.arraylist.xyz").description("Production server")  // HTTPS로 설정
                 ))
-                .info(apiInfo());
-    }
-
-    private Info apiInfo() {
-        return new Info()
-                .title("KickCap Swagger")
-                .description("킥보드 단속 플랫폼 KICKCAP REST API")
-                .version("1.0.0");
+                .info(new Info().title("KickCap Swagger")
+                        .description("킥보드 단속 플랫폼 KICKCAP REST API")
+                        .version("3.0.3")); // OpenAPI 버전 정의
     }
 }
