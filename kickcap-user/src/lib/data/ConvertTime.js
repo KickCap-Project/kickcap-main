@@ -29,14 +29,3 @@ export const convertToKoreanTimeString = (isoString) => {
 
   return `${dateTime.toFormat('yyyy-MM-dd')} ${period} ${hour}:${minute}:${second}`;
 };
-
-
-export const formatTime = (timeString) => {
-  // 백엔드에서 받은 시간 데이터를 luxon의 DateTime 객체로 변환
-  const dt = DateTime.fromISO(timeString, { zone: 'Asia/Seoul' });
-  
-  // 원하는 포맷으로 변환
-  const formattedTime = dt.toFormat('yyyy-MM-dd a hh:mm:ss');
-  
-  return formattedTime;
-};
