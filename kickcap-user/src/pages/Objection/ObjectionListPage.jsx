@@ -62,6 +62,7 @@ const s = {
 };
 
 const ObjectionListPage = () => {
+  sessionStorage.removeItem('objectionId');
   const [objectionList, setObjectionList] = useState([]);
   const [status, setStatus] = useState(0);
   const [page, setPage] = useState(1);
@@ -105,7 +106,7 @@ const ObjectionListPage = () => {
   useEffect(() => {
     setMultipleStates().then(() => {
       loadMoreData();
-    })
+    });
   }, [status]);
 
   useEffect(() => {
@@ -137,7 +138,9 @@ const ObjectionListPage = () => {
         <s.ControlItem isSelected={status === 0} onClick={() => setStatus(0)}>
           접수 내역
         </s.ControlItem>
-        <s.ControlItem isSelected={status === 1} onClick={() => setStatus(1)}>완료 내역</s.ControlItem>
+        <s.ControlItem isSelected={status === 1} onClick={() => setStatus(1)}>
+          완료 내역
+        </s.ControlItem>
       </s.ControlBar>
       {objectionList.length !== 0 ? (
         <s.MainArea>

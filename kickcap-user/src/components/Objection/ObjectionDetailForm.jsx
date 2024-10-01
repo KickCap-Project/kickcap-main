@@ -83,11 +83,16 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   console.log(`id: ${id}`);
 
   const inputProps = (type) => {
+    const setValue = (type, value) => {
+      type === 'title' ? setTitle(value) : setContent(value);
+    };
+
     return modifyMode
       ? {
           defaultValue: type,
           mode: '',
           readOnly: false,
+          onChange: (e) => setValue(type, e.target.value),
         }
       : {
           defaultValue: type,
