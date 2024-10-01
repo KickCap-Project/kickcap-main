@@ -49,6 +49,14 @@ public class ObjectionController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/policeCount")
+    @Operation(summary = "이의제기 목록 데이터 개수 조회")
+    public ResponseEntity<Long> getPoliceObjectionsCount(@AuthenticationPrincipal User user, @RequestParam int status,@RequestParam(required = false) String name){
+        Police police = policeService.findByPoliceId(user.getUsername());
+        Long count = objectionService.getObjectionsCount(police.getId(), status, name);
+        return ResponseEntity.ok(count);
+    }
+
     @GetMapping("/police")
     @Operation(summary = "이의제기 목록 조회 (경찰용)")
     public ResponseEntity<List<ObjectionListResponse>> getPoliceObjections(@AuthenticationPrincipal User user, @RequestParam int status,

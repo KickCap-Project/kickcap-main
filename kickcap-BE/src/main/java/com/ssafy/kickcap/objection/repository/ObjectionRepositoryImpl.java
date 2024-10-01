@@ -34,6 +34,29 @@ public class ObjectionRepositoryImpl {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    public Long findObjectionsCount(Long policeId, int status, String name) {
+
+        BooleanExpression condition = objection.policeIdx.eq(policeId);
+
+        if (status == 0) {
+            condition = condition.and(objection.answer.isNull());
+        } else if (status == 1) {
+            condition = condition.and(objection.answer.isNotNull());
+        }
+
+        if (name != null && !name.isEmpty()) {
+            condition = condition.and(objection.member.name.eq(name));
+        }
+
+        return queryFactory
+                .selectDistinct(objection.count())
+                .from(objection)
+                .leftJoin(objection.answer, answer)
+                .leftJoin(objection.member, member)
+                .where(condition)
+                .fetchOne();
+    }
+
     public List<ObjectionListResponse> findObjections(Long policeId, int status, String name, Pageable pageable) {
 
 
