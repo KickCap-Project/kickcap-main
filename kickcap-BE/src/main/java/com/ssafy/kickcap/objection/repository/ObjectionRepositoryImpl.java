@@ -62,12 +62,6 @@ public class ObjectionRepositoryImpl {
 
         BooleanExpression condition = objection.policeIdx.eq(policeId);
 
-        if (status == 0) {
-            condition = condition.and(objection.answer.isNull());
-        } else if (status == 1) {
-            condition = condition.and(objection.answer.isNotNull());
-        }
-
         if (name != null && !name.isEmpty()) {
             condition = condition.and(objection.member.name.eq(name));
         }
@@ -75,21 +69,42 @@ public class ObjectionRepositoryImpl {
         // Postgres TO_CHAR 사용하여 날짜 형식을 'yyyy.MM.dd'로 변환
         DateTemplate<String> formattedDate = dateTemplate(String.class, "TO_CHAR({0}, 'YYYY.MM.DD')", objection.createdAt);
 
-        return queryFactory
-                .select(new QObjectionListResponse(
-                        objection.id,
-                        formattedDate,  // 'yyyy.MM.dd' 형식으로 변환된 날짜
-                        objection.title,
-                        objection.member.name
-                ))
-                .from(objection)
-                .leftJoin(objection.answer, answer)
-                .leftJoin(objection.member, member)
-                .where(condition)
-                .orderBy(objection.id.desc())  // id를 기준으로 내림차순 정렬 (최신 순)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+        if (status == 0) {
+            condition = condition.and(objection.answer.isNull());
+            return queryFactory
+                    .select(new QObjectionListResponse(
+                            objection.id,
+                            formattedDate,  // 'yyyy.MM.dd' 형식으로 변환된 날짜
+                            objection.title,
+                            objection.member.name
+                    ))
+                    .from(objection)
+                    .leftJoin(objection.answer, answer)
+                    .leftJoin(objection.member, member)
+                    .where(condition)
+                    .orderBy(objection.id.desc())  // id를 기준으로 내림차순 정렬 (최신 순)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+        } else if (status == 1) {
+            condition = condition.and(objection.answer.isNotNull());
+            return queryFactory
+                    .select(new QObjectionListResponse(
+                            objection.id,
+                            formattedDate,  // 'yyyy.MM.dd' 형식으로 변환된 날짜
+                            objection.title,
+                            objection.member.name
+                    ))
+                    .from(objection)
+                    .leftJoin(objection.answer, answer)
+                    .leftJoin(objection.member, member)
+                    .where(condition)
+                    .orderBy(answer.createdAt.asc())  // id를 기준으로 내림차순 정렬 (최신 순)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+        }
+        return null;
     }
 
     public ObjectionDetailResponse findObjectionDetail(Long objectionId, Long violationType) {
