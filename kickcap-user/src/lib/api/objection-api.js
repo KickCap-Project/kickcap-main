@@ -39,7 +39,7 @@ export const getObjectionDetail = async (objectionId) => {
     console.log(`이의제기 상세 조회 GET 요청 실패: ${err}`);
     return null;
   }
-}
+};
 
 export const deleteObjectionDetail = async (objectionId) => {
   try {

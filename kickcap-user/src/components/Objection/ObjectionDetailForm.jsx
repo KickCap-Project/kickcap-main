@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Input from './../Common/Input';
@@ -80,6 +80,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   const [responseDate, setResponseDate] = useState(objectionDetail.responseDate);
 
   const id = useLocation().state?.idx || null;
+  console.log(`id: ${id}`);
 
   const inputProps = (type) => {
     return modifyMode

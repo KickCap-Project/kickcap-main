@@ -143,7 +143,7 @@ const ObjectionListPage = () => {
         <s.MainArea>
           <ObjectionList objectionList={objectionList} />
           <s.ObserveArea ref={observerRef} />
-          </s.MainArea>
+        </s.MainArea>
       ) : (
         <s.MainAreaEmpty>
           <ObjectionEmpty />
