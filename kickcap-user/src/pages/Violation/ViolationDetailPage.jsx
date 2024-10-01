@@ -73,7 +73,19 @@ const ViolationDetailPage = () => {
   };
 
   const paymentEventHandler = () => {
-    navigate('', { state: { id } });
+    // 벌점 10점 이상일 때 education으로, 아니면 payment로 연결
+    const demerit = JSON.parse(localStorage.getItem('Info')).demerit || null;
+
+    if (demerit === null) {
+      navigate('*');
+      return;
+    }
+
+    if (demerit >= 10) {
+      navigate('../payment/education', { state: { id }});
+    } else {
+      navigate('../payment', { state: { id } });
+    }
   };
 
   useEffect(() => {

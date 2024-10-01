@@ -12,6 +12,7 @@ import MainPage from './pages/MainPage';
 
 import ViolationListPage from './pages/Violation/ViolationListPage';
 import ViolationDetailPage from './pages/Violation/ViolationDetailPage';
+import ViolationPaymentPage from './pages/Violation/ViolationPaymentPage';
 import ViolationEducationPage from './pages/Violation/ViolationEducationPage';
 import ViolationObjectionPage from './pages/Violation/ViolationObjectionPage';
 
@@ -94,6 +95,10 @@ function App() {
                 <Route path="objection">
                   <Route index element={<ViolationObjectionPage />} />
                   <Route path="success" element={<SuccessPage message="objection" />} />
+                </Route>
+                <Route path="payment">
+                  <Route index element={<ViolationPaymentPage />} />
+                  <Route path="education" element={<ViolationEducationPage />} />
                 </Route>
               </Route>
               <Route path="/sos" element={<OneClickReportPage />} />
