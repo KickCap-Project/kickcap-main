@@ -52,6 +52,7 @@ export const ViolationDetailType = {
   date: '위반 일시',
   address: '위반 장소',
   violationType: '위반 내역',
+  billTime: '고지 일시',
   demerit: '벌점',
   fine: '범칙금',
   totalBill: '총 납부금액',
