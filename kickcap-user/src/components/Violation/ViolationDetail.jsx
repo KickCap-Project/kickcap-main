@@ -33,6 +33,9 @@ const s = {
 };
 
 const ViolationDetail = ({ detail }) => {
+  // 고지서 표기순서
+  const orderedKeys = Object.keys(ViolationDetailType);
+
   const renderTableData = (key, value) => {
     switch (key) {
       case 'date':
@@ -55,13 +58,13 @@ const ViolationDetail = ({ detail }) => {
     <s.TableWrapper>
       <s.Table>
         <tbody>
-          {Object.entries(detail).map(
-            ([key, value], idx) =>
-              key !== 'isReq' &&
+          {orderedKeys.map(
+            (key, idx) =>
+              detail[key] !== undefined &&
               ViolationDetailType[key] && (
                 <s.Tr key={idx}>
                   <s.Th>{ViolationDetailType[key]}</s.Th>
-                  <s.Td>{renderTableData(key, value)}</s.Td>
+                  <s.Td>{renderTableData(key, detail[key])}</s.Td>
                 </s.Tr>
               ),
           )}
