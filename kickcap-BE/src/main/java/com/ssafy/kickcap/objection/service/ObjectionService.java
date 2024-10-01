@@ -2,7 +2,10 @@ package com.ssafy.kickcap.objection.service;
 
 import com.ssafy.kickcap.bill.dto.BillObjectionDto;
 import com.ssafy.kickcap.bill.entity.Bill;
+import com.ssafy.kickcap.bill.entity.ReportType;
 import com.ssafy.kickcap.bill.repository.BillRepository;
+import com.ssafy.kickcap.cctv.entity.Crackdown;
+import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
 import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionUserListDto;
@@ -11,6 +14,8 @@ import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.objection.repository.AnswerRepository;
 import com.ssafy.kickcap.objection.repository.ObjectionRepository;
 import com.ssafy.kickcap.objection.repository.ObjectionRepositoryImpl;
+import com.ssafy.kickcap.report.entity.Report;
+import com.ssafy.kickcap.report.repository.ReportRepository;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +34,8 @@ public class ObjectionService {
     private final ObjectionRepositoryImpl objectionRepositoryImpl;
     private final AnswerRepository answerRepository;
     private final BillRepository billRepository;
+    private final CrackdownRepository crackdownRepository;
+    private final ReportRepository reportRepository;
 
     public void modifyObjectionByObjectionId(Member member, Long objectionId, BillObjectionDto objectionDto) {
         // Objection 조회
@@ -86,12 +93,27 @@ public class ObjectionService {
 
     ///// 이의제기 상세 조회 경찰.ver/////
     public ObjectionDetailResponse getObjectionDetail(Long objectionId) {
-        return objectionRepositoryImpl.findObjectionDetail(objectionId);
+        Objection objection = objectionRepository.findById(objectionId).orElseThrow(() -> new IllegalArgumentException("Cannot find objection"));
+        if (objection.getBill().getReportType().equals(ReportType.CCTV)){
+            Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new IllegalArgumentException("Cannot find crackdown"));
+            return objectionRepositoryImpl.findObjectionDetail(objectionId, crackdown.getViolationType().getId());
+        } else {
+            Report report = reportRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new IllegalArgumentException("Cannot find report"));
+            return objectionRepositoryImpl.findObjectionDetail(objectionId, report.getViolationType().getId());
+        }
     }
 
     ///// 이의제기 상세 조회 시민.ver/////
     public ObjectionDetailResponse getObjectionUserDetail(Long id, Long objectionId) {
-        return objectionRepositoryImpl.findObjectionUserDetail(id, objectionId);
+        Objection objection = objectionRepository.findById(objectionId).orElseThrow(() -> new IllegalArgumentException("Cannot find objection"));
+        if (objection.getBill().getReportType().equals(ReportType.CCTV)){
+            System.out.println(objection.getBill().getReportType());
+            Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new IllegalArgumentException("Cannot find crackdown"));
+            return objectionRepositoryImpl.findObjectionUserDetail(id, objectionId, crackdown.getViolationType().getId());
+        } else {
+            Report report = reportRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new IllegalArgumentException("Cannot find report"));
+            return objectionRepositoryImpl.findObjectionUserDetail(id, objectionId, report.getViolationType().getId());
+        }
     }
 
     public void answerForObjection(Police police, String content, Long objectionId) {
