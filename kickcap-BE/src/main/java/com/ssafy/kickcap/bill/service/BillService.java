@@ -3,6 +3,7 @@ package com.ssafy.kickcap.bill.service;
 import com.ssafy.kickcap.bill.dto.BillListResponseDto;
 import com.ssafy.kickcap.bill.dto.BillObjectionDto;
 import com.ssafy.kickcap.bill.dto.BillResponseDto;
+import com.ssafy.kickcap.bill.dto.EduRequestDto;
 import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.bill.entity.PaidStatus;
 import com.ssafy.kickcap.bill.entity.ReportType;
@@ -214,22 +215,25 @@ public class BillService {
 
     }
 
-    public void updatePaidStatus(Long billId) {
+    public void updatePaidStatus(Long billId, EduRequestDto requestDto) {
         Bill bill = billRepository.findById(billId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
         bill.updatePaidStatus(PaidStatus.PAID);
         billRepository.save(bill);
 
-        Member member = memberRepository.findById(bill.getMember().getId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
-        int demerit = member.getDemerit();
+        // 영상 시청 시 벌점 차감하는 로직
+        if (requestDto.getIsEdu() == 1) {
+            Member member = memberRepository.findById(bill.getMember().getId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+            int demerit = member.getDemerit();
 
-        // 벌점이 10 이하면 0으로 초기화
-        // 벌점이 10 초과라면 현재 벌점에서 -10 한 값을 넣어주기
-        if (demerit <= 10) {
-            member.updateDemerit(0);
-        } else {
-            member.updateDemerit(demerit - 10);
+            // 벌점이 10 이하면 0으로 초기화
+            // 벌점이 10 초과라면 현재 벌점에서 -10 한 값을 넣어주기
+            if (demerit <= 10) {
+                member.updateDemerit(0);
+            } else {
+                member.updateDemerit(demerit - 10);
+            }
+            memberRepository.save(member);
         }
-        memberRepository.save(member);
     }
 
     public void createObjectionFromBill(Member member, Long billId, BillObjectionDto billObjectionDto) {
