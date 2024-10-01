@@ -53,7 +53,7 @@ const ViolationObjectionForm = ({ id }) => {
 
       console.log(`response.status: ${response.status}`);
 
-      if (response.status === 200) {
+      if (response && response.status === 201) {
         navigate('success');
       }
     } catch (err) {

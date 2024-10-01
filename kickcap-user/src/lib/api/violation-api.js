@@ -67,11 +67,12 @@ export const submitObjection = async (billId, title, content) => {
       content,
     });
 
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201) {
       console.log('이의제기 POST 요청 성공');
-      return response;
     }
+    return response;
   } catch (err) {
     console.log(`이의제기 POST 요청 실패: ${err}`);
+    throw err;
   }
 };

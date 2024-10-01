@@ -73,7 +73,19 @@ const ViolationDetailPage = () => {
   };
 
   const paymentEventHandler = () => {
-    navigate('', { state: { id } });
+    // 벌점 10점 이상일 때 education으로, 아니면 payment로 연결
+    const demerit = JSON.parse(localStorage.getItem('Info')).demerit || null;
+
+    if (demerit === null) {
+      navigate('*');
+      return;
+    }
+
+    if (demerit >= 10) {
+      navigate('../payment/education', { state: { id }});
+    } else {
+      navigate('../payment', { state: { id } });
+    }
   };
 
   useEffect(() => {
@@ -83,6 +95,11 @@ const ViolationDetailPage = () => {
 
         try {
           const detailResponse = await getBillDetail(id);
+          if (!detailResponse) {
+            navigate(-1);
+            return;
+          }
+
           setDetail(detailResponse);
           console.log('세부 항목을 불러오는 데 성공했습니다.');
         } catch (err) {
