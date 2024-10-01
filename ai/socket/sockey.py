@@ -3,7 +3,6 @@ from aiohttp import web, ClientSession
 import cv2
 import numpy as np
 import aiohttp
-import datetime
 import os
 from dotenv import load_dotenv
 
@@ -13,39 +12,48 @@ load_dotenv()
 # 환경 변수에서 DB 연결 정보 가져오기
 API_ENDPOINT = os.getenv("API_ENDPOINT")
 
+connected_clients = set()
+
 async def video_stream(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
     print("Client connected")
 
+    connected_clients.add(ws)
+
     async with ClientSession() as session:
-        while True:
-            try:
-                # 웹소켓으로부터 프레임 데이터 수신
-                frame = await ws.receive_bytes()
-                # 넘파이 배열로 변환
-                nparr = np.frombuffer(frame, np.uint8)
-                # 이미지를 디코딩
-                image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        try:
+            async for msg in ws:
+                if msg.type == aiohttp.WSMsgType.BINARY:
+                    # 웹소켓으로부터 프레임 데이터 수신
+                    frame = msg.data
+                    # 넘파이 배열로 변환
+                    nparr = np.frombuffer(frame, np.uint8)
+                    # 이미지를 디코딩
+                    image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-                if image is not None:
-                    # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
-                    _, image_encoded = cv2.imencode('.jpg', image)
-                    # FastAPI 엔드포인트로 이미지 전송
-                    files = {'image_file': image_encoded.tobytes()}
-                    async with session.post(API_ENDPOINT, data=files) as resp:
-                        if resp.status == 200:
-                            # 응답으로 받은 주석 처리된 이미지 수신
-                            annotated_image_bytes = await resp.read()
-                            # 클라이언트로 전송
-                            await ws.send_bytes(annotated_image_bytes)
-                        else:
-                            print(f"Error from FastAPI endpoint: {resp.status}")
-
-            except (aiohttp.WSServerHandshakeError, aiohttp.ClientError) as e:
-                print(f"Error: {e}")
-                break
-    print("Client disconnected")
+                    if image is not None:
+                        # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+                        _, image_encoded = cv2.imencode('.jpg', image)
+                        # FastAPI 엔드포인트로 이미지 전송
+                        files = {'image_file': image_encoded.tobytes()}
+                        async with session.post(API_ENDPOINT, data=files) as resp:
+                            if resp.status == 200:
+                                # 응답으로 받은 주석 처리된 이미지 수신
+                                annotated_image_bytes = await resp.read()
+                                # 다른 클라이언트들에게 브로드캐스트
+                                for client in connected_clients:
+                                    if client != ws:
+                                        await client.send_bytes(annotated_image_bytes)
+                            else:
+                                print(f"Error from FastAPI endpoint: {resp.status}")
+                elif msg.type == aiohttp.WSMsgType.ERROR:
+                    print('ws connection closed with exception %s' % ws.exception())
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            connected_clients.remove(ws)
+            print("Client disconnected")
     return ws
 
 app = web.Application()
