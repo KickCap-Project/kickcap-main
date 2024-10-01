@@ -2,13 +2,15 @@ package com.ssafy.kickcap.objection.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ObjectionListResponse {
-    private final Long idx;
-    private final String date;
-    private final String title;
-    private final String name;
+    private Long idx;
+    private String date;
+    private String title;
+    private String name;
 
     @QueryProjection
     public ObjectionListResponse(Long idx, String date, String title, String name) {
