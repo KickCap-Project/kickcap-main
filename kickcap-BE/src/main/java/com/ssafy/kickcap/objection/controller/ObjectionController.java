@@ -4,6 +4,7 @@ import com.ssafy.kickcap.bill.dto.BillObjectionDto;
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
 import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
+import com.ssafy.kickcap.objection.dto.ObjectionUserListDto;
 import com.ssafy.kickcap.objection.service.ObjectionService;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
@@ -48,10 +49,18 @@ public class ObjectionController {
 
     @GetMapping("/police")
     @Operation(summary = "이의제기 목록 조회 (경찰용)")
-    public ResponseEntity<List<ObjectionListResponse>> getObjections(@AuthenticationPrincipal User user, @RequestParam int status,
-                                                                     @RequestParam int pageNo, @RequestParam int pageSize, @RequestParam(required = false) String name){
+    public ResponseEntity<List<ObjectionListResponse>> getPoliceObjections(@AuthenticationPrincipal User user, @RequestParam int status,
+                                                                     @RequestParam int pageNo, @RequestParam(required = false) String name){
         Police police = policeService.findByPoliceId(user.getUsername());
-        List<ObjectionListResponse> objections = objectionService.getObjections(police.getId(), status, pageNo, pageSize, name);
+        List<ObjectionListResponse> objections = objectionService.getObjections(police.getId(), status, pageNo, 10, name);
+        return ResponseEntity.ok(objections);
+    }
+
+    @GetMapping("/user")
+    @Operation(summary = "이의제기 목록 조회 (일반시민용)")
+    public ResponseEntity<List<ObjectionUserListDto>> getUserObjections(@AuthenticationPrincipal CustomOAuth2User user,
+                                                                        @RequestParam int status, @RequestParam int pageNo) {
+        List<ObjectionUserListDto> objections = objectionService.getUserObjections(user.getId(), status, pageNo, 10);
         return ResponseEntity.ok(objections);
     }
 

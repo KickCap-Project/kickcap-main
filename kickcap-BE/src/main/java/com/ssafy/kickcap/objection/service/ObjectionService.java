@@ -1,8 +1,11 @@
 package com.ssafy.kickcap.objection.service;
 
 import com.ssafy.kickcap.bill.dto.BillObjectionDto;
+import com.ssafy.kickcap.bill.entity.Bill;
+import com.ssafy.kickcap.bill.repository.BillRepository;
 import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
+import com.ssafy.kickcap.objection.dto.ObjectionUserListDto;
 import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.objection.repository.AnswerRepository;
 import com.ssafy.kickcap.objection.repository.ObjectionRepository;
@@ -23,6 +26,7 @@ public class ObjectionService {
     private final ObjectionRepository objectionRepository;
     private final ObjectionRepositoryImpl objectionRepositoryImpl;
     private final AnswerRepository answerRepository;
+    private final BillRepository billRepository;
 
     public void modifyObjectionByObjectionId(Member member, Long objectionId, BillObjectionDto objectionDto) {
         // Objection 조회
@@ -61,14 +65,24 @@ public class ObjectionService {
         }
 
         objectionRepository.delete(objection);
+        Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(() -> new IllegalArgumentException("Cannot find bill"));
+        bill.updateIsObjection();
+        billRepository.save(bill);
     }
 
-    //// 경찰 이의제기 목록 조회 ////
+    ///// 경찰 이의제기 목록 조회 /////
     public List<ObjectionListResponse> getObjections(Long policeId, int status, int pageNo, int pageSize, String name) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize); // 페이지는 0부터 시작하므로 -1
         return objectionRepositoryImpl.findObjections(policeId, status, name, pageable);
     }
 
+    ///// 일반 시민 이의제기 목록 조회 /////
+    public List<ObjectionUserListDto> getUserObjections(Long memberId, int status, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        return objectionRepositoryImpl.findUserObjections(memberId, status, pageable);
+    }
+
+    ///// 이의제기 상세 조회 /////
     public ObjectionDetailResponse getObjectionDetail(Long objectionId) {
         return objectionRepositoryImpl.findObjectionDetail(objectionId);
     }
