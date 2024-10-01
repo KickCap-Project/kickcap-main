@@ -2,6 +2,7 @@ package com.ssafy.kickcap.objection.controller;
 
 import com.ssafy.kickcap.bill.dto.BillObjectionDto;
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
+import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
 import com.ssafy.kickcap.objection.service.ObjectionService;
 import com.ssafy.kickcap.user.entity.Member;
@@ -49,10 +50,17 @@ public class ObjectionController {
     @Operation(summary = "이의제기 목록 조회 (경찰용)")
     public ResponseEntity<List<ObjectionListResponse>> getObjections(@AuthenticationPrincipal User user, @RequestParam int status,
                                                                      @RequestParam int pageNo, @RequestParam int pageSize, @RequestParam(required = false) String name){
-        System.out.println("여기!!!!!!!!!!!!!!!1"+user.getUsername());
         Police police = policeService.findByPoliceId(user.getUsername());
         List<ObjectionListResponse> objections = objectionService.getObjections(police.getId(), status, pageNo, pageSize, name);
         return ResponseEntity.ok(objections);
     }
+
+    @GetMapping("/{objectionId}")
+    @Operation(summary = "이의제기 상세 정보 조회")
+    public ResponseEntity<ObjectionDetailResponse> getObjectionDetail(@PathVariable Long objectionId) {
+        ObjectionDetailResponse objectionDetail = objectionService.getObjectionDetail(objectionId);
+        return ResponseEntity.ok(objectionDetail);
+    }
+
 
 }
