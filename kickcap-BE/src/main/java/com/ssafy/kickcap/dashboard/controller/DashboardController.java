@@ -80,8 +80,8 @@ public class DashboardController {
 
     @GetMapping("/cctv")
     @Operation(summary = "cctv 상세정보 조회", description = "특정 cctv의 특정 시간대의 단속 정보를 조회할 수 있습니다.")
-    public ResponseEntity<CctvInfoReponse> getCctvData(@RequestParam(required = false) Long idx,
-                                                             @RequestParam(required = false) int time){
+    public ResponseEntity<CctvInfoReponse> getCctvData(@RequestParam Long idx,
+                                                             @RequestParam int time){
 
         CctvInfoReponse cctvInfoReponse = dashboardService.searchCctvInfoByTime(idx, time);
         return ResponseEntity.ok().body(cctvInfoReponse);
