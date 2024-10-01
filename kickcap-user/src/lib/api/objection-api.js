@@ -1,19 +1,19 @@
-import { localAxios } from "../../util/axios-setting";
+import { localAxios } from '../../util/axios-setting';
 
 const axiosInstance = localAxios();
 
-export const getObjectionList = async (status) => {
+export const getObjectionList = async (status, pageNo) => {
   try {
     const response = await axiosInstance.get('/objections/user', {
       params: {
-        status: status,
-        role: 'user',
-      }
+        status,
+        pageNo,
+      },
     });
 
     if (response.status === 200) {
       console.log(`이의제기 목록 조회를 성공적으로 수행했습니다.`);
-      return response.data
+      return response.data;
     } else {
       console.log(`이의제기 목록 조회 중 문제가 발생했습니다: ${response.status}`);
       return [];
@@ -26,7 +26,8 @@ export const getObjectionList = async (status) => {
 
 export const getObjectionDetail = async (objectionId) => {
   try {
-    const response = await axiosInstance.get(`/objections/${objectionId}`);
+    const response = await axiosInstance.get(`/objections/user/${objectionId}`);
+    // const response = await axiosInstance.get(`/objections/${objectionId}`);
 
     if (response.status === 200) {
       console.log(`이의제기 상세 조회를 성공적으로 수행했습니다.`);
@@ -39,7 +40,7 @@ export const getObjectionDetail = async (objectionId) => {
     console.log(`이의제기 상세 조회 GET 요청 실패: ${err}`);
     return null;
   }
-}
+};
 
 export const deleteObjectionDetail = async (objectionId) => {
   try {
@@ -53,8 +54,8 @@ export const deleteObjectionDetail = async (objectionId) => {
     }
   } catch (err) {
     console.log(`이의제기 상세 DELETE 요청 실패: ${err}`);
-  } 
-}
+  }
+};
 
 export const putObjectionDetail = async (objectionId, title, content) => {
   const updatedData = {
@@ -64,7 +65,7 @@ export const putObjectionDetail = async (objectionId, title, content) => {
 
   try {
     const response = await axiosInstance.put(`/objections/${objectionId}`, updatedData);
-    
+
     if (response.status === 200) {
       console.log(`이의제기 수정이 정상적으로 요청되었습니다.`);
       return response;
@@ -74,4 +75,4 @@ export const putObjectionDetail = async (objectionId, title, content) => {
   } catch (err) {
     console.log(`이의제기 수정 PUT 요청 실패: ${err}`);
   }
-}
+};

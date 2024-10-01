@@ -76,8 +76,6 @@ const IndexComponent = ({ color, title }) => {
 };
 
 const ViolationListPage = () => {
-  // dummy data
-
   const [vList, setVList] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -135,7 +133,7 @@ const ViolationListPage = () => {
   return (
     <s.Container>
       <Header title={'나의 단속 내역'} />
-
+      
       {vList.length === 0 ? (
         <s.MainAreaEmpty>
           <ViolationEmpty />

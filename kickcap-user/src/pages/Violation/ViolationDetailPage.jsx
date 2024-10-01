@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import Text from '../../components/Common/Text';
 import Button from '../../components/Common/Button';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import LoadingSpinner from '../../components/Common/LoadingSpinner';
 import ViolationDetail from '../../components/Violation/ViolationDetail';
 import { getBillDetail, getImgFile } from '../../lib/api/violation-api';
 import { useLocation, useNavigate } from 'react-router';
@@ -35,6 +37,8 @@ const s = {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   `,
   ImgWrapper: styled.img`
     border: 1px solid black;
@@ -51,6 +55,13 @@ const s = {
     margin-bottom: 0.5rem;
     gap: 10%;
   `,
+  LoadingArea: styled.div`
+    width: 100%;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `
 };
 
 const ViolationDetailPage = () => {
@@ -137,27 +148,35 @@ const ViolationDetailPage = () => {
       <Header title={'나의 단속 내역'} />
       <s.MainArea>
         <s.BillWrapper>
-          <s.ImgWrapper src={imgFile} alt="image" />
+          {imgFile ? (
+            <s.ImgWrapper src={imgFile} alt="image" />
+          ) : (
+            <LoadingSpinner height={'300px'} />
+          )}
           <ViolationDetail detail={detail} />
           <s.ButtonWrapper>
-            {detail.isObjection === 0 ? (
-              <Button
-                width={'120px'}
-                height={'30px'}
-                size={'0.75rem'}
-                bold={'700'}
-                onClick={() => objectionEventHandler()}
-              >
-                이의 제기
-              </Button>
-            ) : (
-              <Button type={'sub'} width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
-                이의 제기
-              </Button>
+            {detail.isFlag === 'PAID' ? null : (
+              <>
+                {detail.isObjection === 0 ? (
+                  <Button
+                    width={'120px'}
+                    height={'30px'}
+                    size={'0.75rem'}
+                    bold={'700'}
+                    onClick={() => objectionEventHandler()}
+                  >
+                    이의 제기
+                  </Button>
+                ) : (
+                  <Button type={'sub'} width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
+                    이의 제기
+                  </Button>
+                )}
+                <Button width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'} onClick={() => paymentEventHandler()}>
+                  납부하기
+                </Button>
+              </>
             )}
-            <Button width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'} onClick={() => paymentEventHandler()}>
-              납부하기
-            </Button>
           </s.ButtonWrapper>
         </s.BillWrapper>
       </s.MainArea>

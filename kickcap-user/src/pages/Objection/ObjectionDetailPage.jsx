@@ -70,7 +70,6 @@ const ObjectionDetailPage = () => {
     }
 
     sessionStorage.setItem('objectionId', id);
-    
     setObj(id);
   }, [id]);
 
@@ -78,7 +77,11 @@ const ObjectionDetailPage = () => {
     <s.Container>
       <Header title="나의 이의 내역" />
       <s.MainArea>
-        <ObjectionDetailForm objectionDetail={objectionDetail} />
+        {!objectionDetail ? (
+          <p>Loading...</p>
+        ) : (
+          <ObjectionDetailForm objectionDetail={objectionDetail} />
+        )}
       </s.MainArea>
       <Footer />
     </s.Container>

@@ -23,5 +23,9 @@ export const convertToKoreanTimeString = (isoString) => {
   const period = dateTime.hour >= 12 ? '오후' : '오전';
   const hour = dateTime.hour % 12 || 12; // 12시간제로 변환, 0시일 경우 12시로 변환
 
-  return `${dateTime.toFormat('yyyy-MM-dd')} ${period} ${hour}:${dateTime.toFormat('mm:ss')}`;
+  // 분과 초는 그대로 포맷팅
+  const minute = dateTime.toFormat('mm');
+  const second = dateTime.toFormat('ss'); // 소수점이 있는 초는 제거됨
+
+  return `${dateTime.toFormat('yyyy-MM-dd')} ${period} ${hour}:${minute}:${second}`;
 };

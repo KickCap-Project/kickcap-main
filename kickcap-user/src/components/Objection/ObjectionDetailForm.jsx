@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Input from './../Common/Input';
@@ -82,11 +82,16 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   const id = useLocation().state?.idx || null;
 
   const inputProps = (type) => {
+    const setValue = (type, value) => {
+      type === 'title' ? setTitle(value) : setContent(value);
+    };
+
     return modifyMode
       ? {
           defaultValue: type,
           mode: '',
           readOnly: false,
+          onChange: (e) => setValue(type, e.target.value),
         }
       : {
           defaultValue: type,
