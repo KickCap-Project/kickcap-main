@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Button from '../../components/Common/Button';
 import EduVideo from '../../components/Violation/EduVideo';
+
+import { useLocation, useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -44,9 +46,23 @@ const s = {
 };
 
 const ViolationEducationPage = () => {
+  const navigate = useNavigate();
+  const id = useLocation().state?.id || null;
+
+  useEffect(() => {
+    if (id === null) {
+      navigate('*');
+      return;
+    }
+  }, [id]);
+
   const [played, setPlayed] = useState(false);
   const description =
     '벌점 기준을 초과하여 교육 영상을 수강하셔야 합니다.\n영상 재생 완료 후 납부를 진행해주세요.\n\n10점 단위 초과 시 교육 이수 필수';
+
+  const paymentEventHandler = () => {
+    navigate('../', { state: { id }});
+  };
 
   return (
     <s.Container>
@@ -60,7 +76,7 @@ const ViolationEducationPage = () => {
         </s.VideoArea>
       </s.MainArea>
       <s.BtnARea>
-        <Button type={played ? '' : 'sub'} width={'100%'} height={'40px'} display={'block'} margin={'20px auto'}>
+        <Button type={played ? '' : 'sub'} width={'100%'} height={'40px'} display={'block'} margin={'20px auto'} onClick={played ? paymentEventHandler : null}>
           납부하기
         </Button>
       </s.BtnARea>
