@@ -6,18 +6,20 @@ import com.ssafy.kickcap.bill.repository.BillRepository;
 import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionUserListDto;
+import com.ssafy.kickcap.objection.entity.Answer;
 import com.ssafy.kickcap.objection.entity.Objection;
 import com.ssafy.kickcap.objection.repository.AnswerRepository;
 import com.ssafy.kickcap.objection.repository.ObjectionRepository;
 import com.ssafy.kickcap.objection.repository.ObjectionRepositoryImpl;
 import com.ssafy.kickcap.user.entity.Member;
-import jakarta.persistence.EntityNotFoundException;
+import com.ssafy.kickcap.user.entity.Police;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -82,12 +84,29 @@ public class ObjectionService {
         return objectionRepositoryImpl.findUserObjections(memberId, status, pageable);
     }
 
-    ///// 이의제기 상세 조회 /////
+    ///// 이의제기 상세 조회 경찰.ver/////
     public ObjectionDetailResponse getObjectionDetail(Long objectionId) {
         return objectionRepositoryImpl.findObjectionDetail(objectionId);
     }
 
+    ///// 이의제기 상세 조회 시민.ver/////
     public ObjectionDetailResponse getObjectionUserDetail(Long id, Long objectionId) {
         return objectionRepositoryImpl.findObjectionUserDetail(id, objectionId);
+    }
+
+    public void answerForObjection(Police police, String content, Long objectionId) {
+        Objection objection = objectionRepository.findById(objectionId).orElseThrow(()-> new IllegalArgumentException("Cannot find objection"));
+        if (!Objects.equals(police.getId(), objection.getPoliceIdx())) {
+            throw new IllegalArgumentException("Cannot answer objection");
+        }
+        Answer answer = Answer.builder()
+                .objection(objection)
+                .content(content)
+                .build();
+        answerRepository.save(answer);
+
+        Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(()-> new IllegalArgumentException("Cannot find bill"));
+        bill.updateIsObjection();
+        billRepository.save(bill);
     }
 }
