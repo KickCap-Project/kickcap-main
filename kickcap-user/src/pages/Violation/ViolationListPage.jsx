@@ -76,8 +76,6 @@ const IndexComponent = ({ color, title }) => {
 };
 
 const ViolationListPage = () => {
-  // dummy data
-
   const [vList, setVList] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);

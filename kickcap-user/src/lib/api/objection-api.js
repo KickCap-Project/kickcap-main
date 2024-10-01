@@ -2,12 +2,12 @@ import { localAxios } from "../../util/axios-setting";
 
 const axiosInstance = localAxios();
 
-export const getObjectionList = async (status) => {
+export const getObjectionList = async (status, pageNo) => {
   try {
     const response = await axiosInstance.get('/objections/user', {
       params: {
-        status: status,
-        role: 'user',
+        status,
+        pageNo,
       }
     });
 

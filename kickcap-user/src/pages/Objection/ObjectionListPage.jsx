@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 
@@ -54,99 +54,96 @@ const s = {
     overflow: auto;
     flex-basis: 0;
   `,
+  ObserveArea: styled.div`
+    width: 100%;
+    height: 1px;
+    margin-bottom: 1px;
+  `,
 };
 
 const ObjectionListPage = () => {
-  // dummy data
-  // const [objectionList, setObjectionList] = useState([
-  //   {
-  //     idx: 0,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  //   {
-  //     idx: 1,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  //   {
-  //     idx: 2,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  //   {
-  //     idx: 3,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  //   {
-  //     idx: 4,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  //   {
-  //     idx: 5,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  //   {
-  //     idx: 6,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  //   {
-  //     idx: 7,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  //   {
-  //     idx: 8,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  //   {
-  //     idx: 9,
-  //     date: '2024-08-03 오후 12:12:12',
-  //     title: '다시 검토해주세요',
-  //   },
-  // ]);
-  
-  sessionStorage.removeItem('objectionId');
   const [objectionList, setObjectionList] = useState([]);
-
-  // 접수완료 : status = 0
-  // 답변완료 : status = 1
   const [status, setStatus] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const observerRef = useRef(null);
 
-  // 접수완료, 답변완료 버튼 클릭 시 isSelected 변경 및 axios 요청
-  const onClickControl = (item) => {
-    setStatus(item);
+  // status가 변할 때 상태들을 초기화하는 함수
+  const setMultipleStates = () => {
+    return new Promise((resolve) => {
+      setObjectionList([]);
+      setPage(1);
+      setHasMoreData(true);
+      resolve(); // 상태 설정 후 Promise를 해결함
+    });
   };
-  
-  const loadData = async (status) => {
-    const response = await getObjectionList(status);
-    setObjectionList(response)
-  }
-  
-  // 페이지 진입 시 접수완료 목록 보이기
-  // status에 따라 API 요청을 보내 목록 받기
+
+  // 데이터 로드 함수
+  const loadMoreData = async () => {
+    if (isLoading || !hasMoreData) return;
+
+    setIsLoading(true);
+    try {
+      const newList = await getObjectionList(status, page);
+
+      if (newList && newList.length > 0) {
+        setObjectionList((prevPage) => [...prevPage, ...newList]);
+        setPage((prevPage) => prevPage + 1);
+      } else {
+        console.log('더 이상 불러올 데이터가 없습니다.');
+        setHasMoreData(false);
+      }
+    } catch (err) {
+      console.error('데이터를 불러오는 중 문제가 발생했습니다: ', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // status가 0에서 1로, 1에서 0으로 변할 때마다 변수 초기화 후 API 요청을 실행하는 부분
   useEffect(() => {
-    loadData(status);
+    setMultipleStates().then(() => {
+      loadMoreData();
+    })
   }, [status]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoading && hasMoreData) {
+          loadMoreData();
+        }
+      },
+      { threshold: 1.0 },
+    );
+
+    const currentObserverRef = observerRef.current;
+    if (currentObserverRef) {
+      observer.observe(currentObserverRef);
+    }
+
+    return () => {
+      if (currentObserverRef) {
+        observer.unobserve(currentObserverRef);
+      }
+    };
+  }, [isLoading, hasMoreData]);
 
   return (
     <s.Container>
       <Header title="나의 이의 내역" />
       <s.ControlBar>
-        <s.ControlItem isSelected={status === 0} onClick={() => onClickControl(0)}>
+        <s.ControlItem isSelected={status === 0} onClick={() => setStatus(0)}>
           접수 내역
         </s.ControlItem>
-        <s.ControlItem isSelected={status === 1} onClick={() => onClickControl(1)}>완료 내역</s.ControlItem>
+        <s.ControlItem isSelected={status === 1} onClick={() => setStatus(1)}>완료 내역</s.ControlItem>
       </s.ControlBar>
       {objectionList.length !== 0 ? (
         <s.MainArea>
           <ObjectionList objectionList={objectionList} />
-        </s.MainArea>
+          <s.ObserveArea ref={observerRef} />
+          </s.MainArea>
       ) : (
         <s.MainAreaEmpty>
           <ObjectionEmpty />

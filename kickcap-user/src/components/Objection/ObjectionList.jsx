@@ -44,6 +44,8 @@ const s = {
 };
 
 const ObjectionList = ({ objectionList }) => {
+  objectionList.forEach((objection) => console.log(objection));
+
   const TEXTLINE_MARGIN = '12px';
 
   const navigate = useNavigate();
