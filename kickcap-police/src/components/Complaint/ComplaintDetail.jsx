@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import test from '../../asset/policeLogo.png';
 import CrackInfoTable from '../Common/CrackInfoTable';
@@ -11,7 +11,10 @@ import ComplaintSendModal from './../Modal/ComplaintSendModal';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions, selectIsComplaintInfo, selectIsComplaintSend } from '../../store/modal';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { useSearchParams } from 'react-router-dom';
+import { getListDetail } from '../../lib/api/complaint-api';
+import { getCrackDetail } from './../../lib/api/crack-api';
 const s = {
   Container: styled.main`
     width: 100%;
@@ -44,7 +47,6 @@ const s = {
   `,
   MainArea: styled.div`
     width: 90%;
-    height: 550px;
     margin: 0 auto 30px;
     border-radius: 10px;
     padding: 20px;
@@ -56,14 +58,37 @@ const s = {
   BtnArea: styled.div`
     width: 800px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin: 30px auto;
+  `,
+  Line: styled.hr`
+    border-color: ${(props) => props.theme.mainColor};
+  `,
+  AnswerHead: styled.div`
+    width: 100%;
+    margin: 10px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  `,
+  AnswerContent: styled.div`
+    width: 100%;
+    border: 1px solid #d3d3d3;
+    min-height: 100px;
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 500;
   `,
 };
 
 const ComplaintDetail = () => {
   useModalExitHook();
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const complaintId = searchParams.get('detail');
+  const state = searchParams.get('state');
+  const pageNo = useLocation().state?.pageNo;
+  const [complaintData, setComplaintData] = useState({});
+  const [crackData, setCrackData] = useState({});
   const dispatch = useAppDispatch();
   const isInfo = useAppSelector(selectIsComplaintInfo);
   const isSend = useAppSelector(selectIsComplaintSend);
@@ -75,16 +100,38 @@ const ComplaintDetail = () => {
   };
   const navigate = useNavigate();
   const handleMoveList = () => {
-    navigate('..');
+    navigate(`../../complaint?state=${state}&pageNo=${pageNo ? pageNo : 1}`);
   };
 
   const handleCrackCancel = () => {
-    const name = '대전 유성경찰서';
+    const name = localStorage.getItem('police');
     const message = `안녕하세요. ${name} 입니다. 본 사항을 관할 부서에서 확인 결과, 고지서에 문제가 있다고 판단하여 해당 단속 내역은 취소되었음을 알려드립니다.
     안전한 킥보드 문화를 위해 저희 ${name}가 앞장서서 노력하겠습니다. 감사합니다.`;
 
     alert(message);
   };
+
+  useEffect(() => {
+    getListDetail(
+      complaintId,
+      (resp) => {
+        setComplaintData(resp.data);
+        getCrackDetail(
+          resp.data.crackDownIdx,
+          (resp) => {
+            setCrackData(resp.data);
+          },
+          (error) => {
+            alert('잠시 후 다시 시도해주세요.');
+          },
+        );
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+  }, []);
+
   return (
     <s.Container>
       <s.TableArea>
@@ -99,10 +146,10 @@ const ComplaintDetail = () => {
           </s.Thead>
           <s.Tbody>
             <s.Tr>
-              <s.Td>10</s.Td>
-              <s.Td>오진영</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
+              <s.Td>{complaintData.idx}</s.Td>
+              <s.Td>{complaintData.name}</s.Td>
+              <s.Td>{complaintData.violationType}</s.Td>
+              <s.Td>{complaintData.date}</s.Td>
             </s.Tr>
           </s.Tbody>
         </s.Table>
@@ -117,7 +164,14 @@ const ComplaintDetail = () => {
           color={'textBasic2'}
           margin={'20px 0 10px 0'}
         />
-        <Input mode={'read'} width={'100%'} display={'block'} size={'20px'} height={'50px'} />
+        <Input
+          mode={'read'}
+          width={'100%'}
+          display={'block'}
+          size={'20px'}
+          height={'50px'}
+          value={complaintData.title}
+        />
         <Text
           children={'내용'}
           textalian={'left'}
@@ -127,7 +181,38 @@ const ComplaintDetail = () => {
           color={'textBasic2'}
           margin={'20px 0 10px 0'}
         />
-        <TextArea mode={'read'} display={'block'} width={'100%'} height={'290px'} size={'20px'} />
+        <TextArea
+          mode={'read'}
+          display={'block'}
+          width={'100%'}
+          height={'290px'}
+          size={'20px'}
+          value={complaintData.content}
+        />
+        {complaintData.responseDate && (
+          <>
+            <s.Line />
+            <s.AnswerHead>
+              <Text
+                children={'기관 답변'}
+                textalian={'left'}
+                display={'block'}
+                size={'20px'}
+                bold={'700'}
+                color={'textBasic2'}
+              />
+              <Text
+                children={complaintData.responseDate}
+                textalian={'left'}
+                display={'block'}
+                size={'20px'}
+                bold={'700'}
+                color={'textBasic2'}
+              />
+            </s.AnswerHead>
+            <s.AnswerContent>{complaintData.responseContent}</s.AnswerContent>
+          </>
+        )}
         <s.BtnArea>
           <Button
             bold={'700'}
@@ -136,6 +221,8 @@ const ComplaintDetail = () => {
             width={'150px'}
             size={'20px'}
             onClick={handleMoveList}
+            display={'block'}
+            margin={'0 10px'}
           />
           <Button
             bold={'700'}
@@ -144,27 +231,37 @@ const ComplaintDetail = () => {
             width={'150px'}
             size={'20px'}
             onClick={() => handleOpenInfoModal(true)}
+            display={'block'}
+            margin={'0 10px'}
           />
-          <Button
-            bold={'700'}
-            children={'사유 답변'}
-            height={'40px'}
-            width={'150px'}
-            size={'20px'}
-            onClick={() => handleOpenSendModal(true)}
-          />
-          <Button
-            bold={'700'}
-            children={'고지 취소'}
-            height={'40px'}
-            width={'150px'}
-            size={'20px'}
-            onClick={handleCrackCancel}
-          />
+          {state === '0' && (
+            <>
+              <Button
+                bold={'700'}
+                children={'사유 답변'}
+                height={'40px'}
+                width={'150px'}
+                size={'20px'}
+                onClick={() => handleOpenSendModal(true)}
+                display={'block'}
+                margin={'0 10px'}
+              />
+              <Button
+                bold={'700'}
+                children={'고지 취소'}
+                height={'40px'}
+                width={'150px'}
+                size={'20px'}
+                onClick={handleCrackCancel}
+                display={'block'}
+                margin={'0 10px'}
+              />
+            </>
+          )}
         </s.BtnArea>
       </s.MainArea>
-      <ComplaintInfoModal open={isInfo} toggleModal={handleOpenInfoModal} />
-      <ComplaintSendModal open={isSend} toggleModal={handleOpenSendModal} />
+      <ComplaintInfoModal open={isInfo} toggleModal={handleOpenInfoModal} data={crackData} />
+      <ComplaintSendModal open={isSend} toggleModal={handleOpenSendModal} id={complaintData.idx} />
     </s.Container>
   );
 };
