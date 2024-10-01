@@ -76,3 +76,8 @@ export const submitObjection = async (billId, title, content) => {
     throw err;
   }
 };
+
+export const postBillPay = async (billId, isEdu, success, fail) => {
+  // 납부하기
+  await axiosInstance.post(`/bills/${billId}/pay`, isEdu).then(success).catch(fail);
+};
