@@ -90,7 +90,7 @@ const Header = ({ title, subTitle }) => {
     if (mode === 'board') {
       navigate(`/${mode}`);
     } else if (mode === 'complaint') {
-      navigate(`/${mode}?state=receipt&pageNo=1`);
+      navigate(`/${mode}?state=0&pageNo=1`);
     } else {
       navigate(`/${mode}?violationType=3&pageNo=1`);
     }

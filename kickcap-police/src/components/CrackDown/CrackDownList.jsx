@@ -89,7 +89,7 @@ const CrackDownList = () => {
 
   useEffect(() => {
     setViolationType(searchParams.get('violationType'));
-    setPageNo(Number(pageNo));
+    setPageNo(Number(searchParams.get('pageNo')));
     const newViolationType = searchParams.get('violationType') == 3 ? 'helmet' : 'peoples';
     dispatch(pageActions.changeCrackType(newViolationType));
   }, [searchParams]);
@@ -109,7 +109,6 @@ const CrackDownList = () => {
 
   const navigate = useNavigate();
   const handleMovePage = (crackId) => {
-    navigate('read');
     navigate(`read?violationType=${violationType}&detail=${crackId}`, { state: { pageNo } });
   };
 
@@ -163,7 +162,7 @@ const CrackDownList = () => {
           <s.Tbody>
             {data.length !== 0 ? (
               data.map((d, index) => (
-                <s.Tr key={index} onClick={() => handleMovePage()}>
+                <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
                   <s.Td>{d.idx}</s.Td>
                   <s.Td>{d.addr}</s.Td>
                   <s.Td>{d.type}</s.Td>

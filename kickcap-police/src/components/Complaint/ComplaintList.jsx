@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectComplaintNav } from '../../store/page';
-import { useNavigate } from 'react-router';
+import { useNavigate, useOutletContext } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import '../../styles/Pagination.css';
 import Pagination from 'react-js-pagination';
+import { getComplaintList, getComplaintTotalCount, getListDetail } from '../../lib/api/complaint-api';
 
 const s = {
   Container: styled.div`
@@ -83,11 +84,19 @@ const ComplaintList = () => {
   const [state, setState] = useState(searchParams.get('state'));
   const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
+  const { name, data, setData } = useOutletContext();
+
+  useEffect(() => {
+    setState(searchParams.get('state'));
+    setPageNo(Number(searchParams.get('pageNo')));
+    const newViolationType = searchParams.get('state') === '0' ? 'progress' : 'finish';
+    dispatch(pageActions.changeComplaintType(newViolationType));
+  }, [searchParams]);
 
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeComplaintType(mode));
-    const newViolationType = mode === 'progress' ? 'receipt' : 'end';
+    const newViolationType = mode === 'progress' ? '0' : '1';
     setSearchParams({ state: newViolationType, pageNo: 1 });
   };
 
@@ -97,13 +106,6 @@ const ComplaintList = () => {
   const getSize = (mode) => {
     return type === mode ? '30px' : undefined;
   };
-
-  useEffect(() => {
-    setState(searchParams.get('state'));
-    setPageNo(Number(pageNo));
-    const newViolationType = searchParams.get('state') === 'receipt' ? 'progress' : 'finish';
-    dispatch(pageActions.changeComplaintType(newViolationType));
-  }, [searchParams]);
 
   const navigate = useNavigate();
   const handleMovePage = (complaintId) => {
@@ -115,7 +117,29 @@ const ComplaintList = () => {
     setSearchParams({ state, pageNo });
   };
 
-  useEffect(() => {}, [state, pageNo]);
+  useEffect(() => {
+    getComplaintTotalCount(
+      state,
+      name ? name : null,
+      (resp) => {
+        setTotalPage(resp.data);
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+    getComplaintList(
+      state,
+      pageNo,
+      name ? name : null,
+      (resp) => {
+        setData(resp.data);
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+  }, [state, pageNo]);
 
   return (
     <s.Container>
@@ -138,24 +162,20 @@ const ComplaintList = () => {
             </s.Tr>
           </s.Thead>
           <s.Tbody>
-            <s.Tr onClick={() => handleMovePage()}>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
-            <s.Tr>
-              <s.Td>1</s.Td>
-              <s.Td>대전 유성구 학하북로 75-21</s.Td>
-              <s.Td>안전모 미착용</s.Td>
-              <s.Td>24.09.01</s.Td>
-            </s.Tr>
+            {data.length !== 0 ? (
+              data.map((d, index) => (
+                <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
+                  <s.Td>{d.idx}</s.Td>
+                  <s.Td>{d.title}</s.Td>
+                  <s.Td>{d.name}</s.Td>
+                  <s.Td>{d.date}</s.Td>
+                </s.Tr>
+              ))
+            ) : (
+              <s.Tr>
+                <s.noData colSpan={4}>내역이 존재하지 않습니다.</s.noData>
+              </s.Tr>
+            )}
           </s.Tbody>
         </s.Table>
       </s.TableArea>

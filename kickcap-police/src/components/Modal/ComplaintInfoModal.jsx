@@ -6,6 +6,7 @@ import Text from '../Common/Text';
 import Button from '../Common/Button';
 import CrackInfoTable from '../Common/CrackInfoTable';
 import test from '../../asset/policeLogo.png';
+import moment from 'moment';
 
 const s = {
   Container: styled.div`
@@ -25,7 +26,6 @@ const s = {
   TableArea: styled.div`
     width: 100%;
     margin: 20px auto;
-    border: 1px solid black;
   `,
   Table: styled.table`
     width: 80%;
@@ -53,7 +53,6 @@ const s = {
     width: 80%;
     height: 60%;
     margin: 0 auto;
-    border: 1px solid blue;
     display: flex;
     justify-content: space-between;
     /* align-items: center; */
@@ -67,7 +66,6 @@ const s = {
   InfoArea: styled.div`
     width: 50%;
     height: auto;
-    border: 1px solid green;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -76,12 +74,11 @@ const s = {
     width: 100%;
     display: flex;
     justify-content: end;
-    border: 1px solid orange;
     margin: 30px auto;
   `,
 };
 
-const ComplaintInfoModal = ({ open, toggleModal }) => {
+const ComplaintInfoModal = ({ open, toggleModal, data }) => {
   return (
     <ReactModal
       isOpen={open}
@@ -113,18 +110,18 @@ const ComplaintInfoModal = ({ open, toggleModal }) => {
             </s.Thead>
             <s.Tbody>
               <s.Tr>
-                <s.Td>10</s.Td>
-                <s.Td>대전 유성구 학하북로 75-21</s.Td>
-                <s.Td>안전모 미착용</s.Td>
-                <s.Td>24.09.01</s.Td>
+                <s.Td>{data.idx}</s.Td>
+                <s.Td>{data.crackAddr}</s.Td>
+                <s.Td>{data.violationType}</s.Td>
+                <s.Td>{moment(data.date).format('YY-MM-DD')}</s.Td>
               </s.Tr>
             </s.Tbody>
           </s.Table>
         </s.TableArea>
         <s.MainArea>
-          <s.Img src={test} />
+          <s.Img src={data.img} />
           <s.InfoArea>
-            <CrackInfoTable />
+            <CrackInfoTable data={data} />
             <s.BtnArea>
               <Button
                 bold={'700'}

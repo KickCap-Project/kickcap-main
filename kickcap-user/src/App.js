@@ -31,6 +31,7 @@ import NotificationPage from './pages/NotificationPage';
 import ChatPage from './pages/ChatPage';
 import ErrorPage from './pages/ErrorPage';
 import SocialLoginPage from './pages/SocialLoginPage';
+import ViolationPayMent from './pages/Violation/ViolationPayMent';
 
 const s = {
   Background: styled.section`
@@ -92,6 +93,7 @@ function App() {
               <Route path="/violation">
                 <Route index element={<ViolationListPage />} />
                 <Route path="detail" element={<ViolationDetailPage />} />
+                <Route path="pay" element={<ViolationPayMent />} />
                 <Route path="objection">
                   <Route index element={<ViolationObjectionPage />} />
                   <Route path="success" element={<SuccessPage message="objection" />} />

@@ -37,7 +37,7 @@ const Input = ({
   placeholder,
   onChange,
   onClick,
-  onKeyPress,
+  onKeyDown,
   checked,
 }) => {
   return (
@@ -80,7 +80,7 @@ const Input = ({
           onClick={onClick}
           onChange={onChange}
           checked={checked}
-          onKeyPress={onKeyPress}
+          onKeyDown={onKeyDown}
         />
       )}
     </>
