@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import LoadingSpinner from '../../components/Common/LoadingSpinner';
 import ViolationEmpty from '../../components/Violation/ViolationEmpty';
 import ViolationList from '../../components/Violation/ViolationList';
 import { isFlagType } from '../../lib/data/Violation';
@@ -133,7 +134,7 @@ const ViolationListPage = () => {
   return (
     <s.Container>
       <Header title={'나의 단속 내역'} />
-
+      
       {vList.length === 0 ? (
         <s.MainAreaEmpty>
           <ViolationEmpty />
