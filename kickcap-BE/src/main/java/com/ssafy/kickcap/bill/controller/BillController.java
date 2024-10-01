@@ -3,6 +3,7 @@ package com.ssafy.kickcap.bill.controller;
 import com.ssafy.kickcap.bill.dto.BillListResponseDto;
 import com.ssafy.kickcap.bill.dto.BillObjectionDto;
 import com.ssafy.kickcap.bill.dto.BillResponseDto;
+import com.ssafy.kickcap.bill.dto.EduRequestDto;
 import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.bill.service.BillService;
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
@@ -61,9 +62,9 @@ public class BillController {
 
     @PostMapping("/{billId}/pay")
     @Operation(summary = "고지서 납부 상태 완료로 변경")
-    public ResponseEntity<Void> updatePaidStatus(@PathVariable Long billId) {
+    public ResponseEntity<Void> updatePaidStatus(@PathVariable Long billId, @RequestBody EduRequestDto eduRequestDto) {
         // 벌금 납부하면 현재 벌점에서 -10 해준다.
-        billService.updatePaidStatus(billId);
+        billService.updatePaidStatus(billId, eduRequestDto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
