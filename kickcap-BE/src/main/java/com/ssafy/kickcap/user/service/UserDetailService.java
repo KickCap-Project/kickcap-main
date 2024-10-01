@@ -1,5 +1,7 @@
 package com.ssafy.kickcap.user.service;
 
+import com.ssafy.kickcap.exception.ErrorCode;
+import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.repository.PoliceRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,6 @@ public class UserDetailService implements UserDetailsService {
     @Override
     public Police loadUserByUsername(String email) {
         return policeRepository.findByPoliceId(email)
-                .orElseThrow(() -> new IllegalArgumentException((email)));
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
     }
 }

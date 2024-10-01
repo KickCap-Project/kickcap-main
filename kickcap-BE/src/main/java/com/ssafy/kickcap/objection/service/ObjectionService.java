@@ -6,6 +6,8 @@ import com.ssafy.kickcap.bill.entity.ReportType;
 import com.ssafy.kickcap.bill.repository.BillRepository;
 import com.ssafy.kickcap.cctv.entity.Crackdown;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
+import com.ssafy.kickcap.exception.ErrorCode;
+import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionUserListDto;
@@ -40,16 +42,16 @@ public class ObjectionService {
     public void modifyObjectionByObjectionId(Member member, Long objectionId, BillObjectionDto objectionDto) {
         // Objection 조회
         Objection objection = objectionRepository.findById(objectionId)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find objection"));
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
         // Objection 작성자가 요청한 Member와 동일한지 확인
         if (!member.equals(objection.getMember())) {
-            throw new IllegalArgumentException("Cannot modify objection");
+            throw new RestApiException(ErrorCode.FORBIDDEN_ACCESS);
         }
 
         // 해당 Objection에 대한 Answer가 존재하는지 확인
         if (objection.getAnswer() != null) {
-            throw new IllegalArgumentException("Cannot modify objection that has an answer");
+            throw new RestApiException(ErrorCode.METHOD_NOT_ALLOWED);
         }
 
         // Objection 수정 로직 구현 (수정하려는 내용에 따라 추가)
@@ -61,20 +63,20 @@ public class ObjectionService {
     public void deleteObjectionByObjectionId(Member member, Long objectionId) {
         // Objection 조회
         Objection objection = objectionRepository.findById(objectionId)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find objection"));
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
         // Objection 작성자가 요청한 Member와 동일한지 확인
         if (!member.equals(objection.getMember())) {
-            throw new IllegalArgumentException("Cannot modify objection");
+            throw new RestApiException(ErrorCode.FORBIDDEN_ACCESS);
         }
 
         // 해당 Objection에 대한 Answer가 존재하는지 확인
         if (objection.getAnswer() != null) {
-            throw new IllegalArgumentException("Cannot modify objection that has an answer");
+            throw new RestApiException(ErrorCode.METHOD_NOT_ALLOWED);
         }
 
         objectionRepository.delete(objection);
-        Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(() -> new IllegalArgumentException("Cannot find bill"));
+        Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
         bill.updateIsObjection();
         billRepository.save(bill);
     }
@@ -98,33 +100,33 @@ public class ObjectionService {
 
     ///// 이의제기 상세 조회 경찰.ver/////
     public ObjectionDetailResponse getObjectionDetail(Long objectionId) {
-        Objection objection = objectionRepository.findById(objectionId).orElseThrow(() -> new IllegalArgumentException("Cannot find objection"));
+        Objection objection = objectionRepository.findById(objectionId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
         if (objection.getBill().getReportType().equals(ReportType.CCTV)){
-            Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new IllegalArgumentException("Cannot find crackdown"));
+            Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
             return objectionRepositoryImpl.findObjectionDetail(objectionId, crackdown.getViolationType().getId());
         } else {
-            Report report = reportRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new IllegalArgumentException("Cannot find report"));
+            Report report = reportRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
             return objectionRepositoryImpl.findObjectionDetail(objectionId, report.getViolationType().getId());
         }
     }
 
     ///// 이의제기 상세 조회 시민.ver/////
     public ObjectionDetailResponse getObjectionUserDetail(Long id, Long objectionId) {
-        Objection objection = objectionRepository.findById(objectionId).orElseThrow(() -> new IllegalArgumentException("Cannot find objection"));
+        Objection objection = objectionRepository.findById(objectionId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
         if (objection.getBill().getReportType().equals(ReportType.CCTV)){
             System.out.println(objection.getBill().getReportType());
-            Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new IllegalArgumentException("Cannot find crackdown"));
+            Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
             return objectionRepositoryImpl.findObjectionUserDetail(id, objectionId, crackdown.getViolationType().getId());
         } else {
-            Report report = reportRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new IllegalArgumentException("Cannot find report"));
+            Report report = reportRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
             return objectionRepositoryImpl.findObjectionUserDetail(id, objectionId, report.getViolationType().getId());
         }
     }
 
     public void answerForObjection(Police police, String content, Long objectionId) {
-        Objection objection = objectionRepository.findById(objectionId).orElseThrow(()-> new IllegalArgumentException("Cannot find objection"));
+        Objection objection = objectionRepository.findById(objectionId).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
         if (!Objects.equals(police.getId(), objection.getPoliceIdx())) {
-            throw new IllegalArgumentException("Cannot answer objection");
+            throw new RestApiException(ErrorCode.NOT_FOUND);
         }
         Answer answer = Answer.builder()
                 .objection(objection)
@@ -132,7 +134,7 @@ public class ObjectionService {
                 .build();
         answerRepository.save(answer);
 
-        Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(()-> new IllegalArgumentException("Cannot find bill"));
+        Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
         bill.updateIsObjection();
         billRepository.save(bill);
     }

@@ -5,6 +5,8 @@ import com.ssafy.kickcap.cctv.entity.Crackdown;
 import com.ssafy.kickcap.cctv.repository.CctvInfoRepository;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepositoryImpl;
 import com.ssafy.kickcap.dashboard.dto.*;
+import com.ssafy.kickcap.exception.ErrorCode;
+import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.region.repository.RegionCodeRepositoryImpl;
 import com.ssafy.kickcap.report.entity.AccidentReport;
 import com.ssafy.kickcap.report.entity.Report;
@@ -261,7 +263,7 @@ public class DashboardService {
 
     //////////////// cctv info 조회///////////////////
     public CctvInfoReponse searchCctvInfoByTime(Long idx, int time) {
-        CCTVInfo cctvInfo = cctvInfoRepository.findById(idx).orElseThrow(()-> new IllegalArgumentException("찾을 수 없는 cctv 번호입니다."));
+        CCTVInfo cctvInfo = cctvInfoRepository.findById(idx).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
         List<CctvCrackdownResponse> cctvCrackdowns = getCrackdownByCctv(idx, time);
         return CctvInfoReponse.builder()
                 .addr(cctvInfo.getLocation())

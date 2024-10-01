@@ -30,17 +30,17 @@ public class MemberService {
 
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
     }
 
     public Member findById(Long userId) {
         return memberRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
     }
 
     public Member findByNameAndPhone(String name, String phone) {
         return memberRepository.findMemberByNameAndPhone(name, phone)
-                .orElseThrow(() -> new IllegalArgumentException("Unexpected member"));
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
     }
 
     public MemberInfoResponseDto getMemberInfo(Long memberId, Long reportId) {
