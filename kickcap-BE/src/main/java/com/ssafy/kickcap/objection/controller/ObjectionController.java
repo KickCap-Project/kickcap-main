@@ -3,6 +3,7 @@ package com.ssafy.kickcap.objection.controller;
 import com.ssafy.kickcap.bill.dto.BillObjectionDto;
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
 import com.ssafy.kickcap.exception.ErrorCode;
+import com.ssafy.kickcap.objection.dto.ObjectionAnswerDto;
 import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionUserListDto;
@@ -93,7 +94,14 @@ public class ObjectionController {
         return ResponseEntity.ok(objectionDetail);
     }
 
-//    @PostMapping("/{objectionId}/answer")
-//    @Operation(summary = "이의제기 답변 기능")
-//    public ResponseEntity<Void> answerForObjection()
+    @PostMapping("/{objectionId}/answer")
+    @Operation(summary = "이의제기 답변 기능")
+    public ResponseEntity<Void> answerForObjection(@AuthenticationPrincipal User user, @RequestBody ObjectionAnswerDto objectionAnswerDto, @PathVariable Long objectionId){
+        Police police = policeService.findByPoliceId(user.getUsername());
+        if (police == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        objectionService.answerForObjection(police, objectionAnswerDto.getContent(), objectionId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }
