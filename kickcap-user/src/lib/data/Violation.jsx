@@ -35,7 +35,8 @@ export const isFlagType = {
     color: '#0054A6',
   },
   3: {
-    status: '마감 2일 전',
+    // status: '마감 2일 전',
+    status: '납부기한 2일 전',
     color: '#FF6E65',
   },
 };
