@@ -99,7 +99,7 @@ public class ObjectionRepositoryImpl {
                     .leftJoin(objection.answer, answer)
                     .leftJoin(objection.member, member)
                     .where(condition)
-                    .orderBy(answer.createdAt.asc())  // id를 기준으로 내림차순 정렬 (최신 순)
+                    .orderBy(answer.createdAt.desc())  // id를 기준으로 내림차순 정렬 (최신 순)
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .fetch();
