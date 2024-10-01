@@ -12,7 +12,7 @@ export const getCrackList = async (violationType, pageNo, success, fail) => {
   await local.get(`/crackdowns?&violationType=${violationType}&pageNo=${pageNo}`).then(success).catch(fail);
 };
 
-export const getListDetail = async (crackdownId, success, fail) => {
+export const getCrackDetail = async (crackdownId, success, fail) => {
   // 목록 상세 조회
   await local.get(`/crackdowns/${crackdownId}`).then(success).catch(fail);
 };
