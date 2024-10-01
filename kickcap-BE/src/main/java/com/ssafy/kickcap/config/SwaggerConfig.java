@@ -14,9 +14,9 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
+                .openapi("3.0.0")
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
                                 new SecurityScheme()
@@ -29,15 +29,15 @@ public class SwaggerConfig {
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .servers(List.of(
-                        new Server().url("https://www.arraylist.xyz").description("Production server") // HTTPS로 변경
+                        new Server().url("https://www.arraylist.xyz").description("Production server")  // HTTPS로 설정
                 ))
                 .info(apiInfo());
     }
 
     private Info apiInfo() {
         return new Info()
-                .title("CodeArena Swagger")
-                .description("CodeArena 유저 및 인증, ps, 알림에 관한 REST API")
+                .title("KickCap Swagger")
+                .description("킥보드 단속 플랫폼 KICKCAP REST API")
                 .version("1.0.0");
     }
 }
