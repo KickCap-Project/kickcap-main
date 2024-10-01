@@ -122,4 +122,31 @@ public class ObjectionRepositoryImpl {
                 .limit(pageable.getPageSize())
                 .fetch();
     }
+
+    public ObjectionDetailResponse findObjectionUserDetail(Long id, Long objectionId) {
+        return queryFactory
+                .select(new QObjectionDetailResponse(
+                        objection.id,
+                        bill.reportId.as("crackDownIdx"), // crackDownIdx는 bill의 reportId
+                        member.name,
+                        // reportType이 CCTV인 경우 crackdown.violationType.id, USER인 경우 report.violationType.id
+                        bill.reportType
+                                .when(ReportType.CCTV).then(crackdown.violationType.id)
+                                .otherwise(report.violationType.id).intValue(),
+                        objection.createdAt.stringValue(), // 접수 날짜
+                        objection.title,
+                        objection.content,
+                        answer.content,
+                        answer.createdAt.stringValue() // 답변 날짜
+                ))
+                .from(objection)
+                .leftJoin(objection.answer, answer)
+                .leftJoin(objection.bill, bill)
+                .leftJoin(objection.member, member)
+                .leftJoin(crackdown).on(bill.reportType.eq(ReportType.CCTV))
+                .leftJoin(report).on(bill.reportType.eq(ReportType.USER))
+                .where(objection.id.eq(objectionId), objection.member.id.eq(id))
+                .fetchOne();
+    }
+
 }

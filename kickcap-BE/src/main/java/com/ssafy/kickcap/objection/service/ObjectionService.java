@@ -86,4 +86,8 @@ public class ObjectionService {
     public ObjectionDetailResponse getObjectionDetail(Long objectionId) {
         return objectionRepositoryImpl.findObjectionDetail(objectionId);
     }
+
+    public ObjectionDetailResponse getObjectionUserDetail(Long id, Long objectionId) {
+        return objectionRepositoryImpl.findObjectionUserDetail(id, objectionId);
+    }
 }
