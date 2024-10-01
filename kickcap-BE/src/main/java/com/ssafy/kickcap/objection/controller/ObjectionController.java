@@ -112,4 +112,15 @@ public class ObjectionController {
         objectionService.answerForObjection(police, objectionAnswerDto.getContent(), objectionId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/{objectionId}/cancel")
+    @Operation(summary = "고지 취소 기능")
+    public ResponseEntity<Void> cancel(@AuthenticationPrincipal User user, @RequestBody ObjectionAnswerDto objectionAnswerDto, @PathVariable Long objectionId) {
+        Police police = policeService.findByPoliceId(user.getUsername());
+        if (police == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        objectionService.cancelForObjection(police, objectionAnswerDto.getContent(), objectionId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }
