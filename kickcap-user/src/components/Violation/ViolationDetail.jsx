@@ -37,6 +37,7 @@ const ViolationDetail = ({ detail }) => {
     switch (key) {
       case 'date':
       case 'deadLine':
+      case 'billTime':
         return convertToKoreanTimeString(value);
       case 'demerit':
         return `${value} 점`;

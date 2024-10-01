@@ -23,5 +23,20 @@ export const convertToKoreanTimeString = (isoString) => {
   const period = dateTime.hour >= 12 ? '오후' : '오전';
   const hour = dateTime.hour % 12 || 12; // 12시간제로 변환, 0시일 경우 12시로 변환
 
-  return `${dateTime.toFormat('yyyy-MM-dd')} ${period} ${hour}:${dateTime.toFormat('mm:ss')}`;
+  // 분과 초는 그대로 포맷팅
+  const minute = dateTime.toFormat('mm');
+  const second = dateTime.toFormat('ss'); // 소수점이 있는 초는 제거됨
+
+  return `${dateTime.toFormat('yyyy-MM-dd')} ${period} ${hour}:${minute}:${second}`;
+};
+
+
+export const formatTime = (timeString) => {
+  // 백엔드에서 받은 시간 데이터를 luxon의 DateTime 객체로 변환
+  const dt = DateTime.fromISO(timeString, { zone: 'Asia/Seoul' });
+  
+  // 원하는 포맷으로 변환
+  const formattedTime = dt.toFormat('yyyy-MM-dd a hh:mm:ss');
+  
+  return formattedTime;
 };

@@ -35,6 +35,8 @@ const s = {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   `,
   ImgWrapper: styled.img`
     border: 1px solid black;

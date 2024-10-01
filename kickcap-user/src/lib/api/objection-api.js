@@ -26,8 +26,8 @@ export const getObjectionList = async (status, pageNo) => {
 
 export const getObjectionDetail = async (objectionId) => {
   try {
-    // const response = await axiosInstance.get(`/objections/user/${objectionId}`);
-    const response = await axiosInstance.get(`/objections/${objectionId}`);
+    const response = await axiosInstance.get(`/objections/user/${objectionId}`);
+    // const response = await axiosInstance.get(`/objections/${objectionId}`);
 
     if (response.status === 200) {
       console.log(`이의제기 상세 조회를 성공적으로 수행했습니다.`);
