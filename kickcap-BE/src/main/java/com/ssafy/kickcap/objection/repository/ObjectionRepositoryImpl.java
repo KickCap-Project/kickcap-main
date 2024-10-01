@@ -3,40 +3,38 @@ package com.ssafy.kickcap.objection.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.kickcap.bill.entity.QBill;
 import com.ssafy.kickcap.bill.entity.ReportType;
-import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
-import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
+import com.ssafy.kickcap.cctv.entity.QCrackdown;
+import com.ssafy.kickcap.objection.dto.*;
 import com.ssafy.kickcap.objection.entity.QAnswer;
 import com.ssafy.kickcap.objection.entity.QObjection;
+import com.ssafy.kickcap.report.entity.QReport;
 import com.ssafy.kickcap.user.entity.QMember;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import com.ssafy.kickcap.objection.dto.QObjectionListResponse;
-import com.ssafy.kickcap.objection.dto.QObjectionDetailResponse;
 
 import java.util.List;
 
 import static com.querydsl.core.types.dsl.Expressions.dateTemplate;
-import static com.ssafy.kickcap.bill.entity.QBill.bill;
-import static com.ssafy.kickcap.cctv.entity.QCrackdown.crackdown;
-import static com.ssafy.kickcap.objection.entity.QAnswer.answer;
-import static com.ssafy.kickcap.objection.entity.QObjection.objection;
-import static com.ssafy.kickcap.report.entity.QReport.report;
-import static com.ssafy.kickcap.user.entity.QMember.member;
 
 @Repository
 public class ObjectionRepositoryImpl {
     private final JPAQueryFactory queryFactory;
+    private final QObjection objection = QObjection.objection;
+    private final QAnswer answer = QAnswer.answer;
+    private final QMember member = QMember.member;
+    private final QReport report = QReport.report;
+    private final QCrackdown crackdown = QCrackdown.crackdown;
+    private final QBill bill = QBill.bill;
 
     public ObjectionRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
     public List<ObjectionListResponse> findObjections(Long policeId, int status, String name, Pageable pageable) {
-        QObjection objection = QObjection.objection;
-        QAnswer answer = QAnswer.answer;
-        QMember member = QMember.member;
+
 
         BooleanExpression condition = objection.policeIdx.eq(policeId);
 
@@ -99,5 +97,29 @@ public class ObjectionRepositoryImpl {
                 .leftJoin(report).on(bill.reportType.eq(ReportType.USER))
                 .where(objection.id.eq(objectionId))
                 .fetchOne();
+    }
+
+    public List<ObjectionUserListDto> findUserObjections(Long memberId, int status, Pageable pageable) {
+        BooleanExpression condition = objection.member.id.eq(memberId);
+
+        if (status == 0) {
+            condition = condition.and(objection.answer.isNull());
+        } else if (status == 1) {
+            condition = condition.and(objection.answer.isNotNull());
+        }
+
+        return queryFactory
+                .select(new QObjectionUserListDto(
+                        objection.id,
+                        objection.createdAt.stringValue(), // 날짜를 문자열로 변환
+                        objection.title
+                ))
+                .from(objection)
+                .leftJoin(objection.answer, answer)
+                .where(condition)
+                .orderBy(status == 0 ? objection.createdAt.asc() : objection.createdAt.desc()) // status에 따라 정렬 순서 결정
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
     }
 }
