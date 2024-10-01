@@ -61,22 +61,27 @@ public class BillService {
                         // Report 조회
                         Report report = reportRepository.findById(bill.getReportId())
                                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
-                        // ViolationType 이름 가져오기
-                        violationTypeName = report.getViolationType().getName();
+
+                        // Bill -> BillListResponseDto 변환
+                        return BillListResponseDto.builder()
+                                .idx(bill.getId())
+                                .date(report.getReportTime().toString())
+                                .violationType(report.getViolationType().getName())
+                                .deadLine(bill.getDeadline().toString()) // 마감일
+                                .isFlag(setFlag(bill)) // 상태 플래그 설정
+                                .build();
                     } else {
                         Crackdown crackdown = crackdownRepository.findById(bill.getReportId())
                                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
-                        violationTypeName = crackdown.getViolationType().getName();
+                        // Bill -> BillListResponseDto 변환
+                        return BillListResponseDto.builder()
+                                .idx(bill.getId())
+                                .date(crackdown.getCrackdownTime().toString())
+                                .violationType(crackdown.getViolationType().getName())
+                                .deadLine(bill.getDeadline().toString()) // 마감일
+                                .isFlag(setFlag(bill)) // 상태 플래그 설정
+                                .build();
                     }
-
-                    // Bill -> BillListResponseDto 변환
-                    return BillListResponseDto.builder()
-                            .idx(bill.getId())
-                            .date(bill.getCreatedAt().toString())
-                            .violationType(violationTypeName) // ViolationType 이름 설정
-                            .deadLine(bill.getDeadline().toString()) // 마감일
-                            .isFlag(setFlag(bill)) // 상태 플래그 설정
-                            .build();
                 })
                 .toList();
     }
@@ -95,8 +100,6 @@ public class BillService {
     }
 
     public BillResponseDto getBill(Long memberId, Long billId) {
-
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
         Bill bill = billRepository.findById(billId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
@@ -122,6 +125,7 @@ public class BillService {
                     .isFlag(bill.getPaidStatus().toString())
                     .isObjection(setObjection(bill))
                     .imageSrc(report.getImageSrc())
+                    .billTime(bill.getCreatedAt().toString())
                     .build();
         } else {
             Crackdown crackdown = crackdownRepository.findById(bill.getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
@@ -161,7 +165,10 @@ public class BillService {
                 .member(report.getMember())
                 .fine(report.getViolationType().getFine())
                 .totalBill(report.getViolationType().getFine()) // 처음 고지서가 만들어질 때 벌금 금액이 기본값으로 들어감
-                .deadline(ZonedDateTime.now().plusDays(10)) // 납부 기한을 현재로부터 10일 후로 설정
+                .deadline(ZonedDateTime.now().plusDays(10)
+                        .withHour(23)
+                        .withMinute(59)
+                        .withSecond(59)) // 납부 기한을 현재로부터 10일 후 11시 59분 59초로 설정
                 .paidStatus(PaidStatus.UNPAID)
                 .reportType(ReportType.USER)
                 .isObjection("N")
@@ -188,7 +195,10 @@ public class BillService {
                 .member(crackdown.getMember())
                 .fine(crackdown.getViolationType().getFine())
                 .totalBill(crackdown.getViolationType().getFine()) // 처음 고지서가 만들어질 때 벌금 금액이 기본값으로 들어감
-                .deadline(ZonedDateTime.now().plusDays(10)) // 납부 기한을 현재로부터 10일 후로 설정
+                .deadline(ZonedDateTime.now().plusDays(10)
+                        .withHour(23)
+                        .withMinute(59)
+                        .withSecond(59)) // 납부 기한을 현재로부터 10일 후 11시 59분 59초로 설정
                 .paidStatus(PaidStatus.UNPAID)
                 .reportType(ReportType.CCTV)
                 .isObjection("N")

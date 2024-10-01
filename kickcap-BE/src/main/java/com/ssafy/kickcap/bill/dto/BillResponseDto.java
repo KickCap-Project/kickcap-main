@@ -35,4 +35,6 @@ public class BillResponseDto {
 
     private String imageSrc;
 
+    private String billTime; // 고지일시
+
 }
