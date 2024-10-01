@@ -52,7 +52,7 @@ public class BillService {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
 //        Page<Bill> billPage = billRepository.findByMemberOrderByDeadlineDesc(member, pageable);
-        Page<Bill> billPage = billRepository.findByMemberAndPaidStatusNotOrderByDeadlineDesc(member, PaidStatus.CANCEL, pageable);
+        Page<Bill> billPage = billRepository.findByMemberAndPaidStatusNotOrderByDeadlineAsc(member, PaidStatus.CANCEL, pageable);
 
         // Bill -> BillListResponseDto 변환
         return billPage.stream()
