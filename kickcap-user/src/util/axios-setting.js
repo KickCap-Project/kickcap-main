@@ -44,7 +44,9 @@ export const localAxios = () => {
 
         if (refreshToken) {
           try {
-            const tokenRefreshResult = await instance.post(`/tokens/refresh`, refreshToken);
+            const tokenRefreshResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/tokens/refresh`, {
+              refreshToken,
+            });
             const { accessToken } = tokenRefreshResult.data;
 
             // 새로운 액세스 토큰을 스토리지에 저장
