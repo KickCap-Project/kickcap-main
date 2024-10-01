@@ -80,7 +80,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   const [responseDate, setResponseDate] = useState(objectionDetail.responseDate);
 
   const id = useLocation().state?.idx || null;
-  console.log(`id: ${id}`);
 
   const inputProps = (type) => {
     const setValue = (type, value) => {

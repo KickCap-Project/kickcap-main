@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import LoadingSpinner from '../../components/Common/LoadingSpinner';
 import ViolationEmpty from '../../components/Violation/ViolationEmpty';
 import ViolationList from '../../components/Violation/ViolationList';
 import { isFlagType } from '../../lib/data/Violation';
