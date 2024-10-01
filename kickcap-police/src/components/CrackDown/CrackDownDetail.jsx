@@ -5,7 +5,8 @@ import CrackInfoTable from '../Common/CrackInfoTable';
 import Button from '../Common/Button';
 import { useLocation, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
-import { getListDetail } from '../../lib/api/crack-api';
+import { getCrackDetail } from '../../lib/api/crack-api';
+import moment from 'moment';
 const s = {
   Container: styled.main`
     width: 90%;
@@ -42,7 +43,6 @@ const s = {
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
-    align-items: center;
   `,
   Img: styled.img`
     width: 50%;
@@ -78,7 +78,7 @@ const CrackDownDetail = () => {
   };
 
   useEffect(() => {
-    getListDetail(
+    getCrackDetail(
       crackId,
       (resp) => {
         setCrackData(resp.data);
@@ -106,13 +106,13 @@ const CrackDownDetail = () => {
               <s.Td>{crackData.idx}</s.Td>
               <s.Td>{crackData.crackAddr}</s.Td>
               <s.Td>{crackData.violationType}</s.Td>
-              <s.Td>{crackData.date}</s.Td>
+              <s.Td>{moment(crackData.date).format('YY-MM-DD')}</s.Td>
             </s.Tr>
           </s.Tbody>
         </s.Table>
       </s.TableArea>
       <s.MainArea>
-        <s.Img src={test} />
+        <s.Img src={crackData.img} />
         <s.InfoArea>
           <CrackInfoTable data={crackData} />
           <s.BtnArea>

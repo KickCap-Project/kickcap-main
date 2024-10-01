@@ -89,7 +89,7 @@ const CrackDownList = () => {
 
   useEffect(() => {
     setViolationType(searchParams.get('violationType'));
-    setPageNo(Number(pageNo));
+    setPageNo(Number(searchParams.get('pageNo')));
     const newViolationType = searchParams.get('violationType') == 3 ? 'helmet' : 'peoples';
     dispatch(pageActions.changeCrackType(newViolationType));
   }, [searchParams]);
