@@ -2,6 +2,7 @@ package com.ssafy.kickcap.objection.controller;
 
 import com.ssafy.kickcap.bill.dto.BillObjectionDto;
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
+import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionUserListDto;
@@ -65,11 +66,34 @@ public class ObjectionController {
     }
 
     @GetMapping("/{objectionId}")
-    @Operation(summary = "이의제기 상세 정보 조회")
-    public ResponseEntity<ObjectionDetailResponse> getObjectionDetail(@PathVariable Long objectionId) {
+    @Operation(summary = "이의제기 경찰 상세 정보 조회")
+    public ResponseEntity<ObjectionDetailResponse> getObjectionDetail(@AuthenticationPrincipal User user, @PathVariable Long objectionId) {
+        Police police = policeService.findByPoliceId(user.getUsername());
+        if (police == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         ObjectionDetailResponse objectionDetail = objectionService.getObjectionDetail(objectionId);
+        if (objectionDetail == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         return ResponseEntity.ok(objectionDetail);
     }
 
+    @GetMapping("/user/{objectionId}")
+    @Operation(summary = "이의제기 일반 시민 상세 정보 조회")
+    public ResponseEntity<ObjectionDetailResponse> getObjectionUserDetail(@AuthenticationPrincipal CustomOAuth2User user, @PathVariable Long objectionId) {
+        ObjectionDetailResponse objectionDetail = objectionService.getObjectionUserDetail(user.getId(), objectionId);
 
+        // 만약 조회된 이의제기 정보가 없거나 사용자가 작성자가 아닌 경우
+        if (objectionDetail == null) {
+            // 403 Forbidden 반환
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
+        return ResponseEntity.ok(objectionDetail);
+    }
+
+//    @PostMapping("/{objectionId}/answer")
+//    @Operation(summary = "이의제기 답변 기능")
+//    public ResponseEntity<Void> answerForObjection()
 }
