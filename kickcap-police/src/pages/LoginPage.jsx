@@ -63,10 +63,8 @@ const LoginPage = () => {
       [e.target.name]: e.target.value,
     });
   };
-  const handleLogin = async () => {
-    // localStorage.setItem('accessToken', 'test');
-    // console.log(login);
 
+  const handleLogin = async () => {
     await policeLogin(
       login,
       (resp) => {
@@ -79,6 +77,12 @@ const LoginPage = () => {
         alert('아이디, 비밀번호를 확인해주세요.');
       },
     );
+  };
+
+  const handleEnterSearch = (e) => {
+    if (e.keyCode === 13) {
+      handleLogin();
+    }
   };
 
   useEffect(() => {
@@ -99,6 +103,7 @@ const LoginPage = () => {
               display={'block'}
               name={'policeId'}
               onChange={handleChangeLogin}
+              onKeyDown={handleEnterSearch}
               value={login.policeId}
             />
             <Input
@@ -110,6 +115,7 @@ const LoginPage = () => {
               margin={'10px auto 30px'}
               name={'password'}
               onChange={handleChangeLogin}
+              onKeyDown={handleEnterSearch}
               value={login.password}
             />
             <Button width={'100%'} height={'40px'} display={'block'} onClick={handleLogin}>
