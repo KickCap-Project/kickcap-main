@@ -2,6 +2,7 @@ package com.ssafy.kickcap.objection.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.DateTemplate;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.kickcap.bill.entity.QBill;
 import com.ssafy.kickcap.bill.entity.ReportType;
@@ -68,35 +69,33 @@ public class ObjectionRepositoryImpl {
                 .fetch();
     }
 
-    public ObjectionDetailResponse findObjectionDetail(Long objectionId) {
+    public ObjectionDetailResponse findObjectionDetail(Long objectionId, Long violationType) {
         // Postgres TO_CHAR 사용하여 날짜 형식을 'yyyy.MM.dd'로 변환
         DateTemplate<String> formattedObjectionDate = dateTemplate(String.class, "TO_CHAR({0}, 'YYYY.MM.DD')", objection.createdAt);
         DateTemplate<String> formattedAnswerDate = dateTemplate(String.class, "TO_CHAR({0}, 'YYYY.MM.DD')", answer.createdAt);
 
-        // 이의제기 상세 조회 로직
         return queryFactory
                 .select(new QObjectionDetailResponse(
                         objection.id,
-                        bill.reportId.as("crackDownIdx"), // crackDownIdx는 bill의 reportId
+                        bill.reportId.as("crackDownIdx"),
                         member.name,
-                        // reportType이 CCTV인 경우 crackdown.violationType.id, USER인 경우 report.violationType.id
-                        bill.reportType
-                                .when(ReportType.CCTV).then(crackdown.violationType.id)
-                                .otherwise(report.violationType.id).intValue(),
-                        formattedObjectionDate, // 접수 날짜
+                        // reportType에 관계없이 violation_type을 NULL로 반환
+                        Expressions.asNumber(violationType),
+                        formattedObjectionDate,
                         objection.title,
                         objection.content,
                         answer.content,
-                        formattedAnswerDate // 답변 날짜
+                        formattedAnswerDate
                 ))
                 .from(objection)
                 .leftJoin(objection.answer, answer)
                 .leftJoin(objection.bill, bill)
                 .leftJoin(objection.member, member)
-                .leftJoin(crackdown).on(bill.reportType.eq(ReportType.CCTV))
-                .leftJoin(report).on(bill.reportType.eq(ReportType.USER))
+                // crackdown과 report와의 조인 제거
                 .where(objection.id.eq(objectionId))
+                .groupBy(objection.id, bill.reportId, member.name, bill.reportType, formattedObjectionDate, objection.title, objection.content, answer.content, formattedAnswerDate)
                 .fetchOne();
+
     }
 
     public List<ObjectionUserListDto> findUserObjections(Long memberId, int status, Pageable pageable) {
@@ -108,10 +107,16 @@ public class ObjectionRepositoryImpl {
             condition = condition.and(objection.answer.isNotNull());
         }
 
+        DateTemplate<String> formattedDate = Expressions.dateTemplate(
+                String.class,
+                "TO_CHAR({0}, 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"')",
+                objection.createdAt
+        );
+
         return queryFactory
                 .select(new QObjectionUserListDto(
                         objection.id,
-                        objection.createdAt.stringValue(), // 날짜를 문자열로 변환
+                        formattedDate, // 날짜를 문자열로 변환
                         objection.title
                 ))
                 .from(objection)
@@ -123,21 +128,32 @@ public class ObjectionRepositoryImpl {
                 .fetch();
     }
 
-    public ObjectionDetailResponse findObjectionUserDetail(Long id, Long objectionId) {
+    public ObjectionDetailResponse findObjectionUserDetail(Long id, Long objectionId, Long violationType) {
+
+        DateTemplate<String> formattedDate = Expressions.dateTemplate(
+                String.class,
+                "TO_CHAR({0}, 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"')",
+                objection.createdAt
+        );
+
+        DateTemplate<String> formattedDate2 = Expressions.dateTemplate(
+                String.class,
+                "TO_CHAR({0}, 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"')",
+                answer.createdAt
+        );
+
         return queryFactory
                 .select(new QObjectionDetailResponse(
                         objection.id,
                         bill.reportId.as("crackDownIdx"), // crackDownIdx는 bill의 reportId
                         member.name,
                         // reportType이 CCTV인 경우 crackdown.violationType.id, USER인 경우 report.violationType.id
-                        bill.reportType
-                                .when(ReportType.CCTV).then(crackdown.violationType.id)
-                                .otherwise(report.violationType.id).intValue(),
-                        objection.createdAt.stringValue(), // 접수 날짜
+                        Expressions.asNumber(violationType),
+                        formattedDate, // 접수 날짜
                         objection.title,
                         objection.content,
                         answer.content,
-                        answer.createdAt.stringValue() // 답변 날짜
+                        formattedDate2 // 답변 날짜
                 ))
                 .from(objection)
                 .leftJoin(objection.answer, answer)

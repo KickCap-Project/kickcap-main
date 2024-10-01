@@ -12,7 +12,7 @@ public class ObjectionDetailResponse {
     private Long idx;              // 문의 번호
     private Long crackDownIdx;      // 단속 번호
     private String name;           // 작성자
-    private int violationType;     // 단속 종류
+    private Long violationType;     // 단속 종류
     private String date;           // 접수 날짜 (yyyy.MM.dd 형식)
     private String title;          // 제목
     private String content;        // 본문
@@ -20,7 +20,7 @@ public class ObjectionDetailResponse {
     private String responseDate;   // 이의제기 답변 날짜
 
     @QueryProjection
-    public ObjectionDetailResponse(Long idx, Long crackDownIdx, String name, int violationType, String date, String title, String content, String responseContent, String responseDate) {
+    public ObjectionDetailResponse(Long idx, Long crackDownIdx, String name, Long violationType, String date, String title, String content, String responseContent, String responseDate) {
         this.idx = idx;
         this.crackDownIdx = crackDownIdx;
         this.name = name;
