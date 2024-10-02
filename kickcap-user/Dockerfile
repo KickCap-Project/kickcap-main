@@ -50,8 +50,8 @@ RUN echo "REACT_APP_BASE_URL=$REACT_APP_BASE_URL" >> .env && \
     echo "REACT_APP_KAKAO_MAP=$REACT_APP_KAKAO_MAP" >> .env && \
     echo "REACT_APP_KAKAO_REST=$REACT_APP_KAKAO_REST" >> .env && \
     echo "REACT_APP_IMG_SERVER_BASE_URL=$REACT_APP_IMG_SERVER_BASE_URL" >> .env && \
-    echo "REACT_APP_IMG_SERVER_BASE_URL=$REACT_APP_IMG_SERVER_BASE_URL" .env
-    
+    echo "REACT_APP_IMPORT=$REACT_APP_IMPORT" .env
+
 # 빌드 실행
 RUN npm run build
 
