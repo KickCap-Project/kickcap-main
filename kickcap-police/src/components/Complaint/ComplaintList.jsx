@@ -52,7 +52,7 @@ const s = {
   Tr: styled.tr`
     width: 100%;
     height: 40px;
-    cursor: pointer;
+    cursor: ${(props) => props.cursor};
   `,
   Td: styled.td`
     vertical-align: middle;
@@ -60,6 +60,7 @@ const s = {
   `,
   noData: styled.td`
     vertical-align: middle;
+    cursor: default;
   `,
   Th: styled.th`
     font-weight: 700;
@@ -82,10 +83,10 @@ const ComplaintList = () => {
   const type = useAppSelector(selectComplaintNav);
   const dispatch = useAppDispatch();
   const [state, setState] = useState(searchParams.get('state'));
-  const [totalPage, setTotalPage] = useState(0);
+  // const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
   // const [data, setData] = useState([]);
-  const { name, data, setData } = useOutletContext();
+  const { name, data, setData, totalPage, setTotalPage } = useOutletContext();
 
   useEffect(() => {
     setState(searchParams.get('state'));
@@ -164,7 +165,7 @@ const ComplaintList = () => {
           <s.Tbody>
             {data.length !== 0 ? (
               data.map((d, index) => (
-                <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
+                <s.Tr key={index} cursor={'pointer'} onClick={() => handleMovePage(d.idx)}>
                   <s.Td>{d.idx}</s.Td>
                   <s.Td>{d.title}</s.Td>
                   <s.Td>{d.name}</s.Td>
@@ -172,7 +173,7 @@ const ComplaintList = () => {
                 </s.Tr>
               ))
             ) : (
-              <s.Tr>
+              <s.Tr cursor={'deafault'}>
                 <s.noData colSpan={4}>내역이 존재하지 않습니다.</s.noData>
               </s.Tr>
             )}

@@ -3,21 +3,13 @@ import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectReportNav } from '../../store/page';
 import { useNavigate } from 'react-router';
-import Button from './../Common/Button';
 import Input from './../Common/Input';
-import {
-  getListDetail,
-  getReportEndList,
-  getReportEndTotalCount,
-  getReportList,
-  getReportTotalCount,
-} from '../../lib/api/report-api';
+import { getReportEndList, getReportEndTotalCount, getReportList, getReportTotalCount } from '../../lib/api/report-api';
 import moment from 'moment';
 import Pagination from 'react-js-pagination';
 import ReactPaginate from 'react-paginate';
 import { useSearchParams } from 'react-router-dom';
 import '../../styles/Pagination.css';
-import Text from './../Common/Text';
 
 const s = {
   Container: styled.div`
@@ -63,7 +55,7 @@ const s = {
   Tr: styled.tr`
     width: 100%;
     height: 40px;
-    cursor: pointer;
+    cursor: ${(props) => props.cursor};
   `,
   Td: styled.td`
     vertical-align: middle;
@@ -71,6 +63,7 @@ const s = {
   `,
   noData: styled.td`
     vertical-align: middle;
+    cursor: default;
   `,
   Th: styled.th`
     font-weight: 700;
@@ -234,14 +227,14 @@ const ReportList = () => {
           <s.Tbody>
             {data.length !== 0 ? (
               data.map((d, index) => (
-                <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
+                <s.Tr key={index} cursor={'pointer'} onClick={() => handleMovePage(d.idx)}>
                   <s.Td>{d.idx}</s.Td>
                   <s.Td>{d.addr}</s.Td>
                   <s.Td>{moment(d.createTime).format('YY-MM-DD')}</s.Td>
                 </s.Tr>
               ))
             ) : (
-              <s.Tr>
+              <s.Tr cursor={'deafault'}>
                 <s.noData colSpan={3}>내역이 존재하지 않습니다.</s.noData>
               </s.Tr>
             )}

@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions, selectIsComplaintInfo, selectIsComplaintSend } from '../../store/modal';
 import { useLocation, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
-import { getListDetail } from '../../lib/api/complaint-api';
+import { getListDetail, postCancel } from '../../lib/api/complaint-api';
 import { getCrackDetail } from './../../lib/api/crack-api';
 const s = {
   Container: styled.main`
@@ -78,6 +78,8 @@ const s = {
     border-radius: 10px;
     padding: 10px;
     font-weight: 500;
+    white-space: pre-line;
+    line-height: 30px;
   `,
 };
 
@@ -103,12 +105,24 @@ const ComplaintDetail = () => {
     navigate(`../../complaint?state=${state}&pageNo=${pageNo ? pageNo : 1}`);
   };
 
-  const handleCrackCancel = () => {
+  const handleCrackCancel = async () => {
     const name = localStorage.getItem('police');
-    const message = `안녕하세요. ${name} 입니다. 본 사항을 관할 부서에서 확인 결과, 고지서에 문제가 있다고 판단하여 해당 단속 내역은 취소되었음을 알려드립니다.
-    안전한 킥보드 문화를 위해 저희 ${name}가 앞장서서 노력하겠습니다. 감사합니다.`;
+    const message = `안녕하세요. ${name} 입니다.\n본 사항을 관할 부서에서 확인 결과, 고지서에 문제가 있다고 판단하여 해당 단속 내역은 취소되었음을 알려드립니다.
+    안전한 킥보드 문화를 위해 저희 ${name}가 앞장서서 노력하겠습니다. \n감사합니다.`;
 
-    alert(message);
+    if (window.confirm('정말로 고지를 취소하시겠습니까?')) {
+      await postCancel(
+        complaintData.idx,
+        message,
+        (resp) => {
+          alert('고지서가 취소되었습니다.');
+          navigate(`../../complaint?state=${state}&pageNo=${pageNo ? pageNo : 1}`);
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
+    }
   };
 
   useEffect(() => {
