@@ -1,9 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
-import ReportList from '../../components/Reported/ReportList';
-import { ReactComponent as search } from '../../asset/svg/search.svg';
-import IconSvg from '../../components/Common/IconSvg';
 import { Outlet } from 'react-router';
 import { usePageNavHook } from '../../lib/hook/usePageNavHook';
 import { usePageTypeHook } from './../../lib/hook/usePageTypeHook';

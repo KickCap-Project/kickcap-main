@@ -6,7 +6,7 @@ import { useNavigate, useOutletContext } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import '../../styles/Pagination.css';
 import Pagination from 'react-js-pagination';
-import { getComplaintList, getComplaintTotalCount, getListDetail } from '../../lib/api/complaint-api';
+import { getComplaintList, getComplaintTotalCount } from '../../lib/api/complaint-api';
 
 const s = {
   Container: styled.div`
@@ -83,9 +83,8 @@ const ComplaintList = () => {
   const type = useAppSelector(selectComplaintNav);
   const dispatch = useAppDispatch();
   const [state, setState] = useState(searchParams.get('state'));
-  // const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
-  // const [data, setData] = useState([]);
+  const [render, setRender] = useState(false);
   const { name, data, setData, totalPage, setTotalPage } = useOutletContext();
 
   useEffect(() => {
@@ -119,6 +118,10 @@ const ComplaintList = () => {
   };
 
   useEffect(() => {
+    if (!render) {
+      setRender(true);
+      return;
+    }
     getComplaintTotalCount(
       state,
       name ? name : null,
@@ -182,9 +185,9 @@ const ComplaintList = () => {
       </s.TableArea>
       <s.pageArea>
         <Pagination
-          activePage={pageNo} // 현재 페이지
+          activePage={Number(pageNo)} // 현재 페이지
           itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
-          totalItemsCount={totalPage} // 총 아이템 갯수
+          totalItemsCount={Number(totalPage)} // 총 아이템 갯수
           pageRangeDisplayed={10} // paginator의 페이지 범위
           prevPageText={'‹'} // "이전"을 나타낼 텍스트
           nextPageText={'›'} // "다음"을 나타낼 텍스트

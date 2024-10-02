@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import test from '../../asset/policeLogo.png';
 import CrackInfoTable from '../Common/CrackInfoTable';
 import Button from '../Common/Button';
 import { useLocation, useNavigate } from 'react-router';

@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import IconSvg from '../components/Common/IconSvg';
-// import { ReactComponent as Logo } from '../asset/policeLogo.png';
 import Logo from '../asset/policeLogo.png';
 import Text from '../components/Common/Text';
 import { useNavigate } from 'react-router';

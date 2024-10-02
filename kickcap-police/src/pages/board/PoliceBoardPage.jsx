@@ -10,7 +10,6 @@ import { Outlet } from 'react-router';
 import { usePageNavHook } from '../../lib/hook/usePageNavHook';
 import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
-import { chart1, chart2, weekData } from '../../lib/data/ChartData';
 import { useSearchParams } from 'react-router-dom';
 import { getBottomData, gettest, getWeekData } from '../../lib/api/board-api';
 import moment from 'moment';
@@ -72,7 +71,6 @@ const PoliceBoardPage = () => {
   const [sido, setSido] = useState(searchParams.get('sido'));
   const [gugun, setGugun] = useState(searchParams.get('gugun'));
   const [weekData, setWeekData] = useState({});
-  // const [bottomData, setBottomData] = useState({});
 
   useEffect(() => {
     setSido(searchParams.get('sido'));
@@ -100,22 +98,13 @@ const PoliceBoardPage = () => {
         },
       );
     }
-    // getBottomData(
-    //   sido,
-    //   gugun,
-    //   (resp) => {
-    //     setBottomData(resp.data);
-    //   },
-    //   (error) => {
-    //     alert('데이터를 불러오는 도중 에러가 발생했습니다.');
-    //   },
-    // );
   }, [searchParams, sido, gugun]);
 
   const { data: bottomData = {}, error: bottomDataError } = useQuery({
     queryKey: ['bottomData', sido, gugun],
     queryFn: () => getBottomData(sido, gugun),
     // enabled: !!sido && !!gugun,
+    refetchInterval: 10800000,
   });
 
   if (bottomDataError) {
@@ -123,13 +112,13 @@ const PoliceBoardPage = () => {
   }
 
   const ButtomFunc = (today, yesterday) => {
-    if (today == 0 && yesterday == 0) {
+    if (today === 0 && yesterday === 0) {
       return 0;
     }
-    if (today == 0) {
+    if (today === 0) {
       return 0 - yesterday * 100;
     }
-    if (yesterday == 0) {
+    if (yesterday === 0) {
       return today * 100;
     }
     return ((today - yesterday) / yesterday) * 100;

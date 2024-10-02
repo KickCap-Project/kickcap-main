@@ -125,19 +125,18 @@ const ReportList = () => {
   };
 
   useEffect(() => {
-    // alert(pageNo);
     setViolationType(searchParams.get('violationType'));
     setPageNo(Number(searchParams.get('pageNo')));
     const newViolationType =
-      searchParams.get('violationType') == 4
+      searchParams.get('violationType') === '4'
         ? 'park'
-        : searchParams.get('violationType') == 3
+        : searchParams.get('violationType') === '3'
         ? 'helmet'
-        : searchParams.get('violationType') == 1
+        : searchParams.get('violationType') === '1'
         ? 'peoples'
-        : searchParams.get('violationType') == 2
+        : searchParams.get('violationType') === '2'
         ? 'sideWalk'
-        : 'read';
+        : 'road';
     dispatch(pageActions.changeReportType(newViolationType));
   }, [searchParams]);
 
@@ -245,9 +244,9 @@ const ReportList = () => {
         <s.BtnArea></s.BtnArea>
         <s.pageArea>
           <Pagination
-            activePage={pageNo} // 현재 페이지
+            activePage={Number(pageNo)} // 현재 페이지
             itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
-            totalItemsCount={totalPage} // 총 아이템 갯수
+            totalItemsCount={Number(totalPage)} // 총 아이템 갯수
             pageRangeDisplayed={10} // paginator의 페이지 범위
             prevPageText={'‹'} // "이전"을 나타낼 텍스트
             nextPageText={'›'} // "다음"을 나타낼 텍스트

@@ -86,12 +86,13 @@ const CrackDownList = () => {
   const [violationType, setViolationType] = useState(searchParams.get('violationType'));
   const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
+  const [render, setRender] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     setViolationType(searchParams.get('violationType'));
     setPageNo(Number(searchParams.get('pageNo')));
-    const newViolationType = searchParams.get('violationType') == 3 ? 'helmet' : 'peoples';
+    const newViolationType = searchParams.get('violationType') === '3' ? 'helmet' : 'peoples';
     dispatch(pageActions.changeCrackType(newViolationType));
   }, [searchParams]);
 
@@ -119,6 +120,10 @@ const CrackDownList = () => {
   };
 
   useEffect(() => {
+    if (!render) {
+      setRender(true);
+      return;
+    }
     getCrackTotalCount(
       violationType,
       (resp) => {
@@ -180,7 +185,7 @@ const CrackDownList = () => {
       </s.TableArea>
       <s.pageArea>
         <Pagination
-          activePage={pageNo} // 현재 페이지
+          activePage={Number(pageNo)} // 현재 페이지
           itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
           totalItemsCount={totalPage} // 총 아이템 갯수
           pageRangeDisplayed={10} // paginator의 페이지 범위
