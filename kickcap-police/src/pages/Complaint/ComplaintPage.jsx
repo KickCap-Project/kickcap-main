@@ -7,7 +7,7 @@ import { Outlet, useLocation } from 'react-router';
 import { usePageNavHook } from './../../lib/hook/usePageNavHook';
 import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
 import { useSearchParams } from 'react-router-dom';
-import { getComplaintList } from '../../lib/api/complaint-api';
+import { getComplaintList, getComplaintTotalCount } from '../../lib/api/complaint-api';
 const s = {
   Container: styled.div`
     height: 100%;
@@ -45,6 +45,7 @@ const ComplaintPage = () => {
   const [state, setState] = useState(searchParams.get('state'));
   const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
   const [data, setData] = useState([]);
+  const [totalPage, setTotalPage] = useState(0);
   const location = useLocation();
   const [name, setName] = useState('');
   const handleChangeSearch = (e) => {
@@ -59,6 +60,16 @@ const ComplaintPage = () => {
 
   const handleClickSearch = async () => {
     setSearchParams({ state, pageNo: 1 });
+    await getComplaintTotalCount(
+      state,
+      name ? name : null,
+      (resp) => {
+        setTotalPage(resp.data);
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
     await getComplaintList(
       state,
       pageNo,
@@ -88,7 +99,7 @@ const ComplaintPage = () => {
         </s.searchArea>
       )}
       <s.mainArea>
-        <Outlet context={{ name, data, setData }} />
+        <Outlet context={{ name, data, setData, totalPage, setTotalPage }} />
       </s.mainArea>
     </s.Container>
   );
