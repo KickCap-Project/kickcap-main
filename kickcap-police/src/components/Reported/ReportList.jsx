@@ -22,7 +22,6 @@ import Text from './../Common/Text';
 const s = {
   Container: styled.div`
     width: 90%;
-
     margin: 0 auto;
   `,
   TypeArea: styled.div`
@@ -117,6 +116,7 @@ const ReportList = () => {
   const [pageNo, setPageNo] = useState(Number(searchParams.get('pageNo')));
   const [isEnd, setIsEnd] = useState(false);
   const [data, setData] = useState([]);
+
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeReportType(mode));
     const newViolationType =

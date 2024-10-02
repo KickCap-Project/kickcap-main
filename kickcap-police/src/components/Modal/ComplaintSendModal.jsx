@@ -5,6 +5,8 @@ import '../../styles/modal.css';
 import Text from '../Common/Text';
 import Button from '../Common/Button';
 import TextArea from '../Common/TextArea';
+import { postAnswer } from '../../lib/api/complaint-api';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -34,13 +36,26 @@ const s = {
   `,
 };
 
-const ComplaintSendModal = ({ open, toggleModal }) => {
+const ComplaintSendModal = ({ open, toggleModal, id }) => {
+  const navigate = useNavigate();
   const [message, setMessage] = useState('');
   const handleChangeMessage = (e) => {
     setMessage(e.target.value);
   };
-  const handleClickSend = () => {
-    alert(message);
+  const handleClickSend = async () => {
+    await postAnswer(
+      id,
+      message,
+      (resp) => {
+        alert('답변이 전송되었습니다.');
+        setMessage('');
+        toggleModal(false);
+        navigate(`../../complaint?state=0&pageNo=1`);
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
   };
   const handleClose = () => {
     setMessage('');

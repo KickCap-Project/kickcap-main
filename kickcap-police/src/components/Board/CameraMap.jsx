@@ -15,7 +15,7 @@ import BoardCameraModal from '../Modal/BoardCameraModal.jsx';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook.js';
 import { modalActions, selectIsCamera } from '../../store/modal.js';
 import { pageActions, selectBoardNav } from '../../store/page.js';
-import { getMarkerData } from '../../lib/api/board-api.js';
+import { getCCTVInfo, getMarkerData } from '../../lib/api/board-api.js';
 import { useSearchParams } from 'react-router-dom';
 
 const s = {
@@ -84,6 +84,7 @@ const CameraMap = ({ point }) => {
   const [markers, setMarkers] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [mapData, setMapData] = useState({});
+  const [cctvData, setCCTVData] = useState({});
 
   //데이터 받기
   useEffect(() => {
@@ -183,8 +184,19 @@ const CameraMap = ({ point }) => {
       });
 
       // 클릭 이벤트 추가
-      kakao.maps.event.addListener(marker, 'click', () => {
-        setCameraIdx(data.idx);
+      kakao.maps.event.addListener(marker, 'click', async () => {
+        // setCameraIdx(data.idx);
+        await getCCTVInfo(
+          data.idx,
+          timeType,
+          (resp) => {
+            setCCTVData(resp.data);
+            console.log(resp.data);
+          },
+          (error) => {
+            alert('잠시 후 다시 시도해주세요.');
+          },
+        );
         handleOpenCamera(true);
       });
 
@@ -291,7 +303,7 @@ const CameraMap = ({ point }) => {
           </s.selectArea>
         </s.mapArea>
       </s.Container>
-      <BoardCameraModal open={isCamera} toggleModal={handleOpenCamera} idx={cameraIdx} />
+      <BoardCameraModal open={isCamera} toggleModal={handleOpenCamera} idx={cameraIdx} data={cctvData} />
     </>
   );
 };

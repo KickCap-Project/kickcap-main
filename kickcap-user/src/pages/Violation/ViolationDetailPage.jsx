@@ -61,7 +61,7 @@ const s = {
     display: flex;
     justify-content: center;
     align-items: center;
-  `
+  `,
 };
 
 const ViolationDetailPage = () => {
@@ -86,16 +86,16 @@ const ViolationDetailPage = () => {
   const paymentEventHandler = () => {
     // 벌점 10점 이상일 때 education으로, 아니면 payment로 연결
     const demerit = JSON.parse(localStorage.getItem('Info')).demerit || null;
-
+    const name = JSON.parse(localStorage.getItem('Info')).name || null;
     if (demerit === null) {
       navigate('*');
       return;
     }
 
     if (demerit >= 10) {
-      navigate('../payment/education', { state: { id }});
+      navigate('../payment/education', { state: { id, name, pay: detail.totalBill } });
     } else {
-      navigate('../payment', { state: { id } });
+      navigate('../payment', { state: { id, name, pay: detail.totalBill } });
     }
   };
 
@@ -148,11 +148,7 @@ const ViolationDetailPage = () => {
       <Header title={'나의 단속 내역'} />
       <s.MainArea>
         <s.BillWrapper>
-          {imgFile ? (
-            <s.ImgWrapper src={imgFile} alt="image" />
-          ) : (
-            <LoadingSpinner height={'300px'} />
-          )}
+          {imgFile ? <s.ImgWrapper src={imgFile} alt="image" /> : <LoadingSpinner height={'300px'} />}
           <ViolationDetail detail={detail} />
           <s.ButtonWrapper>
             {detail.isFlag === 'PAID' ? null : (
@@ -172,7 +168,13 @@ const ViolationDetailPage = () => {
                     이의 제기
                   </Button>
                 )}
-                <Button width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'} onClick={() => paymentEventHandler()}>
+                <Button
+                  width={'120px'}
+                  height={'30px'}
+                  size={'0.75rem'}
+                  bold={'700'}
+                  onClick={() => paymentEventHandler()}
+                >
                   납부하기
                 </Button>
               </>
