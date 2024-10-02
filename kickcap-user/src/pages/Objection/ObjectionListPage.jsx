@@ -70,14 +70,16 @@ const ObjectionListPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const observerRef = useRef(null);
 
+  const handleStatusChange = (newStatus) => {
+    setStatus(newStatus);
+    console.log(`현재 status 값: ${newStatus}`);
+  };
+
   // status가 변할 때 상태들을 초기화하는 함수
   const setMultipleStates = () => {
-    return new Promise((resolve) => {
-      setObjectionList([]);
-      setPage(1);
-      setHasMoreData(true);
-      resolve(); // 상태 설정 후 Promise를 해결함
-    });
+    setObjectionList([]);
+    setPage(1);
+    setHasMoreData(true);
   };
 
   // 데이터 로드 함수
@@ -104,10 +106,14 @@ const ObjectionListPage = () => {
 
   // status가 0에서 1로, 1에서 0으로 변할 때마다 변수 초기화 후 API 요청을 실행하는 부분
   useEffect(() => {
-    setMultipleStates().then(() => {
-      loadMoreData();
-    });
+    setMultipleStates();
   }, [status]);
+
+  useEffect(() => {
+    if (page === 1) {
+      loadMoreData();
+    }
+  }, [objectionList, page, hasMoreData]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -135,10 +141,10 @@ const ObjectionListPage = () => {
     <s.Container>
       <Header title="나의 이의 내역" />
       <s.ControlBar>
-        <s.ControlItem isSelected={status === 0} onClick={() => setStatus(0)}>
+        <s.ControlItem isSelected={status === 0} onClick={() => handleStatusChange(0)}>
           접수 내역
         </s.ControlItem>
-        <s.ControlItem isSelected={status === 1} onClick={() => setStatus(1)}>
+        <s.ControlItem isSelected={status === 1} onClick={() => handleStatusChange(1)}>
           완료 내역
         </s.ControlItem>
       </s.ControlBar>

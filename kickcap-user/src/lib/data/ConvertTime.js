@@ -29,3 +29,27 @@ export const convertToKoreanTimeString = (isoString) => {
 
   return `${dateTime.toFormat('yyyy-MM-dd')} ${period} ${hour}:${minute}:${second}`;
 };
+
+// objection에서만 사용
+export const convertTimeString = (isoString, type) => {
+  const date = new Date(isoString.replace('Z', ''));
+
+  const hours = date.getHours();
+  const period = hours >= 12 ? '오후' : '오전';
+  const hour = hours % 12 || 12;
+
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+
+  switch (type) {
+    case 'YMDHMS':
+      return `${year}-${month}-${day} ${period} ${hour}:${minutes}:${seconds}`;
+    case 'YMD':
+      return `${year}-${month}-${day}`;
+    default:
+      break;
+  }
+};
