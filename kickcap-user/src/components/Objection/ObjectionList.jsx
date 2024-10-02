@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 
-import { convertToKoreanTimeString } from '../../lib/data/ConvertTime';
+import { convertTimeString } from '../../lib/data/ConvertTime';
 
 const s = {
   Container: styled.div`
@@ -28,7 +28,7 @@ const s = {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: ${(props) => (props.type === 'title' ? 'center' : 'flex-start')};
     width: ${(props) => (props.type === 'title' ? '35%' : '65%')};
   `,
   CardTitle: styled.div`
@@ -61,7 +61,7 @@ const ObjectionList = ({ objectionList }) => {
             <s.CardTitle>제 목</s.CardTitle>
           </s.CardColumn>
           <s.CardColumn type="content">
-            <s.CardContent margin={TEXTLINE_MARGIN}>{convertToKoreanTimeString(objection.date)}</s.CardContent>
+            <s.CardContent margin={TEXTLINE_MARGIN}>{convertTimeString(objection.date, 'YMDHMS')}</s.CardContent>
             <s.CardContent>{objection.title}</s.CardContent>
           </s.CardColumn>
         </s.Card>

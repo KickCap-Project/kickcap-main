@@ -7,6 +7,7 @@ import TextArea from './../Common/TextArea';
 import Button from './../Common/Button';
 import { useLocation, useNavigate } from 'react-router';
 
+import { convertTimeString } from '../../lib/data/ConvertTime';
 import { deleteObjectionDetail, putObjectionDetail } from '../../lib/api/objection-api';
 
 const s = {
@@ -81,20 +82,20 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
 
   const id = useLocation().state?.idx || null;
 
-  const inputProps = (type) => {
-    const setValue = (type, value) => {
-      type === 'title' ? setTitle(value) : setContent(value);
+  const inputProps = (fieldType) => {
+    const setValue = (fieldType, value) => {
+      fieldType === 'title' ? setTitle(value) : setContent(value);
     };
 
     return modifyMode
       ? {
-          defaultValue: type,
+          defaultValue: fieldType === 'title' ? title : content,
           mode: '',
           readOnly: false,
-          onChange: (e) => setValue(type, e.target.value),
+          onChange: (e) => setValue(fieldType, e.target.value),
         }
       : {
-          defaultValue: type,
+          defaultValue: fieldType === 'title' ? title : content,
           mode: 'read',
           readOnly: true,
         };
@@ -111,7 +112,9 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
 
       if (response.status === 204) {
         alert('삭제되었습니다.');
-        navigate('/objection');
+        setTimeout(() => {
+          navigate('/objection', { replace: true });
+        }, 0);
       } else {
         console.log(`response.status: ${response.status}`);
         alert(`이의제기 삭제 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.`);
@@ -142,9 +145,10 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
     }
   };
 
-  const onClickButton = (type) => {
+  const onClickButton = (type, event) => {
+    event.preventDefault();
     console.log(type);
-    // axios
+
     switch (type) {
       case 'delete':
         // 경고창 띄운 후 delete 요청
@@ -171,9 +175,9 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   return (
     <s.Container>
       <s.Form>
-        <s.Input type="text" {...inputProps(title)} />
+        <s.Input type="text" {...inputProps('title')} />
         <br />
-        <s.TextArea type="text" height={'35vh'} {...inputProps(content)} />
+        <s.TextArea type="text" height={'35vh'} {...inputProps('content')} />
         {responseContent ? (
           <>
             <s.Response>
@@ -183,7 +187,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
                   기관 답변
                 </Text>
                 <Text size={'15px'} bold={'700'}>
-                  {responseDate}
+                  {convertTimeString(responseDate, 'YMD')}
                 </Text>
               </s.ResponseHeader>
               <s.TextArea type="text" height={'15vh'} defaultValue={responseContent} mode={'read'} readOnly={true} />
@@ -194,16 +198,16 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
             <s.ButtonContainer>
               {modifyMode ? (
                 <>
-                  <Button width={'30%'} height={'40px'} onClick={() => onClickButton('complete')}>
+                  <Button width={'30%'} height={'40px'} onClick={(e) => onClickButton('complete', e)}>
                     완료
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button width={'30%'} height={'40px'} onClick={() => onClickButton('modify')}>
+                  <Button width={'30%'} height={'40px'} onClick={(e) => onClickButton('modify', e)}>
                     수정
                   </Button>
-                  <Button width={'30%'} height={'40px'} onClick={() => onClickButton('delete')}>
+                  <Button width={'30%'} height={'40px'} onClick={(e) => onClickButton('delete', e)}>
                     삭제
                   </Button>
                 </>

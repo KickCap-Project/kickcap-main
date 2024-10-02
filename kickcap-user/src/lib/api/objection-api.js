@@ -29,9 +29,11 @@ export const getObjectionDetail = async (objectionId) => {
     const response = await axiosInstance.get(`/objections/user/${objectionId}`);
     // const response = await axiosInstance.get(`/objections/${objectionId}`);
 
+    console.log(`GET response.status: ${response.status}`);
+
     if (response.status === 200) {
       console.log(`이의제기 상세 조회를 성공적으로 수행했습니다.`);
-      return response.data;
+      return response;
     } else {
       console.log(`이의제기 상세 요청 중 문제가 발생했습니다: ${response.status}`);
       return null;
@@ -45,6 +47,8 @@ export const getObjectionDetail = async (objectionId) => {
 export const deleteObjectionDetail = async (objectionId) => {
   try {
     const response = await axiosInstance.delete(`/objections/${objectionId}`);
+
+    console.log(`DELETE response.status: ${response.status}`);
 
     if (response.status === 204) {
       console.log(`이의제기가 성공적으로 삭제되었습니다.`);
@@ -64,9 +68,11 @@ export const putObjectionDetail = async (objectionId, title, content) => {
   };
 
   try {
-    const response = await axiosInstance.put(`/objections/${objectionId}`, updatedData);
+    const response = await axiosInstance.post(`/objections/${objectionId}`, updatedData);
 
-    if (response.status === 200) {
+    console.log(`response.status: ${response.status}`);
+
+    if (response.status === 204) {
       console.log(`이의제기 수정이 정상적으로 요청되었습니다.`);
       return response;
     } else {
