@@ -1,5 +1,5 @@
 package com.ssafy.kickcap.notification.entity;
 
 public enum NotificationType {
-    REPORT, BILL
+    BILL, REJECT, APPROVE, REPLY, DEADLINE
 }

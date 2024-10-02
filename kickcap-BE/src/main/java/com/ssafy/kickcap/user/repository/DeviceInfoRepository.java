@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DeviceInfoRepository extends JpaRepository<DeviceInfo, Long>{
@@ -28,4 +29,7 @@ public interface DeviceInfoRepository extends JpaRepository<DeviceInfo, Long>{
     void updateMemberRefreshTokenToNull(@Param("memberId") Long policeId, @Param("fcmToken") String fcmToken);
 
     Optional<DeviceInfo> findByMemberIdAndFcmToken(Long id, String fcmToken);
+
+    @Query("SELECT d FROM DeviceInfo d WHERE d.member.id = :memberId")
+    List<DeviceInfo> findByMember(Long memberId);
 }

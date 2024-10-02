@@ -158,7 +158,7 @@ public class BillService {
     }
 
     // USER 신고를 통한 고지서 생성
-    public void createBillFromReport(Report report, Police police) {
+    public Bill createBillFromReport(Report report, Police police) {
         // Bill 엔티티 생성
         Bill bill = Bill.builder()
                 .reportId(report.getId())
@@ -175,8 +175,8 @@ public class BillService {
                 .isObjection("N")
                 .build();
 
-        // Bill 엔티티 저장
-        billRepository.save(bill);
+        // Bill 엔티티 저장 후 return
+        return billRepository.save(bill);
     }
 
     // CCTV 단속을 통한 고지서 생성
