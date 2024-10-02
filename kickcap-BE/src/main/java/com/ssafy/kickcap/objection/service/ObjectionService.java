@@ -8,6 +8,8 @@ import com.ssafy.kickcap.cctv.entity.Crackdown;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
+import com.ssafy.kickcap.fcm.service.FirebaseMessageService;
+import com.ssafy.kickcap.notification.entity.NotificationType;
 import com.ssafy.kickcap.objection.dto.ObjectionDetailResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionListResponse;
 import com.ssafy.kickcap.objection.dto.ObjectionUserListDto;
@@ -40,6 +42,7 @@ public class ObjectionService {
     private final BillRepository billRepository;
     private final CrackdownRepository crackdownRepository;
     private final ReportRepository reportRepository;
+    private final FirebaseMessageService messageService;
 
     public void modifyObjectionByObjectionId(Member member, Long objectionId, BillObjectionDto objectionDto) {
         // Objection 조회
@@ -149,6 +152,7 @@ public class ObjectionService {
 
         bill.refusalObjection(plusDay);
         billRepository.save(bill);
+        messageService.sendMessage(objection.getMember().getId(), NotificationType.REPLY, bill.getId());
     }
 
     public void cancelForObjection(Police police, String content, Long objectionId) {
@@ -166,5 +170,6 @@ public class ObjectionService {
 
         bill.cancelByObjection();
         billRepository.save(bill);
+        messageService.sendMessage(objection.getMember().getId(), NotificationType.REPLY, bill.getId());
     }
 }
