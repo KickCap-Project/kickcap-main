@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import LogoSvg from './../asset/img/svg/Logo.svg';
 import NotificationOffSvg from './../asset/img/svg/notificationOff.svg';
@@ -10,7 +10,7 @@ import { modalActions } from '../store/modal';
 import { useNavigate } from 'react-router';
 import { logout } from '../lib/api/main-api';
 
-const notification = false;
+import { checkNotification } from '../lib/api/notification-api';
 
 const s = {
   HeaderArea: styled.div`
@@ -50,6 +50,8 @@ const s = {
 };
 
 const Header = () => {
+  const [notification, setNotification] = useState(false);
+
   const dispatch = useAppDispatch();
   const handleOpenMainModal = (isFlag) => {
     dispatch(modalActions.ChangeIsMain(isFlag));
@@ -74,6 +76,21 @@ const Header = () => {
       },
     );
   };
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      const data = await checkNotification();
+
+      if (data) {
+        setNotification(data);
+      } else {
+        console.log(`알림 데이터를 불러오지 못했습니다.`);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
   return (
     <s.HeaderArea>
       <s.Logo src={LogoSvg} />

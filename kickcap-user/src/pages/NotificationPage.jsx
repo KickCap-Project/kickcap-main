@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Notification from './../components/Notification/Notification';
+
+import LoadingSpinner from '../components/Common/LoadingSpinner';
+import { getNotificationList } from '../lib/api/notification-api';
 
 const s = {
   Container: styled.div`
@@ -30,36 +33,42 @@ const s = {
 };
 
 const NotificationPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [noteList, setNoteList] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      if (isLoading) return;
+
+      setIsLoading(true);
+
+      try {
+        const response = await getNotificationList();
+        setNoteList(response);
+      } catch (err) {
+        console.log(`알림 목록을 불러오는 중 문제가 발생했습니다: ${err}`);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
   return (
     <s.Container>
       <Header title={'알 림'} />
       <s.MainArea>
-        <s.NotificationArea>
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-        </s.NotificationArea>
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <s.NotificationArea>
+            {noteList.length > 0 ? (
+              noteList.map((note) => <Notification key={note.idx} note={note} />)
+            ) : (
+              // 임시
+              <p>새로운 알림이 없습니다.</p>
+            )}
+          </s.NotificationArea>
+        )}
       </s.MainArea>
       <Footer />
     </s.Container>
