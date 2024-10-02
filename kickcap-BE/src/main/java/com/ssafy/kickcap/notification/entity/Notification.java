@@ -52,4 +52,7 @@ public class Notification {
         this.createdAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
     }
 
+    public void updateIsRead(String isRead) {
+        this.isRead = isRead;
+    }
 }

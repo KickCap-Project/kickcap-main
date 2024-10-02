@@ -62,4 +62,21 @@ public class NotificationService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public void updateIsRead(Long memberId, Long nid) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RestApiException(ErrorCode.FORBIDDEN_ACCESS));
+        Notification notification = notificationRepository.findById(nid).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        notification.updateIsRead("Y");
+        notificationRepository.save(notification);
+    }
+
+    public boolean isNotRead(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RestApiException(ErrorCode.FORBIDDEN_ACCESS));
+        long count = notificationRepository.countUnreadNotificationsByMemberId(memberId);
+        if (count > 0) {
+            return true;
+        }else {
+            return false;
+        }
+    }
 }
