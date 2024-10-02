@@ -167,7 +167,6 @@ public class ObjectionRepositoryImpl {
     }
 
     public ObjectionDetailResponse findObjectionUserDetail(Long id, Long objectionId, Long violationType) {
-        System.out.println("dkjms");
         DateTemplate<String> formattedDate = Expressions.dateTemplate(
                 String.class,
                 "TO_CHAR({0}, 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"')",
@@ -197,7 +196,7 @@ public class ObjectionRepositoryImpl {
                 .leftJoin(objection.answer, answer)
                 .leftJoin(objection.bill, bill)
                 .leftJoin(objection.member, member)
-                .where(objection.id.eq(objectionId))
+                .where(objection.id.eq(objectionId).and(member.id.eq(id)))
                 .groupBy(objection.id, bill.reportId, member.name, bill.reportType, formattedDate, objection.title, objection.content, answer.content, formattedDate2)
                 .fetchOne();
     }

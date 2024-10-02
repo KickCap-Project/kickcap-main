@@ -115,6 +115,9 @@ public class ObjectionService {
     ///// 이의제기 상세 조회 시민.ver/////
     public ObjectionDetailResponse getObjectionUserDetail(Long id, Long objectionId) {
         Objection objection = objectionRepository.findById(objectionId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        if (!objection.getMember().getId().equals(id)) {
+            throw new RestApiException(ErrorCode.FORBIDDEN_ACCESS);
+        }
         if (objection.getBill().getReportType().equals(ReportType.CCTV)){
             System.out.println(objection.getBill().getReportType());
             Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
