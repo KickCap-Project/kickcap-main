@@ -14,6 +14,7 @@ import { chart1, chart2, weekData } from '../../lib/data/ChartData';
 import { useSearchParams } from 'react-router-dom';
 import { getBottomData, gettest, getWeekData } from '../../lib/api/board-api';
 import moment from 'moment';
+import { useQuery } from '@tanstack/react-query';
 
 const s = {
   Container: styled.div`
@@ -71,11 +72,9 @@ const PoliceBoardPage = () => {
   const [sido, setSido] = useState(searchParams.get('sido'));
   const [gugun, setGugun] = useState(searchParams.get('gugun'));
   const [weekData, setWeekData] = useState({});
-  const [bottomData, setBottomData] = useState({});
+  // const [bottomData, setBottomData] = useState({});
 
   useEffect(() => {
-    console.log(searchParams.get('sido'));
-    console.log(searchParams.get('gugun'));
     setSido(searchParams.get('sido'));
     setGugun(searchParams.get('gugun'));
     if (sido === null) {
@@ -86,7 +85,7 @@ const PoliceBoardPage = () => {
           setWeekData(resp.data);
         },
         (error) => {
-          // alert('데이터를 불러오는 도중 에러가 발생했습니다.');
+          alert('데이터를 불러오는 도중 에러가 발생했습니다.');
         },
       );
     } else {
@@ -97,24 +96,32 @@ const PoliceBoardPage = () => {
           setWeekData(resp.data);
         },
         (error) => {
-          // alert('데이터를 불러오는 도중 에러가 발생했습니다.');
+          alert('데이터를 불러오는 도중 에러가 발생했습니다.');
         },
       );
     }
-
-    getBottomData(
-      sido,
-      gugun,
-      (resp) => {
-        setBottomData(resp.data);
-      },
-      (error) => {
-        // alert('데이터를 불러오는 도중 에러가 발생했습니다.');
-      },
-    );
+    // getBottomData(
+    //   sido,
+    //   gugun,
+    //   (resp) => {
+    //     setBottomData(resp.data);
+    //   },
+    //   (error) => {
+    //     alert('데이터를 불러오는 도중 에러가 발생했습니다.');
+    //   },
+    // );
   }, [searchParams, sido, gugun]);
 
-  // alert(`시도 : ${sido}, 구군 : ${gugun}`);
+  const { data: bottomData = {}, error: bottomDataError } = useQuery({
+    queryKey: ['bottomData', sido, gugun],
+    queryFn: () => getBottomData(sido, gugun),
+    // enabled: !!sido && !!gugun,
+  });
+
+  if (bottomDataError) {
+    alert('데이터를 불러오는 도중 에러가 발생했습니다.');
+  }
+
   const ButtomFunc = (today, yesterday) => {
     if (today == 0 && yesterday == 0) {
       return 0;
@@ -125,9 +132,6 @@ const PoliceBoardPage = () => {
     if (yesterday == 0) {
       return today * 100;
     }
-    // today = today == 0 ? 1 : today;
-    // yesterday = yesterday == 0 ? 1 : yesterday;
-
     return ((today - yesterday) / yesterday) * 100;
   };
 
