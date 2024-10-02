@@ -25,6 +25,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -135,7 +137,31 @@ public class ObjectionService {
         answerRepository.save(answer);
 
         Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
-        bill.updateIsObjection();
+
+        // 이의제기 생성 일시와 경찰 답변 일시 사이의 차이를 계산 (Duration 사용)
+        Duration durationBetween = Duration.between(objection.getCreatedAt(), answer.getCreatedAt());
+
+        // 계산된 차이를 bill의 deadline에 더함
+        ZonedDateTime plusDay = bill.getDeadline().plus(durationBetween);
+
+        bill.refusalObjection(plusDay);
+        billRepository.save(bill);
+    }
+
+    public void cancelForObjection(Police police, String content, Long objectionId) {
+        Objection objection = objectionRepository.findById(objectionId).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
+        if (!Objects.equals(police.getId(), objection.getPoliceIdx())) {
+            throw new RestApiException(ErrorCode.NOT_FOUND);
+        }
+        Answer answer = Answer.builder()
+                .objection(objection)
+                .content(content)
+                .build();
+        answerRepository.save(answer);
+
+        Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
+
+        bill.cancelByObjection();
         billRepository.save(bill);
     }
 }

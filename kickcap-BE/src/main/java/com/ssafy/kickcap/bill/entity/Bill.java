@@ -84,4 +84,14 @@ public class Bill {
         else
             this.isObjection = "N";
     }
+
+    public void refusalObjection(ZonedDateTime deadline){
+        updateIsObjection();
+        this.deadline = deadline;
+    }
+
+    public void cancelByObjection(){
+        updateIsObjection();
+        this.paidStatus = PaidStatus.CANCEL;
+    }
 }
