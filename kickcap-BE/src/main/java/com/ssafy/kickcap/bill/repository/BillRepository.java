@@ -22,7 +22,7 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
 
     Optional<Bill> findFirstByMemberIdOrderByCreatedAtDesc(Long memberId);
 
-    // JPQL로 납부 기한이 지나고 미납 상태인 고지서 조회
-    @Query("SELECT b FROM Bill b WHERE b.deadline < :now AND b.paidStatus = :status")
+    // JPQL로 납부 기한이 지나고 미납 상태 + 이의제기 안한 고지서 조회
+    @Query("SELECT b FROM Bill b WHERE b.deadline < :now AND b.paidStatus = :status AND b.isObjection <> 'Y' ")
     List<Bill> findByDeadlineBeforeAndPaidStatus(@Param("now") ZonedDateTime now, @Param("status") PaidStatus status);
 }
