@@ -12,9 +12,10 @@ export const getWeekData = async (sido, gugun, success, fail) => {
   await local.get(`/dashboard/weeks`, { params: { sido, gugun } }).then(success).catch(fail);
 };
 
-export const getBottomData = async (sido, gugun, success, fail) => {
+export const getBottomData = async (sido, gugun) => {
   // 바텀 통계 데이터
-  await local.get(`/dashboard/bottoms`, { params: { sido, gugun } }).then(success).catch(fail);
+  const response = await local.get(`/dashboard/bottoms`, { params: { sido, gugun } });
+  return response.data; // 응답의 데이터를 반환
 };
 
 export const getMarkerData = async (sido, gugun, success, fail) => {
