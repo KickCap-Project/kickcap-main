@@ -303,7 +303,12 @@ const CameraMap = ({ point }) => {
           </s.selectArea>
         </s.mapArea>
       </s.Container>
-      <BoardCameraModal open={isCamera} toggleModal={handleOpenCamera} idx={cameraIdx} data={cctvData} />
+      <BoardCameraModal
+        open={isCamera}
+        toggleModal={handleOpenCamera}
+        idx={cameraIdx}
+        data={cctvData.crackdown ? cctvData : null}
+      />
     </>
   );
 };
