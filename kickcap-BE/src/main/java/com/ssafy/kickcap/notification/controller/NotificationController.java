@@ -10,9 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,5 +28,19 @@ public class NotificationController {
     public ResponseEntity<List<NotificationListResponseDto>> getNotifications(@AuthenticationPrincipal CustomOAuth2User principal) {
         List<NotificationListResponseDto> notifications = notificationService.getNotifications(principal.getId());
         return ResponseEntity.ok(notifications);
+    }
+
+    @PostMapping("/read")
+    @Operation(summary = "알림 읽음 처리")
+    public ResponseEntity<Void> updateIsRead(@AuthenticationPrincipal CustomOAuth2User principal, @RequestParam Long nid) {
+        notificationService.updateIsRead(principal.getId(), nid);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/check")
+    @Operation(summary = "메인 페이지에서 새로운 알림 확인")
+    public ResponseEntity<Boolean> checkNotRead(@AuthenticationPrincipal CustomOAuth2User principal) {
+        boolean notRead = notificationService.isNotRead(principal.getId());
+        return ResponseEntity.ok(notRead);
     }
 }
