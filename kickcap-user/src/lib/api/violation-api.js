@@ -72,7 +72,12 @@ export const submitObjection = async (billId, title, content) => {
     }
     return response;
   } catch (err) {
-    console.log(`이의제기 POST 요청 실패: ${err}`);
+    if (err.response && err.response.status === 405) {
+      // 이미 이의제기를 한 경우(405 Error) 사용자에게 알림
+      alert('이미 이의제기를 제출하셨습니다. 단속내역 당 1건만 가능합니다.');
+    } else {
+      console.log(`이의제기 POST 요청 실패: ${err}`);
+    }
     throw err;
   }
 };
