@@ -38,8 +38,10 @@ const ViolationObjectionPage = () => {
       navigate('*');
       return;
     }
-  }, [id]);
 
+    alert('이의제기는 단속내역 당 1건만 가능합니다.');
+  }, [id]);
+  
   return (
     <s.Container>
       <Header title="단속 이의제기 신청" />

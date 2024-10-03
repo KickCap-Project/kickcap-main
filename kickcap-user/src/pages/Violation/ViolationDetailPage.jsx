@@ -154,29 +154,36 @@ const ViolationDetailPage = () => {
             {detail.isFlag === 'PAID' ? null : (
               <>
                 {detail.isObjection === 0 ? (
-                  <Button
-                    width={'120px'}
-                    height={'30px'}
-                    size={'0.75rem'}
-                    bold={'700'}
-                    onClick={() => objectionEventHandler()}
-                  >
-                    이의 제기
-                  </Button>
+                  <>
+                    <Button
+                      width={'120px'}
+                      height={'30px'}
+                      size={'0.75rem'}
+                      bold={'700'}
+                      onClick={() => objectionEventHandler()}
+                    >
+                      이의 제기
+                    </Button>
+                    <Button
+                      width={'120px'}
+                      height={'30px'}
+                      size={'0.75rem'}
+                      bold={'700'}
+                      onClick={() => paymentEventHandler()}
+                    >
+                      납부하기
+                    </Button>
+                  </>
                 ) : (
-                  <Button type={'sub'} width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
-                    이의 제기
-                  </Button>
+                  <>
+                    <Button type={'sub'} width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
+                      이의 제기
+                    </Button>
+                    <Button type={'sub'} width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
+                      납부하기
+                    </Button>
+                  </>
                 )}
-                <Button
-                  width={'120px'}
-                  height={'30px'}
-                  size={'0.75rem'}
-                  bold={'700'}
-                  onClick={() => paymentEventHandler()}
-                >
-                  납부하기
-                </Button>
               </>
             )}
           </s.ButtonWrapper>
