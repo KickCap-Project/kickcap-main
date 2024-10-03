@@ -1,5 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+
+import { useNavigate } from 'react-router';
+
+import { setIsReadNote } from '../../lib/api/notification-api';
+import { timeAgo } from '../../lib/data/ConvertTime';
 
 const s = {
   NotificationArea: styled.div`
@@ -45,15 +50,48 @@ const s = {
   `,
 };
 
-const Notification = () => {
+const Notification = ({ note }) => {
+  const navigate = useNavigate();
+  const [isRead, setIsRead] = useState(note.isRead);
+
+  // 입력되는 시간 데이터 확인해서 별도 수정 작업 필요 (timeAgo)
+
+  // 읽음 처리 체크/처리 후 navigate 부분
+  const handleMovePage = (idx, type, value, isRead) => {
+    if (isRead === 'Y' && (type === 'APPROVE' || type === 'REJECT')) return;
+
+    (async () => {
+      try {
+        const response = isRead === 'Y' ? true : await setIsReadNote(idx);
+
+        if (response) {
+          setIsRead('Y');
+
+          switch (type) {
+            case 'BILL':
+            case 'DEADLINE':
+              navigate('/violation/detail', { state: { idx: value } });
+              break;
+            case 'REPLY':
+              navigate('/objection/detail', { state: { idx: value } });
+              break;
+            default:
+              break;
+          }
+        }
+      } catch (err) {
+        console.log(`${type} navigate할 수 없습니다.`);
+      }
+    })();
+  };
+
   return (
-    <s.NotificationArea>
-      <s.onArea>
-        <s.IsUnread />
-      </s.onArea>
+    <s.NotificationArea onClick={() => handleMovePage(note.idx, note.type, note.value, isRead)}>
+      <s.onArea>{isRead === 'N' ? <s.IsUnread /> : null}</s.onArea>
       <s.ContentArea>
-        <s.Time>{'3시간전'}</s.Time>
-        <s.Content>단속 고지서가 도착했습니다.</s.Content>
+        <s.Time>{timeAgo(note.date)}</s.Time>
+        {/* <s.Time>{timeAgo(date)}</s.Time> */}
+        <s.Content>{note.content}</s.Content>
       </s.ContentArea>
     </s.NotificationArea>
   );

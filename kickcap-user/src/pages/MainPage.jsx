@@ -115,7 +115,7 @@ const MainPage = () => {
 
           setInfo(updatedInfo);
           localStorage.setItem('Info', JSON.stringify(updatedInfo));
-          console.log(`벌점이 성공적으로 갱신되었습니다: ${response.status}`);
+          console.log(`벌점이 성공적으로 갱신되었습니다.`);
         } else {
           console.log(`벌점 조회 중 문제가 발생했습니다: ${response.status}`);
         }

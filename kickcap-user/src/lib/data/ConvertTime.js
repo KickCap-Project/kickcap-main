@@ -53,3 +53,36 @@ export const convertTimeString = (isoString, type) => {
       break;
   }
 };
+
+// notification에서만 사용
+// 시간 차이를 'n분 전', 'n시간 전', 'n일 전', 'n달 전', 'n년 전'으로 변환하는 함수
+export const timeAgo = (dateString) => {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffInMs = now - date; // 밀리초 단위 시간 차이
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60)); // 분 단위 차이
+
+  if (diffInMinutes < 1) {
+    return '방금 전'; // 1분 미만일 때
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes}분 전`; // 1시간 미만일 때
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours}시간 전`; // 1일 미만일 때
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 30) {
+    return `${diffInDays}일 전`; // 1달 미만일 때
+  }
+
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) {
+    return `${diffInMonths}달 전`; // 1년 미만일 때
+  }
+
+  const diffInYears = Math.floor(diffInMonths / 12);
+  return `${diffInYears}년 전`; // 1년 이상일 때
+};
