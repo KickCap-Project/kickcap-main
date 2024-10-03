@@ -21,6 +21,7 @@ const s = {
     width: 90%;
     flex: 1;
     display: flex;
+    justify-content: ${(props) => (props.center ? 'center' : 'flex-start')};
     flex-direction: column;
     align-items: center;
     padding: 10px;
@@ -31,6 +32,14 @@ const s = {
     width: 100%;
     overflow-y: auto;
   `,
+  LoadingSpinnerArea: styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  `
 };
 
 const NotificationPage = () => {
@@ -57,9 +66,11 @@ const NotificationPage = () => {
   return (
     <s.Container>
       <Header title={'알 림'} />
-      <s.MainArea>
+      <s.MainArea center={isLoading || noteList.length === 0}>
         {isLoading ? (
-          <LoadingSpinner />
+          <s.LoadingSpinnerArea>
+            <LoadingSpinner />
+          </s.LoadingSpinnerArea>
         ) : (
           <s.NotificationArea>
             {noteList.length > 0 ? (
