@@ -55,7 +55,7 @@ public class Objection {
     }
 
     // Relationships
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bill_idx", nullable = false)
     private Bill bill;
 
