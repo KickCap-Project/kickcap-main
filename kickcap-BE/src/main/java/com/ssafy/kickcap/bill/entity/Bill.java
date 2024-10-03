@@ -14,8 +14,6 @@ import org.springframework.data.annotation.CreatedDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -71,8 +69,8 @@ public class Bill {
     @JoinColumn(name = "police_idx", nullable = false)
     private Police police;
 
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
-    private List<Objection> objections = new ArrayList<>();
+    @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL)
+    private Objection objection;
 
     public void updatePaidStatus(PaidStatus paidStatus) {
         this.paidStatus = paidStatus;
