@@ -28,7 +28,7 @@ public class Informer{
     @Column(nullable = false)
     private Long accusedId;
 
-    @Column(nullable = false, length = 10)
+    @Column(name = "kickboard_number", nullable = false, length = 10)
     private String kickboardNumber;
 
     @Column(name = "is_sent", nullable = false, length = 1)
@@ -47,5 +47,9 @@ public class Informer{
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
+    }
+
+    public void updateIsSent(String isSent) {
+        this.isSent = isSent;
     }
 }
