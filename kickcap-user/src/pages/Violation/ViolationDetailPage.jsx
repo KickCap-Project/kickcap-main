@@ -151,7 +151,7 @@ const ViolationDetailPage = () => {
           {imgFile ? <s.ImgWrapper src={imgFile} alt="image" /> : <LoadingSpinner height={'300px'} />}
           <ViolationDetail detail={detail} />
           <s.ButtonWrapper>
-            {detail.isFlag === 'PAID' ? null : (
+            {detail.isFlag === 'PAID' || detail.isFlag === 'CANCEL' ? null : (
               <>
                 {detail.isObjection === 0 ? (
                   <>

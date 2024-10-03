@@ -83,8 +83,6 @@ const Header = () => {
 
       if (data) {
         setNotification(data);
-      } else {
-        console.log(`알림 데이터를 불러오지 못했습니다.`);
       }
     };
 

@@ -27,7 +27,8 @@ self.addEventListener('notificationclick', function (event) {
   console.log('notification click');
   event.notification.close();
   let url = event.notification.data;
+  clients.openWindow(url);
   
-  const openURL = process.env.REACT_APP_FRONT_URL + url;
-  clients.openWindow(openURL);
+  // const openURL = process.env.REACT_APP_FRONT_URL + url;
+  // clients.openWindow(openURL);
 });

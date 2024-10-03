@@ -50,7 +50,7 @@ export const checkNotification = async () => {
       return response.data === 'true' || response.data === true;
     }
   } catch (err) {
-    console.log(`알림 확인 중 오류가 발생했습니다: ${err}`);
+    console.log(`신규 알림 확인 중 오류가 발생했습니다: ${err}`);
     return false;
   }
 };
