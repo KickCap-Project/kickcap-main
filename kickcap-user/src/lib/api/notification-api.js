@@ -24,7 +24,7 @@ export const getNotificationList = async () => {
 // 알림 읽음 처리
 export const setIsReadNote = async (nid) => {
   try {
-    const response = await axiosInstance.post(`/notifications/read`, {
+    const response = await axiosInstance.post(`/notifications/read`, null, {
       params: {
         nid,
       },
@@ -44,10 +44,10 @@ export const setIsReadNote = async (nid) => {
 // 메인 페이지에서 알림 확인
 export const checkNotification = async () => {
   try {
-    const response = await axiosInstance.get(`/notification/check`);
+    const response = await axiosInstance.get(`/notifications/check`);
 
     if (response.status === 200) {
-      return response.data;
+      return response.data === 'true' || response.data === true;
     }
   } catch (err) {
     console.log(`알림 확인 중 오류가 발생했습니다: ${err}`);

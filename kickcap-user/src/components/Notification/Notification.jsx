@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { useNavigate } from 'react-router';
@@ -52,6 +52,7 @@ const s = {
 
 const Notification = ({ note }) => {
   const navigate = useNavigate();
+  const [isRead, setIsRead] = useState(note.isRead);
 
   // 입력되는 시간 데이터 확인해서 별도 수정 작업 필요 (timeAgo)
 
@@ -64,6 +65,8 @@ const Notification = ({ note }) => {
         const response = isRead === 'Y' ? true : await setIsReadNote(idx);
 
         if (response) {
+          setIsRead('Y');
+
           switch (type) {
             case 'BILL':
             case 'DEADLINE':
@@ -83,8 +86,8 @@ const Notification = ({ note }) => {
   };
 
   return (
-    <s.NotificationArea onClick={() => handleMovePage(note.idx, note.type, note.value, note.isRead)}>
-      <s.onArea>{note.isRead === 'N' ? <s.IsUnread /> : null}</s.onArea>
+    <s.NotificationArea onClick={() => handleMovePage(note.idx, note.type, note.value, isRead)}>
+      <s.onArea>{isRead === 'N' ? <s.IsUnread /> : null}</s.onArea>
       <s.ContentArea>
         <s.Time>{timeAgo(note.date)}</s.Time>
         {/* <s.Time>{timeAgo(date)}</s.Time> */}

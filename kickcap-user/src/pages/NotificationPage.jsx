@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Notification from './../components/Notification/Notification';
+import NotificationEmpty from '../components/Notification/NotificationEmpty';
 
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import { getNotificationList } from '../lib/api/notification-api';
@@ -64,8 +65,7 @@ const NotificationPage = () => {
             {noteList.length > 0 ? (
               noteList.map((note) => <Notification key={note.idx} note={note} />)
             ) : (
-              // 임시
-              <p>새로운 알림이 없습니다.</p>
+              <NotificationEmpty />
             )}
           </s.NotificationArea>
         )}
