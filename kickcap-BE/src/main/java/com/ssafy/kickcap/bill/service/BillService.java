@@ -146,6 +146,7 @@ public class BillService {
                     .isFlag(bill.getPaidStatus().toString())
                     .isObjection(setObjection(bill))
                     .imageSrc(crackdown.getImageSrc())
+                    .billTime(bill.getCreatedAt().toString())
                     .build();
         }
     }
@@ -238,6 +239,9 @@ public class BillService {
 
     public void createObjectionFromBill(Member member, Long billId, BillObjectionDto billObjectionDto) {
         Bill bill = billRepository.findById(billId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+
+        if (bill.getObjection()!=null)
+            throw new RestApiException(ErrorCode.METHOD_NOT_ALLOWED);
 
         objectionRepository.save(Objection.builder()
                         .policeIdx(bill.getPolice().getId())
