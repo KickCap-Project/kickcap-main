@@ -115,7 +115,7 @@ public class ObjectionRepositoryImpl {
         return queryFactory
                 .select(new QObjectionDetailResponse(
                         objection.id,
-                        null,
+                        Expressions.constant(null),
                         member.name,
                         // reportType에 관계없이 violation_type을 NULL로 반환
                         Expressions.asNumber(violationType),
