@@ -21,7 +21,6 @@ import ReportMisusePage from './pages/Report/ReportMisusePage';
 import ObjectionListPage from './pages/Objection/ObjectionListPage';
 import ObjectionDetailPage from './pages/Objection/ObjectionDetailPage';
 
-// import OneClickReportPage from './pages/OneClickReport/OneClickReportPage';
 import SuccessPage from './pages/SuccessPage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { PrivateRoute, PublicRoute } from './pages/IsLoginPage';
@@ -101,7 +100,6 @@ function App() {
                   <Route path="education" element={<ViolationEducationPage />} />
                 </Route>
               </Route>
-              {/* <Route path="/sos" element={<OneClickReportPage />} /> */}
               <Route path="/report">
                 <Route index element={<ReportMainPage />} />
                 <Route path="parking">
