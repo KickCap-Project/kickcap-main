@@ -8,6 +8,7 @@ import Pagination from 'react-js-pagination';
 import '../../styles/Pagination.css';
 import { getCrackList, getCrackTotalCount } from './../../lib/api/crack-api';
 import moment from 'moment';
+import PaginationTest from '../Common/PaginationTest';
 
 const s = {
   Container: styled.div`
@@ -71,7 +72,6 @@ const s = {
   pageArea: styled.div`
     width: 500px;
     height: 40px;
-    border: 1px solid red;
     margin: 20px auto;
     display: flex;
     align-items: center;
@@ -184,9 +184,10 @@ const CrackDownList = () => {
         </s.Table>
       </s.TableArea>
       <s.pageArea>
+        {/* <PaginationTest currentPage={pageNo} totalPosts={totalPage} postsPerPage={1} onPageChange={handleClickPage} /> */}
         <Pagination
           activePage={Number(pageNo)} // 현재 페이지
-          itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
+          itemsCountPerPage={1} // 한 페이지랑 보여줄 아이템 갯수
           totalItemsCount={totalPage} // 총 아이템 갯수
           pageRangeDisplayed={10} // paginator의 페이지 범위
           prevPageText={'‹'} // "이전"을 나타낼 텍스트

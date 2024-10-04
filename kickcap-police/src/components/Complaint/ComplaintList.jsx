@@ -70,7 +70,6 @@ const s = {
   pageArea: styled.div`
     width: 500px;
     height: 40px;
-    border: 1px solid red;
     margin: 20px auto;
     display: flex;
     align-items: center;
