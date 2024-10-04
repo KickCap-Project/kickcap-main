@@ -30,14 +30,16 @@ public class FirebaseMessageService {
         // 알림 제목, 내용, URL 템플릿 가져오기
         NotificationRequestDto notificationRequestDto = getTemplate(type);
 
+        // member  찾기
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+
         // device_info 조회
         List<DeviceInfo> deviceInfoList = deviceInfoRepository.findByMember(memberId);
 
+        boolean isMessageSent = false; // 메시지가 전송되었는지 여부를 저장하는 플래그
+
         if(!deviceInfoList.isEmpty()) {
             for (DeviceInfo deviceInfo : deviceInfoList) {
-                // member  찾기
-                Member member = memberRepository.findById(memberId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
-
                 // Notification 객체를 Builder를 사용하여 생성
                 Notification notification = Notification.builder()
                         .setTitle(notificationRequestDto.getTitle()) // 알림 제목
@@ -53,14 +55,16 @@ public class FirebaseMessageService {
                     // 메시지 전송
                     String response = FirebaseMessaging.getInstance().send(message);
                     System.out.println("Message sent successfully");
-
-                    // 알림 저장
-                    saveNotification(member, notificationRequestDto.getBody(), billId, type);
-
+                    isMessageSent = true; // 메시지가 성공적으로 전송됨
                 } catch (FirebaseMessagingException e) {
                     e.printStackTrace();
                     System.out.println("Failed to send message");
                 }
+            }
+            // 메시지가 한 번이라도 전송되었다면 알림 저장
+            if (isMessageSent) {
+                // 알림 저장
+                saveNotification(member, notificationRequestDto.getBody(), billId, type);
             }
         }
     }
