@@ -83,6 +83,14 @@ const ViolationDetailPage = () => {
     navigate('../objection', { state: { id } });
   };
 
+  const objectionDetailHandler = (e) => {
+    if (detail.objectionId) {
+      navigate(`/objection/detail`, { state: { idx: detail.objectionId } });
+    } else {
+      e.preventDefault();
+    }
+  };
+
   const paymentEventHandler = () => {
     // 벌점 10점 이상일 때 education으로, 아니면 payment로 연결
     const demerit = JSON.parse(localStorage.getItem('Info')).demerit || null;
@@ -155,9 +163,25 @@ const ViolationDetailPage = () => {
           {imgFile ? <s.ImgWrapper src={imgFile} alt="image" /> : <LoadingSpinner height={'300px'} />}
           <ViolationDetail detail={detail} />
           <s.ButtonWrapper>
-            {detail.isFlag === 'PAID' || detail.isFlag === 'CANCEL' ? null : (
+            {detail.isFlag === 'PAID' || detail.isFlag === 'CANCEL' ? (
+              detail.objectionId ? (
+                // 2-1. PAID, CANCEL 상태고 이의 제기 이력이 있을 경우
+                // 이의내역 버튼만 활성화
+                <Button
+                  width={'120px'}
+                  height={'30px'}
+                  size={'0.75rem'}
+                  bold={'700'}
+                  onClick={() => objectionDetailHandler()}
+                />
+              ) : // 2-2. PAID, CANCEL 상태고 이의를 제기한 적이 없을 경우
+              // 아무 버튼도 띄우지 않기
+              null
+            ) : (
               <>
                 {detail.isObjection === 0 ? (
+                  // 1-1. UNPAID 상태고 이의를 제기하지 않은 상태인 경우
+                  // 이의제기 활성화, 납부하기 활성화
                   <>
                     <Button
                       width={'120px'}
@@ -178,8 +202,19 @@ const ViolationDetailPage = () => {
                       납부하기
                     </Button>
                   </>
-                ) : (
+                ) : detail.response === 'N' ? (
+                  // 1-2-1. UNPAID 상태이고, 이의제기 상태이고, 답변 없는 상태라면
+                  // 이의내역 활성화, 납부하기 비활성화
                   <>
+                    <Button
+                      width={'120px'}
+                      height={'30px'}
+                      size={'0.75rem'}
+                      bold={'700'}
+                      onClick={() => objectionDetailHandler()}
+                    >
+                      이의 내역
+                    </Button>
                     <Button
                       type={'sub'}
                       width={'120px'}
@@ -188,10 +223,23 @@ const ViolationDetailPage = () => {
                       bold={'700'}
                       onClick={handlePreventDefault}
                     >
-                      이의 제기
+                      납부하기
+                    </Button>
+                  </>
+                ) : (
+                  // 1-2-2. UNPAID 상태이고, 이의제기 상태이고, 답변이 달린 상태라면
+                  // 이의내역 활성화, 납부하기 활성화
+                  <>
+                    <Button
+                      width={'120px'}
+                      height={'30px'}
+                      size={'0.75rem'}
+                      bold={'700'}
+                      onClick={() => objectionDetailHandler()}
+                    >
+                      이의 내역
                     </Button>
                     <Button
-                      type={'sub'}
                       width={'120px'}
                       height={'30px'}
                       size={'0.75rem'}

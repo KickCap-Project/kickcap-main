@@ -57,6 +57,10 @@ const ObjectionDetailPage = () => {
 
     sessionStorage.setItem('objectionId', id);
     setObj(id);
+
+    return () => {
+      sessionStorage.removeItem('objectionId');
+    };
   }, [id]);
 
   return (

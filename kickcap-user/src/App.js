@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { ThemeProvider } from 'styled-components';
 import { basicTheme } from './styles/theme';
 import GlobalStyle from './styles/global-styles';
-import Button from './components/Common/Button';
-import { ReactComponent as test } from './asset/img/svg/noPark.svg';
 
 import SplashPage from './pages/SplashPage';
 import LoginPage from './pages/LoginPage';
