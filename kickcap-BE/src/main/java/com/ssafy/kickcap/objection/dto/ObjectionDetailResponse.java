@@ -18,9 +18,10 @@ public class ObjectionDetailResponse {
     private String content;        // 본문
     private String responseContent; // 이의제기 답변
     private String responseDate;   // 이의제기 답변 날짜
+    private Long billId;
 
     @QueryProjection
-    public ObjectionDetailResponse(Long idx, Long crackDownIdx, String name, Long violationType, String date, String title, String content, String responseContent, String responseDate) {
+    public ObjectionDetailResponse(Long idx, Long crackDownIdx, String name, Long violationType, String date, String title, String content, String responseContent, String responseDate, Long billId) {
         this.idx = idx;
         this.crackDownIdx = crackDownIdx;
         this.name = name;
@@ -30,5 +31,6 @@ public class ObjectionDetailResponse {
         this.content = content;
         this.responseContent = responseContent;
         this.responseDate = responseDate;
+        this.billId = billId;
     }
 }
