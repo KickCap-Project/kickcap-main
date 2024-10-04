@@ -14,6 +14,7 @@ API_ENDPOINT = os.getenv("API_ENDPOINT")
 
 connected_clients = set()
 
+
 async def video_stream(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
@@ -25,6 +26,10 @@ async def video_stream(request):
         try:
             async for msg in ws:
                 if msg.type == aiohttp.WSMsgType.BINARY:
+                    # 수신받은 데이터 크기 출력
+                    data_size = len(msg.data)
+                    print(f"Received data size: {data_size} bytes")
+
                     # 웹소켓으로부터 프레임 데이터 수신
                     frame = msg.data
                     # 넘파이 배열로 변환
@@ -55,6 +60,7 @@ async def video_stream(request):
             connected_clients.remove(ws)
             print("Client disconnected")
     return ws
+
 
 app = web.Application()
 app.router.add_get('/video', video_stream)
