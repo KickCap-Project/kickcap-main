@@ -13,7 +13,9 @@ import com.ssafy.kickcap.cctv.entity.Crackdown;
 import com.ssafy.kickcap.cctv.repository.CrackdownRepository;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
+import com.ssafy.kickcap.objection.entity.Answer;
 import com.ssafy.kickcap.objection.entity.Objection;
+import com.ssafy.kickcap.objection.repository.AnswerRepository;
 import com.ssafy.kickcap.objection.repository.ObjectionRepository;
 import com.ssafy.kickcap.report.entity.Report;
 import com.ssafy.kickcap.report.repository.ReportRepository;
@@ -31,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +47,7 @@ public class BillService {
     private final PoliceRepository policeRepository;
     private final CrackdownRepository crackdownRepository;
     private final ObjectionRepository objectionRepository;
+    private final AnswerRepository answerRepository;
 
     public List<BillListResponseDto> getBillList(Long memberId, int pageNo) {
         // 페이지 요청 객체 생성 (첫 페이지는 0부터 시작)
@@ -106,6 +110,22 @@ public class BillService {
 
         Police police = policeRepository.findById(bill.getPolice().getId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
+        Long objectionId = -1L;
+        String response = null;
+
+        Objection objection = objectionRepository.findByBillId(billId);
+        if (objection != null) {
+            objectionId = objection.getId();
+            Answer answer = answerRepository.findByObjection(objection);
+            if (answer != null) {
+                response = "Y";
+            }else {
+                response = "N";
+            }
+        }
+
+        System.out.println("objectionId : " + objectionId + " , response : " + response);
+
         if (bill.getReportType().equals(ReportType.USER)) {
 
             Report report = reportRepository.findById(bill.getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
@@ -127,6 +147,8 @@ public class BillService {
                     .isObjection(setObjection(bill))
                     .imageSrc(report.getImageSrc())
                     .billTime(bill.getCreatedAt().toString())
+                    .objectionId(objectionId)
+                    .response(response)
                     .build();
         } else {
             Crackdown crackdown = crackdownRepository.findById(bill.getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
