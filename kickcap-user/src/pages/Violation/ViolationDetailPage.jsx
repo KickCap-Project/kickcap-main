@@ -84,7 +84,7 @@ const ViolationDetailPage = () => {
   };
 
   const objectionDetailHandler = (e) => {
-    if (detail.objectionId) {
+    if (detail.objectionId && detail.objectionId !== -1) {
       navigate('/objection/detail', { state: { idx: detail.objectionId } });
     } else {
       e.preventDefault();
@@ -164,7 +164,7 @@ const ViolationDetailPage = () => {
           <ViolationDetail detail={detail} />
           <s.ButtonWrapper>
             {detail.isFlag === 'PAID' || detail.isFlag === 'CANCEL' ? (
-              detail.objectionId ? (
+              detail.objectionId && detail.objectionId !== -1 ? (
                 // 2-1. PAID, CANCEL 상태고 이의 제기 이력이 있을 경우
                 // 이의내역 버튼만 활성화
                 <Button
@@ -174,12 +174,12 @@ const ViolationDetailPage = () => {
                   bold={'700'}
                   onClick={() => objectionDetailHandler()}
                 />
-              ) : // 2-2. PAID, CANCEL 상태고 이의를 제기한 적이 없을 경우
+              ) : // 2-2. PAID, CANCEL 상태고 이의를 제기한 적이 없을 경우(objectionId === -1)
               // 아무 버튼도 띄우지 않기
               null
             ) : (
               <>
-                {detail.isObjection === 0 ? (
+                {detail.response === null ? (
                   // 1-1. UNPAID 상태고 이의를 제기하지 않은 상태인 경우
                   // 이의제기 활성화, 납부하기 활성화
                   <>

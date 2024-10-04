@@ -21,7 +21,7 @@ import ReportMisusePage from './pages/Report/ReportMisusePage';
 import ObjectionListPage from './pages/Objection/ObjectionListPage';
 import ObjectionDetailPage from './pages/Objection/ObjectionDetailPage';
 
-import OneClickReportPage from './pages/OneClickReport/OneClickReportPage';
+// import OneClickReportPage from './pages/OneClickReport/OneClickReportPage';
 import SuccessPage from './pages/SuccessPage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { PrivateRoute, PublicRoute } from './pages/IsLoginPage';
@@ -85,7 +85,9 @@ function App() {
               <Route path="/main">
                 <Route index element={<MainPage />} />
                 <Route path="notification" element={<NotificationPage />} />
-                <Route path="chat" element={<ChatPage />} />
+              </Route>
+              <Route path="/chat">
+                <Route index element={<ChatPage />} />
               </Route>
               <Route path="/violation">
                 <Route index element={<ViolationListPage />} />
@@ -99,7 +101,7 @@ function App() {
                   <Route path="education" element={<ViolationEducationPage />} />
                 </Route>
               </Route>
-              <Route path="/sos" element={<OneClickReportPage />} />
+              {/* <Route path="/sos" element={<OneClickReportPage />} /> */}
               <Route path="/report">
                 <Route index element={<ReportMainPage />} />
                 <Route path="parking">

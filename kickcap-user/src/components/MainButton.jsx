@@ -30,10 +30,13 @@ const s = {
     letter-spacing: -0.075rem;
   `,
   Img: styled.img`
+    /* border: 2px solid black; */
     position: absolute;
     left: 5%;
     top: ${(props) => (props.type === 'big' ? '10%' : '')};
     bottom: ${(props) => (props.type === 'big' ? '' : '10%')};
+    width: ${(props) => (props.type === 'big' ? '4rem' : '3rem')};
+    height: ${(props) => (props.type === 'big' ? '4rem' : '3rem')};
   `,
 };
 
