@@ -37,4 +37,8 @@ public class BillResponseDto {
 
     private String billTime; // 고지일시
 
+    private Long objectionId; // 이의제기 번호
+
+    private String response; // 이의제기 답변 여부
+
 }
