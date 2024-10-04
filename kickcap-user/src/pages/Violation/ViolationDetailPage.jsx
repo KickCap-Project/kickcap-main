@@ -99,6 +99,10 @@ const ViolationDetailPage = () => {
     }
   };
 
+  const handlePreventDefault = (e) => {
+    e.preventDefault();
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (!isLoading) {
@@ -176,10 +180,24 @@ const ViolationDetailPage = () => {
                   </>
                 ) : (
                   <>
-                    <Button type={'sub'} width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
+                    <Button
+                      type={'sub'}
+                      width={'120px'}
+                      height={'30px'}
+                      size={'0.75rem'}
+                      bold={'700'}
+                      onClick={handlePreventDefault}
+                    >
                       이의 제기
                     </Button>
-                    <Button type={'sub'} width={'120px'} height={'30px'} size={'0.75rem'} bold={'700'}>
+                    <Button
+                      type={'sub'}
+                      width={'120px'}
+                      height={'30px'}
+                      size={'0.75rem'}
+                      bold={'700'}
+                      onClick={handlePreventDefault}
+                    >
                       납부하기
                     </Button>
                   </>
