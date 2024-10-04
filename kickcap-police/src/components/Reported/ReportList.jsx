@@ -3,21 +3,13 @@ import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectReportNav } from '../../store/page';
 import { useNavigate } from 'react-router';
-import Button from './../Common/Button';
 import Input from './../Common/Input';
-import {
-  getListDetail,
-  getReportEndList,
-  getReportEndTotalCount,
-  getReportList,
-  getReportTotalCount,
-} from '../../lib/api/report-api';
+import { getReportEndList, getReportEndTotalCount, getReportList, getReportTotalCount } from '../../lib/api/report-api';
 import moment from 'moment';
 import Pagination from 'react-js-pagination';
 import ReactPaginate from 'react-paginate';
 import { useSearchParams } from 'react-router-dom';
 import '../../styles/Pagination.css';
-import Text from './../Common/Text';
 
 const s = {
   Container: styled.div`
@@ -63,7 +55,7 @@ const s = {
   Tr: styled.tr`
     width: 100%;
     height: 40px;
-    cursor: pointer;
+    cursor: ${(props) => props.cursor};
   `,
   Td: styled.td`
     vertical-align: middle;
@@ -71,6 +63,7 @@ const s = {
   `,
   noData: styled.td`
     vertical-align: middle;
+    cursor: default;
   `,
   Th: styled.th`
     font-weight: 700;
@@ -99,7 +92,6 @@ const s = {
   pageArea: styled.div`
     width: 500px;
     height: 40px;
-    border: 1px solid red;
     margin: 20px auto;
     display: flex;
     align-items: center;
@@ -132,19 +124,18 @@ const ReportList = () => {
   };
 
   useEffect(() => {
-    // alert(pageNo);
     setViolationType(searchParams.get('violationType'));
     setPageNo(Number(searchParams.get('pageNo')));
     const newViolationType =
-      searchParams.get('violationType') == 4
+      searchParams.get('violationType') === '4'
         ? 'park'
-        : searchParams.get('violationType') == 3
+        : searchParams.get('violationType') === '3'
         ? 'helmet'
-        : searchParams.get('violationType') == 1
+        : searchParams.get('violationType') === '1'
         ? 'peoples'
-        : searchParams.get('violationType') == 2
+        : searchParams.get('violationType') === '2'
         ? 'sideWalk'
-        : 'read';
+        : 'road';
     dispatch(pageActions.changeReportType(newViolationType));
   }, [searchParams]);
 
@@ -234,14 +225,14 @@ const ReportList = () => {
           <s.Tbody>
             {data.length !== 0 ? (
               data.map((d, index) => (
-                <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
+                <s.Tr key={index} cursor={'pointer'} onClick={() => handleMovePage(d.idx)}>
                   <s.Td>{d.idx}</s.Td>
                   <s.Td>{d.addr}</s.Td>
                   <s.Td>{moment(d.createTime).format('YY-MM-DD')}</s.Td>
                 </s.Tr>
               ))
             ) : (
-              <s.Tr>
+              <s.Tr cursor={'deafault'}>
                 <s.noData colSpan={3}>내역이 존재하지 않습니다.</s.noData>
               </s.Tr>
             )}
@@ -252,9 +243,9 @@ const ReportList = () => {
         <s.BtnArea></s.BtnArea>
         <s.pageArea>
           <Pagination
-            activePage={pageNo} // 현재 페이지
+            activePage={Number(pageNo)} // 현재 페이지
             itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
-            totalItemsCount={totalPage} // 총 아이템 갯수
+            totalItemsCount={Number(totalPage)} // 총 아이템 갯수
             pageRangeDisplayed={10} // paginator의 페이지 범위
             prevPageText={'‹'} // "이전"을 나타낼 텍스트
             nextPageText={'›'} // "다음"을 나타낼 텍스트

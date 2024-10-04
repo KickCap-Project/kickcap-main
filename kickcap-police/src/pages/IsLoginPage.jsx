@@ -13,7 +13,6 @@ export const PrivateRoute = () => {
 };
 
 export const PublicRoute = () => {
-  // localStorage.removeItem('persist:redux-state');
   const dispatch = useAppDispatch();
   dispatch(pageActions.changeboardType('park'));
   const checkLogin = !!localStorage.getItem('accessToken');

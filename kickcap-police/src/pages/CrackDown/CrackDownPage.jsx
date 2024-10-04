@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
-import CrackDownList from '../../components/CrackDown/CrackDownList';
 import { Outlet } from 'react-router';
 import { usePageNavHook } from '../../lib/hook/usePageNavHook';
 import { usePageTypeHook } from '../../lib/hook/usePageTypeHook';
@@ -10,12 +9,9 @@ const s = {
   Container: styled.div`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    /* border: 3px solid orange; */
     overflow-y: auto;
   `,
-  mainArea: styled.main`
-    /* border: 1px solid red; */
-  `,
+  mainArea: styled.main``,
 };
 
 const CrackDownPage = () => {

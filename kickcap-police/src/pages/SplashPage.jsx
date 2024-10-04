@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import logo from '../asset/svg/logo.svg';
 import Text from './../components/Common/Text';
 import { ReactComponent as police } from '../asset/svg/police.svg';
 import { requestPermission } from '../firebaseCloudMessaging';
@@ -33,8 +32,6 @@ const SplashPage = () => {
   const navigate = useNavigate();
   const setFcmToken = async () => {
     const fcmToken = await requestPermission();
-    // localStorage.setItem('fcmToken', fcmToken);
-    // navigate('/login');
     if (fcmToken) {
       localStorage.setItem('fcmToken', fcmToken);
       navigate('/login');

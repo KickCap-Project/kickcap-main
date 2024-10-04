@@ -4,9 +4,8 @@ import ReactModal from 'react-modal';
 import '../../styles/modal.css';
 import Text from '../Common/Text';
 import Button from '../Common/Button';
-import test from '../../asset/policeLogo.png';
 import CameraCrackList from '../Board/CameraCrackList';
-import { dummy } from '../../lib/data/CameraCrackData';
+import MonitoringApp from '../Board/MonitoringApp';
 
 const s = {
   Container: styled.div`
@@ -57,32 +56,46 @@ const BoardCameraModal = ({ open, toggleModal, idx, data }) => {
       className="centerBigModal"
       overlayClassName="Overlay"
     >
-      <s.Container>
-        <s.Header>
-          <Text
-            children={data.addr}
-            textalian={'center'}
-            display={'block'}
-            size={'25px'}
-            bold={'700'}
-            color={'textBasic'}
-          />
-          <Button
-            bold={'700'}
-            children={'닫 기'}
-            height={'40px'}
-            width={'150px'}
-            size={'20px'}
-            onClick={() => toggleModal(false)}
-          />
-        </s.Header>
-        <s.MainArea>
-          <s.Img src={test} />
-          <s.InfoArea>
-            {data.crackdown && data.crackdown.map((data, index) => <CameraCrackList key={index} data={data} />)}
-          </s.InfoArea>
-        </s.MainArea>
-      </s.Container>
+      {data && (
+        <s.Container>
+          <s.Header>
+            <Text
+              children={data.addr}
+              textalian={'center'}
+              display={'block'}
+              size={'25px'}
+              bold={'700'}
+              color={'textBasic'}
+            />
+            <Button
+              bold={'700'}
+              children={'닫 기'}
+              height={'40px'}
+              width={'150px'}
+              size={'20px'}
+              onClick={() => toggleModal(false)}
+            />
+          </s.Header>
+          <s.MainArea>
+            <MonitoringApp />
+            <s.InfoArea>
+              {data.crackdown.length !== 0 ? (
+                data.crackdown.map((data, index) => <CameraCrackList key={index} data={data} />)
+              ) : (
+                <Text
+                  children={'단속 내역이 존재하지 않습니다.'}
+                  textalian={'center'}
+                  display={'block'}
+                  size={'15px'}
+                  bold={'700'}
+                  color={'textBasic'}
+                  margin={'10px auto'}
+                />
+              )}
+            </s.InfoArea>
+          </s.MainArea>
+        </s.Container>
+      )}
     </ReactModal>
   );
 };

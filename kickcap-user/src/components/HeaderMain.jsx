@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import LogoSvg from './../asset/img/svg/Logo.svg';
 import NotificationOffSvg from './../asset/img/svg/notificationOff.svg';
 import NotificationOnSvg from './../asset/img/svg/notificationOn.svg';
-import SettingSvg from './../asset/img/svg/setting.svg';
 import logoutImg from '../asset/img/svg/logout.svg';
 import { useAppDispatch } from '../lib/hook/useReduxHook';
 import { modalActions } from '../store/modal';

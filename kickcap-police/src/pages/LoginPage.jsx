@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as logo } from '../asset/svg/logo.svg';
 import { ReactComponent as police } from '../asset/svg/police.svg';
 import IconSvg from './../components/Common/IconSvg';
 import Input from './../components/Common/Input';
 import Button from './../components/Common/Button';
 import Text from './../components/Common/Text';
 import { useNavigate } from 'react-router';
-import { requestPermission } from '../firebaseCloudMessaging';
 import { policeLogin } from './../lib/api/main-api';
 
 const s = {

@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
 import '../../styles/modal.css';
 import Text from '../Common/Text';
 import Button from '../Common/Button';
 import CrackInfoTable from '../Common/CrackInfoTable';
-import test from '../../asset/policeLogo.png';
 
 const s = {
   Container: styled.div`

@@ -5,7 +5,6 @@ import '../../styles/modal.css';
 import Text from '../Common/Text';
 import Button from '../Common/Button';
 import CrackInfoTable from '../Common/CrackInfoTable';
-import test from '../../asset/policeLogo.png';
 import moment from 'moment';
 
 const s = {
@@ -55,7 +54,6 @@ const s = {
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
-    /* align-items: center; */
   `,
   Img: styled.img`
     width: 47%;

@@ -1,12 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-// import { ReactComponent as logo } from '../../asset/svg/logo.svg';
 import { ReactComponent as logo } from '../../asset/svg/police.svg';
 import { navActions, selectNav } from '../../store/nav';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import IconSvg from '../Common/IconSvg';
 import { useNavigate } from 'react-router';
-import Button from './../Common/Button';
 import { logout } from '../../lib/api/main-api';
 
 const s = {
