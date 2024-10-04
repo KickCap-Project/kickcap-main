@@ -85,7 +85,7 @@ const ViolationDetailPage = () => {
 
   const objectionDetailHandler = (e) => {
     if (detail.objectionId) {
-      navigate(`/objection/detail`, { state: { idx: detail.objectionId } });
+      navigate('/objection/detail', { state: { idx: detail.objectionId } });
     } else {
       e.preventDefault();
     }
