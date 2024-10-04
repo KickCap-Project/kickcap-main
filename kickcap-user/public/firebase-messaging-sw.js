@@ -16,7 +16,7 @@ self.addEventListener('push', function (e) {
   const notificationTitle = notification.title;
   const notificationOptions = {
     body: notification.body,
-    icon: '/logo192.png',
+    icon: '/mstile-150x150.png',
     data: data.url,
   };
 

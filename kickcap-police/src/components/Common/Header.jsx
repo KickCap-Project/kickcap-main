@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Text from './Text';
-// import { ReactComponent as logo } from '../../asset/svg/logo.svg';
 import { ReactComponent as logo } from '../../asset/svg/police.svg';
 import IconSvg from './IconSvg';
 import { navActions, selectNav } from '../../store/nav';

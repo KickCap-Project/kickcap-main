@@ -20,3 +20,8 @@ export const getListDetail = async (objectionId, success, fail) => {
 export const postAnswer = async (objectionId, content, success, fail) => {
   await local.post(`/objections/${objectionId}/answer`, content).then(success).catch(fail);
 };
+
+// 고지서취소
+export const postCancel = async (objectionId, content, success, fail) => {
+  await local.post(`/objections/${objectionId}/cancel`, content).then(success).catch(fail);
+};

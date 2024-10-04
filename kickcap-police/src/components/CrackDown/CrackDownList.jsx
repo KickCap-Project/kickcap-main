@@ -8,6 +8,7 @@ import Pagination from 'react-js-pagination';
 import '../../styles/Pagination.css';
 import { getCrackList, getCrackTotalCount } from './../../lib/api/crack-api';
 import moment from 'moment';
+import PaginationTest from '../Common/PaginationTest';
 
 const s = {
   Container: styled.div`
@@ -53,7 +54,7 @@ const s = {
   Tr: styled.tr`
     width: 100%;
     height: 40px;
-    cursor: pointer;
+    cursor: ${(props) => props.cursor};
   `,
   Td: styled.td`
     vertical-align: middle;
@@ -61,6 +62,7 @@ const s = {
   `,
   noData: styled.td`
     vertical-align: middle;
+    cursor: default;
   `,
   Th: styled.th`
     font-weight: 700;
@@ -70,7 +72,6 @@ const s = {
   pageArea: styled.div`
     width: 500px;
     height: 40px;
-    border: 1px solid red;
     margin: 20px auto;
     display: flex;
     align-items: center;
@@ -85,12 +86,13 @@ const CrackDownList = () => {
   const [violationType, setViolationType] = useState(searchParams.get('violationType'));
   const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
+  const [render, setRender] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     setViolationType(searchParams.get('violationType'));
     setPageNo(Number(searchParams.get('pageNo')));
-    const newViolationType = searchParams.get('violationType') == 3 ? 'helmet' : 'peoples';
+    const newViolationType = searchParams.get('violationType') === '3' ? 'helmet' : 'peoples';
     dispatch(pageActions.changeCrackType(newViolationType));
   }, [searchParams]);
 
@@ -118,6 +120,10 @@ const CrackDownList = () => {
   };
 
   useEffect(() => {
+    if (!render) {
+      setRender(true);
+      return;
+    }
     getCrackTotalCount(
       violationType,
       (resp) => {
@@ -162,7 +168,7 @@ const CrackDownList = () => {
           <s.Tbody>
             {data.length !== 0 ? (
               data.map((d, index) => (
-                <s.Tr key={index} onClick={() => handleMovePage(d.idx)}>
+                <s.Tr key={index} cursor={'pointer'} onClick={() => handleMovePage(d.idx)}>
                   <s.Td>{d.idx}</s.Td>
                   <s.Td>{d.addr}</s.Td>
                   <s.Td>{d.type}</s.Td>
@@ -170,7 +176,7 @@ const CrackDownList = () => {
                 </s.Tr>
               ))
             ) : (
-              <s.Tr>
+              <s.Tr cursor={'deafault'}>
                 <s.noData colSpan={4}>내역이 존재하지 않습니다.</s.noData>
               </s.Tr>
             )}
@@ -178,9 +184,10 @@ const CrackDownList = () => {
         </s.Table>
       </s.TableArea>
       <s.pageArea>
+        {/* <PaginationTest currentPage={pageNo} totalPosts={totalPage} postsPerPage={1} onPageChange={handleClickPage} /> */}
         <Pagination
-          activePage={pageNo} // 현재 페이지
-          itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
+          activePage={Number(pageNo)} // 현재 페이지
+          itemsCountPerPage={1} // 한 페이지랑 보여줄 아이템 갯수
           totalItemsCount={totalPage} // 총 아이템 갯수
           pageRangeDisplayed={10} // paginator의 페이지 범위
           prevPageText={'‹'} // "이전"을 나타낼 텍스트
