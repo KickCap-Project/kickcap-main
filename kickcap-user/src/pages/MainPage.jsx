@@ -20,7 +20,6 @@ import { useNavigate } from 'react-router';
 import InfoModal from '../components/Modal/InfoModal';
 
 import { localAxios } from '../util/axios-setting';
-import { update } from 'firebase/database';
 
 const s = {
   Container: styled.div`
@@ -36,7 +35,7 @@ const s = {
     justify-content: flex-end;
     align-items: end;
     width: 90%;
-    margin: 20px auto 5px;
+    margin: 20px auto 10px;
   `,
   MainArea: styled.div`
     flex: 1;
@@ -116,8 +115,6 @@ const MainPage = () => {
           setInfo(updatedInfo);
           localStorage.setItem('Info', JSON.stringify(updatedInfo));
           console.log(`벌점이 성공적으로 갱신되었습니다.`);
-        } else {
-          console.log(`벌점 조회 중 문제가 발생했습니다: ${response.status}`);
         }
       } catch (err) {
         console.log(`벌점 조회 중 오류 발생: ${err}`);
@@ -153,19 +150,19 @@ const MainPage = () => {
         <s.MainThum />
         <MainButton
           type="big"
-          title="원 클릭 신고"
-          description="긴급 신고를 한번에!"
-          imgSrc={MainBtn2}
-          onClick={() => handleMovePage('/sos')}
+          title="제보하기"
+          description="잡아주세요!"
+          imgSrc={MainBtn3}
+          onClick={() => handleMovePage('/report')}
         />
 
         <s.SmallButtonWrapper>
           <MainButton
             type="small"
-            title="제보하기"
-            description="잡아주세요!"
-            imgSrc={MainBtn3}
-            onClick={() => handleMovePage('/report')}
+            title="법률 챗봇"
+            description="궁금해요!"
+            imgSrc={ChatbotBtn}
+            onClick={() => handleMovePage('/chat')}
           />
           <MainButton
             type="small"
@@ -176,10 +173,10 @@ const MainPage = () => {
           />
         </s.SmallButtonWrapper>
 
-        <Carousel />
-        <s.ChatbotButton src={ChatbotBtn} onClick={() => handleMovePage('chat')} />
+        {/* <s.ChatbotButton src={ChatbotBtn} onClick={() => handleMovePage('chat')} /> */}
       </s.MainArea>
 
+      <Carousel />
       <Footer />
       <PhoneSetModal open={isPhone} toggleModal={handleOpenPhoneModal} />
       <MainPageModal open={isMain} toggleModal={handleOpenMainModal} />

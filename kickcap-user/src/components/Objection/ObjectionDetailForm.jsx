@@ -26,7 +26,7 @@ const s = {
   ButtonContainer: styled.div`
     width: 100%;
     margin: 8vh;
-    gap: 5%;
+    gap: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -55,6 +55,9 @@ const s = {
   `,
   Response: styled.div`
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   `,
   ResponseHeader: styled.div`
     width: 100%;
@@ -77,8 +80,9 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   const [modifyMode, setModifyMode] = useState(false);
   const [title, setTitle] = useState(objectionDetail.title);
   const [content, setContent] = useState(objectionDetail.content);
-  const [responseContent, setResponseContent] = useState(objectionDetail.responseContent);
-  const [responseDate, setResponseDate] = useState(objectionDetail.responseDate);
+
+  const responseContent = objectionDetail.responseContent ? objectionDetail.responseContent : null;
+  const responseDate = objectionDetail.responseDate ? objectionDetail.responseDate : null;
 
   const id = useLocation().state?.idx || null;
 
@@ -108,16 +112,11 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
     try {
       const response = await deleteObjectionDetail(objectionId);
 
-      console.log(`response.status: ${response.status}`);
-
       if (response.status === 204) {
         alert('삭제되었습니다.');
         setTimeout(() => {
           navigate('/objection', { replace: true });
         }, 0);
-      } else {
-        console.log(`response.status: ${response.status}`);
-        alert(`이의제기 삭제 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.`);
       }
     } catch (err) {
       console.log(`이의제기 삭제 중 문제 발생: ${err}`);
@@ -129,8 +128,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   const toModifyComplete = async (objectionId, title, content) => {
     try {
       const response = await putObjectionDetail(objectionId, title, content);
-
-      console.log(`response.status: ${response.status}`);
 
       if (response.status === 200) {
         alert('수정이 정상적으로 완료되었습니다.');
@@ -147,7 +144,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
 
   const onClickButton = (type, event) => {
     event.preventDefault();
-    console.log(type);
 
     switch (type) {
       case 'delete':
@@ -157,7 +153,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
         }
         break;
       case 'modify':
-        // 수정 모드로 변경
+        // 수정/삭제 모드로 변경
         setModifyMode(true);
         break;
       case 'complete':
@@ -165,6 +161,13 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
         if (window.confirm('수정하시겠습니까?')) {
           setModifyMode(false);
           toModifyComplete(id, title, content);
+        }
+        break;
+      case 'navigate':
+        if (objectionDetail.billId) {
+          navigate('/violation/detail', { state: { idx: objectionDetail.billId } });
+        } else {
+          alert('단속 내역을 찾는 중 오류가 발생했습니다.');
         }
         break;
       default:
@@ -191,6 +194,9 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
                 </Text>
               </s.ResponseHeader>
               <s.TextArea type="text" height={'15vh'} defaultValue={responseContent} mode={'read'} readOnly={true} />
+              <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('navigate', e)} margin={'15px'}>
+                단속 내역
+              </Button>
             </s.Response>
           </>
         ) : (
@@ -198,17 +204,20 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
             <s.ButtonContainer>
               {modifyMode ? (
                 <>
-                  <Button width={'30%'} height={'40px'} onClick={(e) => onClickButton('complete', e)}>
-                    완료
+                  <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('complete', e)}>
+                    수정완료
+                  </Button>
+                  <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('delete', e)}>
+                    삭제하기
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button width={'30%'} height={'40px'} onClick={(e) => onClickButton('modify', e)}>
-                    수정
+                  <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('modify', e)}>
+                    수정 / 삭제
                   </Button>
-                  <Button width={'30%'} height={'40px'} onClick={(e) => onClickButton('delete', e)}>
-                    삭제
+                  <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('navigate', e)}>
+                    단속 내역
                   </Button>
                 </>
               )}
