@@ -128,15 +128,17 @@ const ComplaintDetail = () => {
       complaintId,
       (resp) => {
         setComplaintData(resp.data);
-        getCrackDetail(
-          resp.data.crackDownIdx,
-          (resp) => {
-            setCrackData(resp.data);
-          },
-          (error) => {
-            alert('잠시 후 다시 시도해주세요.');
-          },
-        );
+        if (resp.data.crackDownIdx !== -1) {
+          getCrackDetail(
+            resp.data.crackDownIdx,
+            (resp) => {
+              setCrackData(resp.data);
+            },
+            (error) => {
+              alert('잠시 후 다시 시도해주세요.');
+            },
+          );
+        }
       },
       (error) => {
         alert('잠시 후 다시 시도해주세요.');
@@ -236,16 +238,18 @@ const ComplaintDetail = () => {
             display={'block'}
             margin={'0 10px'}
           />
-          <Button
-            bold={'700'}
-            children={'단속 정보'}
-            height={'40px'}
-            width={'150px'}
-            size={'20px'}
-            onClick={() => handleOpenInfoModal(true)}
-            display={'block'}
-            margin={'0 10px'}
-          />
+          {complaintData.crackDownIdx !== -1 && (
+            <Button
+              bold={'700'}
+              children={'단속 정보'}
+              height={'40px'}
+              width={'150px'}
+              size={'20px'}
+              onClick={() => handleOpenInfoModal(true)}
+              display={'block'}
+              margin={'0 10px'}
+            />
+          )}
           {state === '0' && (
             <>
               <Button
