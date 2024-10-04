@@ -152,6 +152,10 @@ const ReportIllegalParkingForm = () => {
     }
   };
 
+  const handlePreventDefault = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <s.Form>
       {selectedImage ? (
@@ -214,7 +218,7 @@ const ReportIllegalParkingForm = () => {
             작성 완료
           </Button>
         ) : (
-          <Button type={'sub'} width={'90%'} height={'40px'} bold={'700'} size={'24px'}>
+          <Button type={'sub'} width={'90%'} height={'40px'} bold={'700'} size={'24px'} onClick={handlePreventDefault}>
             작성 완료
           </Button>
         )}
