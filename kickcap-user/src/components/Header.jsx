@@ -25,9 +25,18 @@ const s = {
 
 const Header = ({ title }) => {
   const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    if (window.history.length > 1) {
+      navigate(-1); // 이전 페이지가 있으면 뒤로가기
+    } else {
+      navigate('/main'); // 이전 페이지가 히스토리 스택에 없으면 메인 페이지로 이동 (ex. 푸시 알림을 눌러 알림 목록 페이지로 이동 시)
+    }
+  };
+
   return (
     <s.HeaderArea>
-      <s.Img src={BackSvg} onClick={() => navigate(-1)} />
+      <s.Img src={BackSvg} onClick={handleBackClick} />
       <Text size={20} bold={'800'}>
         {title}
       </Text>
