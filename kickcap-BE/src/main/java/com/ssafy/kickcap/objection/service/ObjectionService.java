@@ -108,7 +108,7 @@ public class ObjectionService {
         Objection objection = objectionRepository.findById(objectionId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
         if (objection.getBill().getReportType().equals(ReportType.CCTV)){
             Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
-            return objectionRepositoryImpl.findObjectionDetail(objectionId, crackdown.getViolationType().getId());
+            return objectionRepositoryImpl.findObjectionCCTVDetail(objectionId, crackdown.getViolationType().getId());
         } else {
             Report report = reportRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
             return objectionRepositoryImpl.findObjectionDetail(objectionId, report.getViolationType().getId());

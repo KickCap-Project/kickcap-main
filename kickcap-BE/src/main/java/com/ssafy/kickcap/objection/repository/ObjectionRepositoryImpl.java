@@ -115,6 +115,36 @@ public class ObjectionRepositoryImpl {
         return queryFactory
                 .select(new QObjectionDetailResponse(
                         objection.id,
+                        Expressions.asNumber(-1L),
+                        member.name,
+                        // reportType에 관계없이 violation_type을 NULL로 반환
+                        Expressions.asNumber(violationType),
+                        formattedObjectionDate,
+                        objection.title,
+                        objection.content,
+                        answer.content,
+                        formattedAnswerDate,
+                        bill.id
+                ))
+                .from(objection)
+                .leftJoin(objection.answer, answer)
+                .leftJoin(objection.bill, bill)
+                .leftJoin(objection.member, member)
+                // crackdown과 report와의 조인 제거
+                .where(objection.id.eq(objectionId))
+                .groupBy(objection.id, bill.reportId, member.name, bill.reportType, formattedObjectionDate, objection.title, objection.content, answer.content, formattedAnswerDate)
+                .fetchOne();
+
+    }
+
+    public ObjectionDetailResponse findObjectionCCTVDetail(Long objectionId, Long violationType) {
+        // Postgres TO_CHAR 사용하여 날짜 형식을 'yyyy.MM.dd'로 변환
+        DateTemplate<String> formattedObjectionDate = dateTemplate(String.class, "TO_CHAR({0}, 'YYYY.MM.DD')", objection.createdAt);
+        DateTemplate<String> formattedAnswerDate = dateTemplate(String.class, "TO_CHAR({0}, 'YYYY.MM.DD')", answer.createdAt);
+
+        return queryFactory
+                .select(new QObjectionDetailResponse(
+                        objection.id,
                         bill.reportId.as("crackDownIdx"),
                         member.name,
                         // reportType에 관계없이 violation_type을 NULL로 반환
@@ -123,7 +153,8 @@ public class ObjectionRepositoryImpl {
                         objection.title,
                         objection.content,
                         answer.content,
-                        formattedAnswerDate
+                        formattedAnswerDate,
+                        bill.id
                 ))
                 .from(objection)
                 .leftJoin(objection.answer, answer)
@@ -190,7 +221,8 @@ public class ObjectionRepositoryImpl {
                         objection.title,
                         objection.content,
                         answer.content,
-                        formattedDate2 // 답변 날짜
+                        formattedDate2, // 답변 날짜
+                        bill.id
                 ))
                 .from(objection)
                 .leftJoin(objection.answer, answer)
