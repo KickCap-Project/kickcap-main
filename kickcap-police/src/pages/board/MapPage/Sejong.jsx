@@ -48,8 +48,8 @@ const Sejong = () => {
         version="1.2"
         baseProfile="tiny"
         viewBox="0 0 800 1149"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <g id="세종특별자치시_시군구_경계">
           <path
