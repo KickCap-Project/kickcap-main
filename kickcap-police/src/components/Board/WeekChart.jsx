@@ -17,16 +17,7 @@ const s = {
 const WeekChart = ({ title, datas, labels }) => {
   return (
     <s.Container>
-      <Text
-        children={title}
-        size={'13px'}
-        bold={'600'}
-        textalian={'center'}
-        width={'130px'}
-        color={'textBasic'}
-        display={'block'}
-      />
-      <LineChart datas={datas} labels={labels} />
+      <LineChart title={title} datas={datas} labels={labels} />
     </s.Container>
   );
 };

@@ -168,4 +168,4 @@ const Header = ({ title, subTitle }) => {
   );
 };
 
-export default Header;
+export default React.memo(Header);

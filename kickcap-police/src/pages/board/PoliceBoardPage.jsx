@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BoardHeader from '../../components/Board/BoardHeader';
 import WeekChart from '../../components/Board/WeekChart';
@@ -70,48 +70,53 @@ const PoliceBoardPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [sido, setSido] = useState(searchParams.get('sido'));
   const [gugun, setGugun] = useState(searchParams.get('gugun'));
-  const [weekData, setWeekData] = useState({});
 
-  useEffect(() => {
-    setSido(searchParams.get('sido'));
-    setGugun(searchParams.get('gugun'));
-    if (sido === null) {
-      gettest(
-        sido,
-        gugun,
-        (resp) => {
-          setWeekData(resp.data);
-        },
-        (error) => {
-          alert('데이터를 불러오는 도중 에러가 발생했습니다.');
-        },
-      );
-    } else {
-      getWeekData(
-        sido,
-        gugun,
-        (resp) => {
-          setWeekData(resp.data);
-        },
-        (error) => {
-          alert('데이터를 불러오는 도중 에러가 발생했습니다.');
-        },
-      );
-    }
-  }, [searchParams, sido, gugun]);
+  const {
+    data: weekData = {},
+    error: weekDataError,
+    refetch: refetchWeekData,
+  } = useQuery({
+    queryKey: ['weekData', sido, gugun],
+    queryFn: () => {
+      return sido ? getWeekData(sido, gugun) : gettest();
+    },
+    enabled: false,
+  });
 
-  const { data: bottomData = {}, error: bottomDataError } = useQuery({
+  if (weekDataError) {
+    alert('데이터를 불러오는 도중 에러가 발생했습니다.');
+  }
+
+  const {
+    data: bottomData = {},
+    error: bottomDataError,
+    refetch: refetchBottomData,
+  } = useQuery({
     queryKey: ['bottomData', sido, gugun],
     queryFn: () => getBottomData(sido, gugun),
-    // enabled: !!sido && !!gugun,
     refetchInterval: 10800000,
+    enabled: false,
   });
 
   if (bottomDataError) {
     alert('데이터를 불러오는 도중 에러가 발생했습니다.');
   }
 
-  const ButtomFunc = (today, yesterday) => {
+  useEffect(() => {
+    const newSido = searchParams.get('sido');
+    const newGugun = searchParams.get('gugun');
+
+    if (newSido !== sido) {
+      setSido(newSido);
+    }
+    if (newGugun !== gugun) {
+      setGugun(newGugun);
+    }
+    refetchWeekData();
+    refetchBottomData();
+  }, [searchParams, sido, gugun, refetchWeekData, refetchBottomData]);
+
+  const ButtomFunc = useCallback((today, yesterday) => {
     if (today === 0 && yesterday === 0) {
       return 0;
     }
@@ -122,7 +127,7 @@ const PoliceBoardPage = () => {
       return today * 100;
     }
     return ((today - yesterday) / yesterday) * 100;
-  };
+  }, []);
 
   const crackLabel = ['안전모 미착용', '다인 승차'];
   const reportLabel = ['불법 주차', '안전모 미착용', '다인 승차', '보도 주행', '지정차로 위반'];
@@ -164,9 +169,9 @@ const PoliceBoardPage = () => {
         : '21-23';
     });
 
-  const cCrack = ButtomFunc(bottomData.tcrack, bottomData.ycrack);
-  const cReport = ButtomFunc(bottomData.treport, bottomData.yreport);
-  const cAccident = ButtomFunc(bottomData.taccident, bottomData.yaccident);
+  const cCrack = ButtomFunc(bottomData.tcrack, bottomData.ycrack).toFixed(1);
+  const cReport = ButtomFunc(bottomData.treport, bottomData.yreport).toFixed(1);
+  const cAccident = ButtomFunc(bottomData.taccident, bottomData.yaccident).toFixed(1);
 
   usePageNavHook('board');
   usePageTypeHook('board');
@@ -205,9 +210,9 @@ const PoliceBoardPage = () => {
             title="일일 사고"
             data={bottomData.taccident && bottomData.taccident.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           />
-          <CompareInfo title={'전일 대비 단속'} data={cCrack.toFixed(1)} />
-          <CompareInfo title={'전일 대비 신고'} data={cReport.toFixed(1)} />
-          <CompareInfo title={'전일 대비 사고'} data={cAccident.toFixed(1)} />
+          <CompareInfo title={'전일 대비 단속'} data={cCrack} />
+          <CompareInfo title={'전일 대비 신고'} data={cReport} />
+          <CompareInfo title={'전일 대비 사고'} data={cAccident} />
         </s.FooterArea>
       </s.Container>
     </>

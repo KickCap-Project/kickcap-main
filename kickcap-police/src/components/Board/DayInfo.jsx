@@ -15,6 +15,7 @@ const s = {
 };
 
 const DayInfo = ({ title, data }) => {
+  console.log('하단');
   return (
     <s.Container>
       <Text
