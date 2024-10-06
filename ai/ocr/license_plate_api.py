@@ -249,15 +249,23 @@ async def insert_crackdown(request: GetResultRequests):
             raise HTTPException(status_code=404, detail="Memeber Not Found")
         accused_idx = results[0]
 
-        # # CCTV 신고에 데이터 추가
+        # CCTV 신고에 데이터 추가
         insert_query = '''
                     INSERT INTO crackdown (cctv_idx, accused_idx, violation_type, image_src, crackdown_time, created_at, kickboard_number)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                     '''
         data = (request.camera_idx, accused_idx[0], request.type, request.image_src, crackdown_time, now_kst, request.result_text)
         cursor.execute(insert_query, data)
+        last_inserted_id = cursor.fetchone()[0]  # 첫 번째 컬럼이 자동 증가 값 (ai)임
         connection.commit()
-        print('Successfully Inserted')
+        print(f'{last_inserted_id} Successfully Inserted')
+
+        # 고지서 만들기
+        async with httpx.AsyncClient() as client:
+            response = await client.post(f'http://localhost:8081/bills/crackdown/{last_inserted_id}')
+            print(response)
+
+
     except HTTPException as http_exc:
         raise http_exc
 
