@@ -251,10 +251,10 @@ async def insert_crackdown(request: GetResultRequests):
 
         # # CCTV 신고에 데이터 추가
         insert_query = '''
-                    INSERT INTO crackdown (cctv_idx, accused_idx, violation_type, image_src, crackdown_time, created_at)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO crackdown (cctv_idx, accused_idx, violation_type, image_src, crackdown_time, created_at, kickboard_number)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                     '''
-        data = (request.camera_idx, accused_idx[0], request.type, request.image_src, crackdown_time, now_kst)
+        data = (request.camera_idx, accused_idx[0], request.type, request.image_src, crackdown_time, now_kst, request.result_text)
         cursor.execute(insert_query, data)
         connection.commit()
         print('Successfully Inserted')
