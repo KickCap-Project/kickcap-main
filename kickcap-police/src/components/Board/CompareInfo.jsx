@@ -15,7 +15,6 @@ const s = {
 };
 
 const CompareInfo = ({ title, data }) => {
-  console.log('비교');
   return (
     <s.Container>
       <Text

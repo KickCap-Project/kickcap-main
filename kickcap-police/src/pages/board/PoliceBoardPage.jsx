@@ -95,7 +95,6 @@ const PoliceBoardPage = () => {
     queryKey: ['bottomData', sido, gugun],
     queryFn: () => getBottomData(sido, gugun),
     refetchInterval: 10800000,
-    enabled: false,
   });
 
   if (bottomDataError) {
