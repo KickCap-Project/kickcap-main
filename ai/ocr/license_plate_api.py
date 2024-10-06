@@ -184,7 +184,7 @@ async def capture_image(image: UploadFile = File(...)):
 @app.post("/capture")
 async def capture(request: OCRRequests):
     async with httpx.AsyncClient() as client:
-        response = await client.post('http://localhost:9876/preprocess', json=request.dict())
+        response = await client.post(API_ENDPOINT, json=request.dict())
     return response.json()
 
 
