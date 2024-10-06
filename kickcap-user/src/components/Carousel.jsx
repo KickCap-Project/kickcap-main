@@ -26,7 +26,13 @@ const s = {
     & .slick-dots li button:before {
       color: black;
     }
-  `,
+
+    @media (min-width: 768px) { // 태블릿
+      & .slick-dots {
+        bottom: 1.5rem; // 태블릿 화면에서 더 위로 이동
+      }
+    }
+`,
   SlideItem: styled.div`
     background-color: ${(props) => props.theme.AreaColor};
     border: 1px solid #d3d3d3;
@@ -100,20 +106,10 @@ const Carousel = () => {
           <s.Img src={Guide} />
         </s.SlideItem>
         <s.SlideItem>
-          <s.Title>원 클릭 신고</s.Title>
-          <s.Description>
-            <s.Text>킥보드 이용 중 사고 발생 시 클릭 한번으로 신고 가능!</s.Text>
-            <s.Text>신고 시 관할 경찰서에 자동으로 신고 접수가 되며</s.Text>
-            <s.Text>신고자 정보, 신고 시각, 위치정보 데이터가 사용됩니다.</s.Text>
-          </s.Description>
-          <s.Img src={Guide} />
-        </s.SlideItem>
-        <s.SlideItem>
           <s.Title>PM 관련 법률 챗봇 지원</s.Title>
           <s.Description>
             <s.Text>이동형 전동장치(PM)에 관한 궁금한 법률 정보를 챗봇이 제공!</s.Text>
             <s.Text>법을 잘 몰라도 챗봇이 친절히 알려줘요~</s.Text>
-            <s.Text>귀여운 챗봇은 오른쪽 하단에 위치해 있습니다.</s.Text>
           </s.Description>
           <s.Img src={Guide} />
         </s.SlideItem>
