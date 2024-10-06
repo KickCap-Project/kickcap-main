@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 const BASE_URL = "https://j11b102.p.ssafy.io/plate";
 const INSERT_API_ENDPONT = BASE_URL + "/insert";
 const IMAGE_API_ENDPONT = BASE_URL + "/image";
-const OCR_API_ENDPONT = BASE_URL + "/ocr";
+const OCR_API_ENDPONT = BASE_URL + "/capture";
 
 const VideoStream = () => {
     const videoRef = useRef(null);
@@ -120,8 +120,7 @@ const VideoStream = () => {
                 const ocrResponse = await axios.post(OCR_API_ENDPONT, ocrData);
 
                 if (ocrResponse.status === 200) {
-                    // 결과를 라벨에 표시
-                    setLabelResult(ocrResponse.data.result);
+                    console.log(ocrResponse)
                 }
             } catch (error) {
                 // 에러 처리

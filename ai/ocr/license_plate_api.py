@@ -181,6 +181,13 @@ async def capture_image(image: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"이미지 처리 중 오류 발생: {str(e)}")
 
 
+@app.post("/capture")
+async def capture(request: OCRRequests):
+    async with httpx.AsyncClient() as client:
+        response = await client.post('http://localhost:9876/preprocess', json=request.dict())
+    return response.json()
+
+
 # POST 요청 처리
 @app.post("/insert_crackdown")
 async def insert_crackdown(request: GetResultRequests):
