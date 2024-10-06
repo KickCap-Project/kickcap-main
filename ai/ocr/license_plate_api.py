@@ -93,6 +93,16 @@ class ResultRequests(BaseModel):
     ocr_img_src: str
     result_text: str
 
+# 데이터 모델 정의
+class GetResultRequests(BaseModel):
+    camera_idx: int
+    file_name: str
+    type: int
+    time: str
+    image_src: str
+    ocr_img_src: str
+    result_text: str
+
 @app.post("/insert")
 def gcooter_insert(request: GcooterRequests):
     lat = 36.355409
@@ -170,109 +180,99 @@ async def capture_image(image: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"이미지 처리 중 오류 발생: {str(e)}")
 
-@app.post("/ocr")
-async def ocr_endpoint(request: OCRRequests):
-    print('ocr 시작')
+
+# POST 요청 처리
+@app.post("/insert_crackdown")
+async def insert_crackdown(request: GetResultRequests):
+    # 요청 받은 데이터를 출력하거나 저장하는 작업 수행
+
+    # 현재 시간 (한국 시간)
+    now_kst = datetime.now(KST)
+
+    # TTL 설정을 위한 만료 시간 계산
+    expire_time = now_kst + timedelta(minutes=1)
+    expire_seconds = int((expire_time - now_kst).total_seconds())
+
+    # Redis에 키 저장 및 TTL 설정
+    key = f"{request.camera_idx}_{request.type}_{request.result_text}"
+
+    print(key)
+    if await redis_client.exists(key):
+        print(redis_client.ttl(key))
+        raise HTTPException(status_code=200, detail=f"Duplicate License Plate {redis_client.ttl(key)}")
+
+    connection = ''
+    cursor = ''
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(API_ENDPOINT, json=request.model_dump())
-            if response.status_code != 200:
-                raise HTTPException(status_code=response.status_code, detail=f"Error calling Preprocess API: {response.json().get('detail', 'No detail provided')}")
-            response_data = response.json()
+        connection = psycopg2.connect(
+            dbname=db_name,
+            user=db_user,
+            password=db_password,
+            host=db_host,
+            port=db_port
+        )
+        cursor = connection.cursor()
 
-            result = ResultRequests(
-                image_src=response_data.get("image_src"),
-                ocr_img_src=response_data.get("ocr_img_src"),
-                result_text=response_data.get("result_text")
-            )
+        crackdown_time = KST.localize(datetime.strptime(request.time, "%Y%m%d%H%M%S%f"))
 
-            # 현재 시간 (한국 시간)
-            now_kst = datetime.now(KST)
+        # 킥보드를 이용한 사람을 업체를 통해 찾음
+        select_query = '''
+                    SELECT name, phone
+                    FROM gcooter
+                    WHERE %s BETWEEN start_time AND end_time;
+                    '''
 
-            # TTL 설정을 위한 만료 시간 계산
-            expire_time = now_kst + timedelta(minutes=1)
-            expire_seconds = int((expire_time - now_kst).total_seconds())
+        cursor.execute(select_query, (now_kst,))
+        results = cursor.fetchall()
+        if not results:
+            print('Gcooter Not Found')
+            raise HTTPException(status_code=404, detail="Gcooter Not Found")
 
-            # Redis에 키 저장 및 TTL 설정
-            key = f"{request.camera_idx}_{request.type}_{result.result_text}"
+        # 킥보드를 이용한 member를 찾음
+        select_query = '''
+                    SELECT idx
+                    FROM member
+                    WHERE name = %s AND phone = %s;
+                    '''
+        name, phone = results[0]
+        cursor.execute(select_query, (name, phone,))
+        results = cursor.fetchall()
+        if not results:
+            print('Memeber Not Found')
+            raise HTTPException(status_code=404, detail="Memeber Not Found")
+        accused_idx = results[0]
 
-            print(key)
-            if await redis_client.exists(key):
-                print(redis_client.ttl(key))
-                raise HTTPException(status_code=200, detail=f"Duplicate License Plate {redis_client.ttl(key)}")
+        # # CCTV 신고에 데이터 추가
+        insert_query = '''
+                    INSERT INTO crackdown (cctv_idx, accused_idx, violation_type, image_src, crackdown_time, created_at)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    '''
+        data = (request.camera_idx, accused_idx[0], request.type, request.image_src, crackdown_time, now_kst)
+        cursor.execute(insert_query, data)
+        connection.commit()
+        print('Successfully Inserted')
+    except HTTPException as http_exc:
+        raise http_exc
 
-            connection = ''
-            cursor = ''
-            try:
-                connection = psycopg2.connect(
-                    dbname=db_name,
-                    user=db_user,
-                    password=db_password,
-                    host=db_host,
-                    port=db_port
-                )
-                cursor = connection.cursor()
+    except Exception as error:
+        print(error)
+        raise HTTPException(status_code=500, detail="DataBase Error")  # 데이터베이스 예외 처리
 
-                crackdown_time = KST.localize(datetime.strptime(request.time, "%Y%m%d%H%M%S%f"))
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            # print("PostgreSQL 연결이 닫혔습니다.")
 
-                # 킥보드를 이용한 사람을 업체를 통해 찾음
-                select_query = '''
-                SELECT name, phone
-                FROM gcooter
-                WHERE %s BETWEEN start_time AND end_time;
-                '''
+    await redis_client.setex(key, expire_seconds, 'processed')
+    return {
+        'cctv_idx': request.camera_idx,
+        'accused_idx': accused_idx[0],
+        'type': request.type,
+        'image_src': request.image_src,
+        'ocr_img_src': request.ocr_img_src,
+        'crackdown_time': crackdown_time,
+        'created_at': now_kst,
+        'result': request.result_text
+    }
 
-                cursor.execute(select_query, (now_kst, ))
-                results = cursor.fetchall()
-                if not results:
-                    raise HTTPException(status_code=404, detail="Gcooter Not Found")
-
-                # 킥보드를 이용한 member를 찾음
-                select_query = '''
-                SELECT idx
-                FROM member
-                WHERE name = %s AND phone = %s;
-                '''
-                name, phone = results[0]
-                cursor.execute(select_query, (name, phone, ))
-                results = cursor.fetchall()
-                if not results:
-                    raise HTTPException(status_code=404, detail="Memeber Not Found")
-                accused_idx = results[0]
-
-                # # CCTV 신고에 데이터 추가
-                insert_query = '''
-                INSERT INTO crackdown (cctv_idx, accused_idx, violation_type, image_src, crackdown_time, created_at)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                '''
-                data = (request.camera_idx, accused_idx[0], request.type, result.image_src, crackdown_time, now_kst)
-                cursor.execute(insert_query, data)
-                connection.commit()
-                print('여기까지 옴')
-            except HTTPException as http_exc:
-                raise http_exc
-
-            except Exception as error:
-                print(error)
-                raise HTTPException(status_code=500, detail="DataBase Error")  # 데이터베이스 예외 처리
-
-            finally:
-                if connection:
-                    cursor.close()
-                    connection.close()
-                    # print("PostgreSQL 연결이 닫혔습니다.")
-
-            await redis_client.setex(key, expire_seconds, 'processed')
-            print("여기까지 옴 2")
-            return {
-                'cctv_idx': request.camera_idx,
-                'accused_idx': accused_idx[0],
-                'type': request.type,
-                'image_src': result.image_src,
-                'ocr_img_src': result.ocr_img_src,
-                'crackdown_time': crackdown_time,
-                'created_at': now_kst,
-                'result': result.result_text
-            }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing OCR: {str(e)}")
