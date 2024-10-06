@@ -25,6 +25,7 @@ const s = {
 
     & .slick-dots li button:before {
       color: black;
+      font-size: 9px;
     }
 
     @media (min-width: 768px) { // 태블릿
