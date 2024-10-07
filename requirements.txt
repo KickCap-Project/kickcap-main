@@ -1,0 +1,12 @@
+dotenv
+langchain_community
+langchain_huggingface
+langchain_text_splitters
+langchain
+fastapi
+pdf2image
+requests
+tqdm
+getpass
+pydantic
+openai
