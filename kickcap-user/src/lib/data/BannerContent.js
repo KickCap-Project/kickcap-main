@@ -189,8 +189,8 @@ export const BannerContent = {
                 지원합니다.
               </TextIndent>
               <TextIndent>
-                챗봇은 사용자의 질문에 따라 <RedText>관련 법률 조항</RedText>을 빠르게 안내하며, 언제든지 편리하게 이용
-                가능합니다.
+                챗봇은 사용자의 질문에 따라 <RedText>관련 법률 조항</RedText>을 빠르게 안내하며,
+                <RedText>메인 페이지 우측 하단</RedText>의 아이콘을 눌러 언제든지 편리하게 이용 가능합니다.
               </TextIndent>
             </>
           ),
