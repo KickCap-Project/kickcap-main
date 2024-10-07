@@ -25,10 +25,6 @@ async def video_stream(request):
         try:
             async for msg in ws:
                 if msg.type == aiohttp.WSMsgType.BINARY:
-                    # 수신받은 데이터 크기 출력
-                    data_size = len(msg.data)
-                    print(f"Received data size: {data_size} bytes")
-
                     # 웹소켓으로부터 프레임 데이터 수신
                     frame = msg.data
                     # 넘파이 배열로 변환
