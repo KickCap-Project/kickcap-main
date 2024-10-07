@@ -52,7 +52,10 @@ async def video_stream(request):
                             if resp.status != 200:
                                 print(f"Error from FastAPI endpoint: {resp.status}")
                         # 주석 처리된 이미지를 다른 클라이언트들에게 브로드캐스트
-                        annotated_image_bytes = image_encoded.tobytes()
+
+                        resized_image = cv2.resize(image, (640, 360))
+                        _, resize_image_encoded = cv2.imencode('.jpg', resized_image)
+                        annotated_image_bytes = resize_image_encoded.tobytes()
                         for client in connected_clients:
                             if client != ws:
                                 await client.send_bytes(annotated_image_bytes)
