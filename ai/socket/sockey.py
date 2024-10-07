@@ -5,7 +5,6 @@ import numpy as np
 import aiohttp
 import os
 from dotenv import load_dotenv
-import aiohttp_cors  # Import aiohttp_cors for CORS handling
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
@@ -14,6 +13,7 @@ load_dotenv()
 API_ENDPOINT = os.getenv("API_ENDPOINT")
 
 connected_clients = set()
+
 
 async def video_stream(request):
     ws = web.WebSocketResponse()
@@ -26,8 +26,18 @@ async def video_stream(request):
         try:
             async for msg in ws:
                 if msg.type == aiohttp.WSMsgType.BINARY:
+                    # 수신받은 데이터 크기 출력
+                    data_size = len(msg.data)
+                    print(f"Received data size: {data_size} bytes")
+
                     # 웹소켓으로부터 프레임 데이터 수신
                     frame = msg.data
+
+                    # 원본 프레임을 다른 클라이언트에게 브로드캐스트
+                    for client in connected_clients:
+                        if client != ws:
+                            await client.send_bytes(frame)
+
                     # 넘파이 배열로 변환
                     nparr = np.frombuffer(frame, np.uint8)
                     # 이미지를 디코딩
@@ -39,15 +49,13 @@ async def video_stream(request):
                         # FastAPI 엔드포인트로 이미지 전송
                         files = {'image_file': image_encoded.tobytes()}
                         async with session.post(API_ENDPOINT, data=files) as resp:
-                            if resp.status == 200:
-                                # 응답으로 받은 주석 처리된 이미지 수신
-                                annotated_image_bytes = await resp.read()
-                                # 다른 클라이언트들에게 브로드캐스트
-                                for client in connected_clients:
-                                    if client != ws:
-                                        await client.send_bytes(annotated_image_bytes)
-                            else:
+                            if resp.status != 200:
                                 print(f"Error from FastAPI endpoint: {resp.status}")
+                        # 주석 처리된 이미지를 다른 클라이언트들에게 브로드캐스트
+                        annotated_image_bytes = image_encoded.tobytes()
+                        for client in connected_clients:
+                            if client != ws:
+                                await client.send_bytes(annotated_image_bytes)
                 elif msg.type == aiohttp.WSMsgType.ERROR:
                     print('ws connection closed with exception %s' % ws.exception())
         except Exception as e:
@@ -57,19 +65,9 @@ async def video_stream(request):
             print("Client disconnected")
     return ws
 
+
 app = web.Application()
-
-# CORS 설정 추가
-cors = aiohttp_cors.setup(app, defaults={
-    "*": aiohttp_cors.ResourceOptions(
-            allow_credentials=True,
-            expose_headers="*",
-            allow_headers="*",
-        )
-})
-
-# 라우트 추가 및 CORS 지원
-resource = cors.add(app.router.add_get('/video', video_stream))
+app.router.add_get('/video', video_stream)
 
 # 앱 실행
 web.run_app(app, port=8765)
