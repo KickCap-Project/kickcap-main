@@ -1,10 +1,8 @@
 package com.ssafy.kickcap.report.controller;
 
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
-import com.ssafy.kickcap.report.dto.ParkingReportRequestDto;
-import com.ssafy.kickcap.report.dto.RedisRequestDto;
-import com.ssafy.kickcap.report.dto.ReportListResponseDto;
-import com.ssafy.kickcap.report.dto.ReportResponseDto;
+import com.ssafy.kickcap.report.dto.*;
+import com.ssafy.kickcap.report.service.AccidentReportService;
 import com.ssafy.kickcap.report.service.ParkingReportService;
 import com.ssafy.kickcap.report.service.RealTimeReportService;
 import com.ssafy.kickcap.report.service.ReportService;
@@ -31,6 +29,7 @@ public class ReportController {
 
     private final RealTimeReportService realTimeReportService;
     private final ParkingReportService parkingReportService;
+    private final AccidentReportService accidentReportService;
     private final ReportService reportService;
     private final PoliceService policeService;
 
@@ -45,6 +44,13 @@ public class ReportController {
     @Operation(summary = "불법 주차 신고", description = "시민 사용자가 불법 주차 신고")
     public ResponseEntity<Void> saveParkingReport(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody ParkingReportRequestDto requestDto) {
         parkingReportService.saveParkingReportToRedis(principal.getId(), requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/accident")
+    @Operation(summary = "사고 신고", description = "시민 사용자가 사고 신고")
+    public ResponseEntity<Void> saveAccidentReport(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody AccidentReportRequestDto requestDto) {
+        accidentReportService.saveAccidentReport(principal.getId(), requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
