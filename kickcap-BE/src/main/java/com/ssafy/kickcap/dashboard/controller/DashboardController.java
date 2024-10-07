@@ -21,22 +21,25 @@ public class DashboardController {
 
     private final DashboardService dashboardService;
 
-    @GetMapping("/")
-    @Operation(summary = "전국 1주일 통계 데이터 조회", description = "전국의 일주일간 데이터를 조회합니다.")
-    public ResponseEntity<WeekResponse> NationwideWeekData() {
-        WeekResponse weekResponse = dashboardService.searchWeekData("","");
-        return ResponseEntity.ok().body(weekResponse);
-    }
+//    @GetMapping("")
+//    @Operation(summary = "전국 1주일 통계 데이터 조회", description = "전국의 일주일간 데이터를 조회합니다.")
+//    public ResponseEntity<WeekResponse> NationwideWeekData() {
+//        WeekResponse weekResponse = dashboardService.searchWeekData("","");
+//        return ResponseEntity.ok().body(weekResponse);
+//    }
 
-    @GetMapping("/weeks")
+    @GetMapping("")
     @Operation(summary = "시도 및 구군 1주일 통계 데이터 조회", description = "특정 시도의 또는 특정 구군의 일주일간 데이터를 조회합니다.")
     public ResponseEntity<WeekResponse> weekData(
-            @RequestParam String sido,
+            @RequestParam(required = false) String sido,
             @RequestParam(required = false) String gugun) {
 
         WeekResponse weekResponse;
 
-        if (gugun == null || gugun.isEmpty()) {
+        if (sido == null || sido.isEmpty()) {
+            // 시도가 제공되지 않았을 때 전국으로 조회
+            weekResponse = dashboardService.searchWeekData("","");
+        } else if (gugun == null || gugun.isEmpty()) {
             // 구군이 제공되지 않았을 때, 시도만으로 조회
             weekResponse = dashboardService.searchWeekData(sido,"");
         } else {
