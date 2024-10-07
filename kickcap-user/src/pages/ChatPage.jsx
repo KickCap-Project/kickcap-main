@@ -55,7 +55,7 @@ const ChatPage = () => {
       // axios
       const response = await sendMessage(input);
 
-      const botReply = { sender: 'bot', text: response.data };
+      const botReply = { sender: 'bot', text: response };
       setMessages((prevMessages) => [...prevMessages, botReply]);
     } catch (err) {}
 
