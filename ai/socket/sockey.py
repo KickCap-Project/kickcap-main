@@ -14,7 +14,6 @@ API_ENDPOINT = os.getenv("API_ENDPOINT")
 
 connected_clients = set()
 
-
 async def video_stream(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
@@ -60,7 +59,6 @@ async def video_stream(request):
             connected_clients.remove(ws)
             print("Client disconnected")
     return ws
-
 
 app = web.Application()
 app.router.add_get('/video', video_stream)
