@@ -143,15 +143,15 @@ public class DashboardService {
     }
 
     private BottomDateResponse getBottomDataByRegion(List<Long> stationIdxList) {
-        ZonedDateTime startDay = now.minusDays(1).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
-        ZonedDateTime endDay = now.toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime startDay = now.toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime endDay = now.plusDays(1).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
 
         Long tCrack = getCrackdownCountOfDay(stationIdxList,startDay,endDay);    // 오늘 단속 수
         Long tReport = getReportCountOfDay(stationIdxList,startDay,endDay);   // 오늘 신고 수
         Long tAccident = getAccidentCountOfDay(stationIdxList,startDay,endDay); // 오늘 사고 수
 
-        startDay = now.minusDays(2).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
-        endDay = now.minusDays(1).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+        startDay = now.minusDays(1).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+        endDay = now.toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
 
         Long yCrack = getCrackdownCountOfDay(stationIdxList,startDay,endDay);    // 전일 단속 수
         Long yReport = getReportCountOfDay(stationIdxList,startDay,endDay);   // 전일 신고 수
