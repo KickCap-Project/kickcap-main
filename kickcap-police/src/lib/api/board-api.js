@@ -12,15 +12,9 @@ const local = localAxios();
 //   await local.get(`/dashboard/weeks`, { params: { sido, gugun } }).then(success).catch(fail);
 // };
 
-export const gettest = async () => {
-  // 바텀 통계 데이터
-  const response = await local.get(`/dashboard/`);
-  return response.data; // 응답의 데이터를 반환
-};
-
 export const getWeekData = async (sido, gugun) => {
   // 바텀 통계 데이터
-  const response = await local.get(`/dashboard/weeks`, { params: { sido, gugun } });
+  const response = await local.get(`/dashboard`, { params: { sido, gugun } });
   return response.data; // 응답의 데이터를 반환
 };
 

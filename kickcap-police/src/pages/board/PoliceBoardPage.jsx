@@ -78,7 +78,7 @@ const PoliceBoardPage = () => {
   } = useQuery({
     queryKey: ['weekData', sido, gugun],
     queryFn: () => {
-      return sido ? getWeekData(sido, gugun) : gettest();
+      return getWeekData(sido, gugun);
     },
     enabled: false,
   });
