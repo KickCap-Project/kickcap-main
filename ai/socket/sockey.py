@@ -5,6 +5,7 @@ import numpy as np
 import aiohttp
 import os
 from dotenv import load_dotenv
+import aiohttp_cors  # Import aiohttp_cors for CORS handling
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
@@ -57,7 +58,18 @@ async def video_stream(request):
     return ws
 
 app = web.Application()
-app.router.add_get('/video', video_stream)
+
+# CORS 설정 추가
+cors = aiohttp_cors.setup(app, defaults={
+    "*": aiohttp_cors.ResourceOptions(
+            allow_credentials=True,
+            expose_headers="*",
+            allow_headers="*",
+        )
+})
+
+# 라우트 추가 및 CORS 지원
+resource = cors.add(app.router.add_get('/video', video_stream))
 
 # 앱 실행
 web.run_app(app, port=8765)
