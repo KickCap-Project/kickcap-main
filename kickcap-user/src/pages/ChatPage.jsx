@@ -55,9 +55,11 @@ const ChatPage = () => {
       // axios
       const response = await sendMessage(input);
 
-      const botReply = { sender: 'bot', text: response };
+      const botReply = { sender: 'bot', text: response.answer };
       setMessages((prevMessages) => [...prevMessages, botReply]);
-    } catch (err) {}
+    } catch (err) {
+      alert('메시지 전송에 실패했습니다. 나중에 다시 시도해주세요.');
+    }
 
     setInput('');
   };

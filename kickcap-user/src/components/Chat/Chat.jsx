@@ -57,7 +57,7 @@ const Chat = ({ messages }) => {
 
       {messages.map((msg, index) =>
         msg.sender === 'bot' ? (
-          <s.BotChatArea>
+          <s.BotChatArea key={index}>
             <s.Bot>{msg.text}</s.Bot>
           </s.BotChatArea>
         ) : (
