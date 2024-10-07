@@ -12,29 +12,40 @@ const VideoStream = () => {
     const socketRef = useRef(null);
     const [annotatedImage, setAnnotatedImage] = useState(null);
     const [labelResult, setLabelResult] = useState("");
-    // kickboard_number를 상태로 관리 (초기값을 빈 문자열로 설정)
-    const [kickboardNumber, setKickboardNumber] = useState("S4821");
-    const [inputName, setName] = useState("홍길동");
-    const [inputPhone, setPhone] = useState("+82 10-1111-2222");
+    // 상태 관리 묶음
+    const [userInfos, setUserInfos] = useState([
+        {
+            name: "유현진",
+            phone: "010-9204-6503",
+        },
+        {
+            name: "김종원",
+            phone: "010-6632-7764",
+        },
+        {
+            name: "오진영",
+            phone: "010-5056-6221",
+        }
+    ]);
+    const [selectedUserInfo, setSelectedUserInfo] = useState(0);
+    const [kickboardNumber, setKickboardNumber] = useState("M8765");
     const [inputMinute, setMinute] = useState("1");
     const [inputCameraIdx, setCameraIdx] = useState("1");
 
-    // 입력 값이 변경될 때 상태 업데이트
-    const handleInputNumberChange = (e) => {
+    const handleKickboardNumberChange = (e) => {
         setKickboardNumber(e.target.value);
     };
-    const handleInputNameChange = (e) => {
-        setName(e.target.value);
+    const handleUserInfoChange = (index) => {
+        setSelectedUserInfo(index);
     };
-    const handleInputPhoneChange = (e) => {
-        setPhone(e.target.value);
-    };
+
     const handleInputMinuteChange = (e) => {
         setMinute(e.target.value);
     };
     const handleInputCameraIdxChange = (e) => {
         setCameraIdx(e.target.value);
     };
+
 
     const getCurrentTimeString = () => {
         const now = new Date();
@@ -137,8 +148,8 @@ const VideoStream = () => {
         try {
             const response = await axios.post(INSERT_API_ENDPONT, {
                 kickboard_number: kickboardNumber,
-                phone: inputPhone,
-                name: inputName,
+                phone: userInfos[selectedUserInfo].phone,
+                name: userInfos[selectedUserInfo].name,
                 minute: inputMinute,
             });
 
@@ -257,24 +268,59 @@ const VideoStream = () => {
             </div>
             <div>
                 <div>
+                    <label>킥보드 번호: </label>
+                    <div>
+                        <input
+                            type="radio"
+                            value="M8765"
+                            checked={kickboardNumber === "M8765"}
+                            onChange={handleKickboardNumberChange}
+                        />
+                        M8765
+                        <input
+                            type="radio"
+                            value="A1234"
+                            checked={kickboardNumber === "A1234"}
+                            onChange={handleKickboardNumberChange}
+                        />
+                        A1234
+                    </div>
+                </div>
+                <div>
                     <label>camera_idx: </label>
                     <input value={inputCameraIdx} onChange={handleInputCameraIdxChange} />
-                </div>
-                <div>
-                    <label>name: </label>
-                    <input value={inputName} onChange={handleInputNameChange} />
-                </div>
-                <div>
-                    <label>phone: </label>
-                    <input value={inputPhone} onChange={handleInputPhoneChange} />
                 </div>
                 <div>
                     <label>유지 시간(분): </label>
                     <input value={inputMinute} onChange={handleInputMinuteChange} />
                 </div>
+
+
                 <div>
-                    <label>킥보드 번호: </label>
-                    <input value={kickboardNumber} onChange={handleInputNumberChange} />
+                    <label>사용자 정보: </label>
+                    <div>
+                        <input
+                            type="radio"
+                            value={0}
+                            checked={selectedUserInfo === 0}
+                            onChange={() => handleUserInfoChange(0)}
+                        />
+                        유현진 (010-9204-6503)
+                        <input
+                            type="radio"
+                            value={1}
+                            checked={selectedUserInfo === 1}
+                            onChange={() => handleUserInfoChange(1)}
+                        />
+                        김종원 (010-6632-7764)
+                        <input
+                            type="radio"
+                            value={2}
+                            checked={selectedUserInfo === 2}
+                            onChange={() => handleUserInfoChange(2)}
+                        />
+                        오진영 (010-5056-6221)
+                    </div>
                 </div>
 
                 <button onClick={handleInsert} style={{ width: "150px", height: "50px" }}>
