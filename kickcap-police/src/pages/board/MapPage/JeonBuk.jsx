@@ -48,8 +48,8 @@ const Jeonbuk = () => {
         version="1.2"
         baseProfile="tiny"
         viewBox="0 0 800 436"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <g id="전라북도_시군구_경계">
           <path

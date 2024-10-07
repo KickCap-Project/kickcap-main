@@ -48,8 +48,8 @@ const Chungnam = () => {
         version="1.2"
         baseProfile="tiny"
         viewBox="0 0 800 517"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <g id="충청남도_시군구_경계">
           <path

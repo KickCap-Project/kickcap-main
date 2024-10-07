@@ -17,10 +17,18 @@ const s = {
     justify-content: space-between;
     overflow-y: auto;
   `,
-  LoginArea: styled.div`
+  MainArea: styled.div`
     width: 50%;
     margin: 0 auto;
     padding: 10px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  `,
+  LoginArea: styled.div`
+    width: 100%;
   `,
   FormArea: styled.div`
     width: 70%;
@@ -30,6 +38,7 @@ const s = {
     background-color: ${(props) => props.theme.AreaColor};
     height: 20%;
     max-height: 100px;
+    min-height: 80px;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -91,36 +100,38 @@ const LoginPage = () => {
   return (
     <>
       <s.Container>
-        <s.LoginArea>
-          <IconSvg Ico={police} width={'250px'} display={'block'} margin={'20px auto'} />
-          <s.FormArea>
-            <Input
-              width={'100%'}
-              height={'40px'}
-              placeholder={'아이디를 입력해주세요.'}
-              display={'block'}
-              name={'policeId'}
-              onChange={handleChangeLogin}
-              onKeyDown={handleEnterSearch}
-              value={login.policeId}
-            />
-            <Input
-              type={'password'}
-              width={'100%'}
-              height={'40px'}
-              placeholder={'비밀번호를 입력해주세요.'}
-              display={'block'}
-              margin={'10px auto 30px'}
-              name={'password'}
-              onChange={handleChangeLogin}
-              onKeyDown={handleEnterSearch}
-              value={login.password}
-            />
-            <Button width={'100%'} height={'40px'} display={'block'} onClick={handleLogin}>
-              로 그 인
-            </Button>
-          </s.FormArea>
-        </s.LoginArea>
+        <s.MainArea>
+          <s.LoginArea>
+            <IconSvg Ico={police} width={'250px'} display={'block'} margin={'20px auto'} />
+            <s.FormArea>
+              <Input
+                width={'100%'}
+                height={'40px'}
+                placeholder={'아이디를 입력해주세요.'}
+                display={'block'}
+                name={'policeId'}
+                onChange={handleChangeLogin}
+                onKeyDown={handleEnterSearch}
+                value={login.policeId}
+              />
+              <Input
+                type={'password'}
+                width={'100%'}
+                height={'40px'}
+                placeholder={'비밀번호를 입력해주세요.'}
+                display={'block'}
+                margin={'10px auto 30px'}
+                name={'password'}
+                onChange={handleChangeLogin}
+                onKeyDown={handleEnterSearch}
+                value={login.password}
+              />
+              <Button width={'100%'} height={'40px'} display={'block'} onClick={handleLogin}>
+                로 그 인
+              </Button>
+            </s.FormArea>
+          </s.LoginArea>
+        </s.MainArea>
 
         <s.FooterArea>
           <s.IconArea>{/* <IconSvg Ico={police} width={'60px'} display={'block'} margin={'0 auto'} /> */}</s.IconArea>

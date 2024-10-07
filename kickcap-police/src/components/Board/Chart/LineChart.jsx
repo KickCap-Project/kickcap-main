@@ -12,6 +12,7 @@ import {
 import { Line } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels'; // 추가된 플러그인
 import styled from 'styled-components';
+import React from 'react';
 
 // 라이브러리 등록
 ChartJS.register(
@@ -38,7 +39,7 @@ const s = {
   `,
 };
 
-const LineChart = ({ labels, datas }) => {
+const LineChart = ({ title, labels, datas }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false, // 부모 요소의 크기에 맞게 차트의 비율을 유지하지 않음
@@ -47,6 +48,14 @@ const LineChart = ({ labels, datas }) => {
         display: false,
       },
       title: {
+        text: title,
+        position: 'top',
+        color: '#fff',
+        align: 'start',
+        padding: {
+          top: 0,
+          bottom: 30,
+        },
         display: true,
       },
       tooltip: {
@@ -100,4 +109,4 @@ const LineChart = ({ labels, datas }) => {
   );
 };
 
-export default LineChart;
+export default React.memo(LineChart);

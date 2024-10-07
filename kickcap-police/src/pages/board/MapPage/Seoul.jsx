@@ -52,8 +52,8 @@ const Seoul = () => {
         version="1.2"
         baseProfile="tiny"
         viewBox="0 0 800 700"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <g id="서울특별시_시군구_경계">
           <path

@@ -2,6 +2,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels'; // 추가된 플러그인
 import styled from 'styled-components';
+import React from 'react';
 
 // 라이브러리 등록
 ChartJS.register(
@@ -23,7 +24,7 @@ const s = {
   `,
 };
 
-const CircleChart = ({ labels, datas }) => {
+const CircleChart = ({ title, labels, datas }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false, // 부모 요소의 크기에 맞게 차트의 비율을 유지하지 않음
@@ -38,6 +39,17 @@ const CircleChart = ({ labels, datas }) => {
             size: 10,
           },
         },
+      },
+      title: {
+        text: title,
+        position: 'top',
+        color: '#fff',
+        align: 'start',
+        padding: {
+          top: 0,
+          bottom: 10,
+        },
+        display: true,
       },
       tooltip: {
         enabled: true, // tooltip 표시 여부
@@ -74,4 +86,4 @@ const CircleChart = ({ labels, datas }) => {
   );
 };
 
-export default CircleChart;
+export default React.memo(CircleChart);
