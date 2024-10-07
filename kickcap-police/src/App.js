@@ -149,7 +149,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </s.Container>
-      <BoardEmergencyModal open={true} toggleModal={handleOpenEmergency} data={emergencyData} />
+      {/* <BoardEmergencyModal open={true} toggleModal={handleOpenEmergency} data={emergencyData} /> */}
     </ThemeProvider>
   );
 }
