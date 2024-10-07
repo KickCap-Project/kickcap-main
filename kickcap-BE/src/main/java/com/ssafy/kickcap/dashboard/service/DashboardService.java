@@ -33,16 +33,17 @@ public class DashboardService {
     private final CctvInfoRepository cctvInfoRepository;
 
     // 현재 시간을 Asia/Seoul 타임존으로 가져오기
-    ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+    static ZonedDateTime now;
 
     // 현재 시간의 자정과 7일 전 자정 계산
-    ZonedDateTime startOfLastWeek = now.minusDays(7).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
-    ZonedDateTime startOfToday = now.toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+    static ZonedDateTime startOfLastWeek;
+    static ZonedDateTime startOfToday;
 
     // 일주일간 데이터를 조회합니다.
     public WeekResponse searchWeekData(String sido, String gugun) {
         List<Long> stationIdxList = regionCodeRepositoryImpl.findStationIdxByRegion(sido, gugun); // 해당 시도와 구군에 해당하는 stationIdx 목록 조회
 //        System.out.println(stationIdxList);
+        newDate();
         return getWeekDataByRegion(stationIdxList);
     }
 
@@ -138,6 +139,7 @@ public class DashboardService {
 
     /////////////////////////////////// 하단 데이터 ////////////////////////////////
     public BottomDateResponse searchBottomData(String sido, String gugun) {
+        newDate();
         List<Long> stationIdxList = regionCodeRepositoryImpl.findStationIdxByRegion(sido, gugun); // 해당 시도와 구군에 해당하는 stationIdx 목록 조회
         return getBottomDataByRegion(stationIdxList);
     }
@@ -182,6 +184,7 @@ public class DashboardService {
 
     ///////////////////////////////////////구군 마커 데이터 조회////////////////////////////////////////////
     public MarkersDataReponse searchGugunMarkerDate(String sido, String gugun) {
+        newDate();
         List<Long> stationIdxList = regionCodeRepositoryImpl.findStationIdxByRegion(sido, gugun); // 해당 시도와 구군에 해당하는 stationIdx 목록 조회
         return getMarkerDataByRegion(stationIdxList);
     }
@@ -263,6 +266,7 @@ public class DashboardService {
 
     //////////////// cctv info 조회///////////////////
     public CctvInfoReponse searchCctvInfoByTime(Long idx, int time) {
+        newDate();
         CCTVInfo cctvInfo = cctvInfoRepository.findById(idx).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
         List<CctvCrackdownResponse> cctvCrackdowns = getCrackdownByCctv(idx, time);
         return CctvInfoReponse.builder()
@@ -287,5 +291,14 @@ public class DashboardService {
                             .build());
         }
         return cctvCrackdownResponses;
+    }
+
+    private static void newDate(){
+        // 현재 시간을 Asia/Seoul 타임존으로 가져오기
+        now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+        // 현재 시간의 자정과 7일 전 자정 계산
+        startOfLastWeek = now.minusDays(7).toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
+        startOfToday = now.toLocalDate().atStartOfDay(ZoneId.of("Asia/Seoul"));
     }
 }
