@@ -54,6 +54,22 @@ public class ReportController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping("/accident")
+    @Operation(summary = "사고 신고 접수 가져오기")
+    public ResponseEntity<AccidentReportResponseDto> getAccidentReport(@AuthenticationPrincipal User user) {
+        Police police = policeService.findByPoliceId(user.getUsername());
+        AccidentReportResponseDto responseDto = accidentReportService.getAccidentReport(police);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/accident/{idx}")
+    @Operation(summary = "사고 출동 처리")
+    public ResponseEntity<Void> udpateIsRead(@AuthenticationPrincipal User user, @PathVariable Long idx) {
+        Police police = policeService.findByPoliceId(user.getUsername());
+        accidentReportService.updateIsRead(police, idx);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @GetMapping("/count")
     @Operation(summary = "관할 경찰서 미승인 데이터 개수 조회", description = "관할 경찰서 해당 단속 유형에 해당하는 미승인('UNAPPROVED') 데이터 개수를 반환합니다.")
     public ResponseEntity<Long> getUnApprovedReportCount(@AuthenticationPrincipal User user, @RequestParam Long violationType) {

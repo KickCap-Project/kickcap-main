@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -42,6 +43,10 @@ public class AccidentReport{
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
 
+    @Column(name = "is_read", nullable = false, length = 1)
+    @ColumnDefault(value = "'N'")
+    private String isRead;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"));
@@ -55,4 +60,8 @@ public class AccidentReport{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "police_idx", nullable = false)
     private Police police;
+
+    public void updateIsRead(String isRead) {
+        this.isRead = isRead;
+    }
 }
