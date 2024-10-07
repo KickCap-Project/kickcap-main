@@ -57,7 +57,7 @@ const BannerModal = ({ open, toggleModal }) => {
     <ReactModal isOpen={open} ariaHideApp={false} className="centerModal" overlayClassName="Overlay">
       <s.Container>
         <s.HeaderArea>
-          <Text size={20} bold={'800'} children={title} />
+          <Text size={'20px'} bold={'800'} children={title} />
         </s.HeaderArea>
         <s.MainArea>
           {content.map((item, index) => (
@@ -76,7 +76,6 @@ const BannerModal = ({ open, toggleModal }) => {
               height={'40px'}
               bold={'700'}
               size={'18px'}
-              margin={'20px auto'}
               onClick={() => toggleModal(false)}
             />
           </s.ButtonArea>

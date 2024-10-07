@@ -14,10 +14,9 @@ const s = {
   CarouselContainer: styled.div`
     position: relative;
     width: 90%;
-    padding-bottom: 2rem;
+    /* padding-bottom: 2rem; */
 
     & .slick-dots {
-      /* border: 2px solid black; */
       position: absolute;
       bottom: 1rem;
       left: 50%;
