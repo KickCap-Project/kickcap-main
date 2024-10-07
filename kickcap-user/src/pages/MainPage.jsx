@@ -159,10 +159,10 @@ const MainPage = () => {
         <s.SmallButtonWrapper>
           <MainButton
             type="small"
-            title="법률 챗봇"
-            description="궁금해요!"
-            imgSrc={ChatbotBtn}
-            onClick={() => handleMovePage('/chat')}
+            title="원 클릭 신고"
+            description="긴급 신고를 한번에!"
+            imgSrc={MainBtn2}
+            onClick={() => handleMovePage('/sos')}
           />
           <MainButton
             type="small"
@@ -173,7 +173,7 @@ const MainPage = () => {
           />
         </s.SmallButtonWrapper>
 
-        {/* <s.ChatbotButton src={ChatbotBtn} onClick={() => handleMovePage('chat')} /> */}
+        <s.ChatbotButton src={ChatbotBtn} onClick={() => handleMovePage('/chat')} />
       </s.MainArea>
 
       <Carousel />
