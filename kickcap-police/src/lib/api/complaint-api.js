@@ -2,6 +2,18 @@ import { localAxios } from '../../util/axios-setting';
 
 const local = localAxios();
 
+// export const getComplaintTotalCount = async (status, name) => {
+//   // 게시판 총 개수
+//   const response = await local.get(`/objections/policeCount`, { params: { status, name } });
+//   return response.data; // 응답의 데이터를 반환
+// };
+
+// export const getComplaintList = async (status, pageNo, name) => {
+//   // 목록 조회
+//   const response = await local.get(`/objections/police`, { params: { status, pageNo, name } });
+//   return response.data; // 응답의 데이터를 반환
+// };
+
 export const getComplaintTotalCount = async (status, name, success, fail) => {
   // 이의게시판 총 개수
   await local.get(`/objections/policeCount`, { params: { status, name } }).then(success).catch(fail);
