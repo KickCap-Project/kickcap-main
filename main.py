@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware  # CORSMiddleware를 올바르게 가져옴
 
 from vector_store import initialize_txtVectorstore, search_with_vectorstore, initialize_webVectorstore, load_vectorstore
 from rag_chain import get_rag_chain_response
@@ -48,6 +49,23 @@ async def lifespan(app: FastAPI):
 
 # FastAPI에 Lifespan 핸들러 등록
 app = FastAPI(lifespan=lifespan)
+
+# CORS 설정
+origins = [
+    "http://localhost:3000",  # 프론트엔드가 실행되고 있는 주소 (React 앱이 실행되는 로컬 주소)
+    "https://www.bardisue.store",    # 실제 배포된 프론트엔드 주소를 추가할 수 있습니다.
+    "https://j11b102.p.ssafy.io",
+    "https://www.arraylist.xyz",
+    "http://localhost:3001"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # 허용할 origin들을 설정
+    allow_credentials=True,
+    allow_methods=["*"],    # 허용할 HTTP 메서드 (GET, POST 등). 모든 메서드를 허용하려면 ["*"]
+    allow_headers=["*"],    # 허용할 헤더. 모든 헤더를 허용하려면 ["*"]
+)
 
 # "/ask" 경로에 POST 요청이 들어오면 실행되는 함수
 @app.post("/ask")
