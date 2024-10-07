@@ -69,15 +69,9 @@ const s = {
   `,
 };
 
-const BoardEmergencyModal = ({ open, toggleModal }) => {
+const BoardEmergencyModal = ({ open, toggleModal, data }) => {
   return (
-    <ReactModal
-      isOpen={open}
-      ariaHideApp={false}
-      onRequestClose={toggleModal}
-      className="centerSmallModal"
-      overlayClassName="Overlay"
-    >
+    <ReactModal isOpen={open} ariaHideApp={false} className="centerSmallModal" overlayClassName="Overlay">
       <s.Container>
         <s.Header>
           <Text
@@ -128,6 +122,7 @@ const BoardEmergencyModal = ({ open, toggleModal }) => {
               size={'20px'}
               display={'block'}
               margin={'0 auto'}
+              onClick={() => toggleModal(false)}
             />
           </s.InfoArea>
         </s.MainArea>
