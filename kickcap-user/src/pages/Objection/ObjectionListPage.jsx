@@ -72,7 +72,6 @@ const ObjectionListPage = () => {
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
-    console.log(`현재 status 값: ${newStatus}`);
   };
 
   // status가 변할 때 상태들을 초기화하는 함수

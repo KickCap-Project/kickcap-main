@@ -4,10 +4,12 @@ import persistStore from 'redux-persist/es/persistStore';
 import storageSession from 'redux-persist/lib/storage/session';
 import modalReducer from './modal';
 import locationReducer from './location';
+import carouselModalReducer from './carouselModal';
 
 const reducers = combineReducers({
   modal: modalReducer,
   location: locationReducer,
+  carouselModal: carouselModalReducer,
 });
 
 const persistConfig = {
