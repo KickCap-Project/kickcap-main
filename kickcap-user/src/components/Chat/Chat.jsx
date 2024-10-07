@@ -14,6 +14,7 @@ const s = {
     display: flex;
     justify-content: center;
     align-items: center;
+    line-height: 1.25;
   `,
   MyChat: styled.div`
     width: fit-content;
@@ -27,6 +28,7 @@ const s = {
     display: flex;
     justify-content: center;
     align-items: center;
+    line-height: 1.25;
   `,
   MyChatArea: styled.div`
     display: flex;
@@ -39,76 +41,31 @@ const s = {
   `,
 };
 
-const Chat = () => {
+const Chat = ({ messages }) => {
+  const info = JSON.parse(localStorage.getItem('Info'));
+  const name = info.name;
+
   return (
     <>
       <s.BotChatArea>
         <s.Bot>
-          무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을
-          도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을 도와드릴까요?무엇을
-          도와드릴까요?
+          {name}님! 오늘도 안전운행하세요!
+          <br />
+          오늘은 무엇을 도와드릴까요?
         </s.Bot>
       </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
-      </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
-      </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
-      </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
-      </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
-      </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
-      </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
-      </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.BotChatArea>
-        <s.Bot>무엇을 도와드릴까요?</s.Bot>
-      </s.BotChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
-      <s.MyChatArea>
-        <s.MyChat>킥보드 법률을 알려줘</s.MyChat>
-      </s.MyChatArea>
+
+      {messages.map((msg, index) =>
+        msg.sender === 'bot' ? (
+          <s.BotChatArea>
+            <s.Bot>{msg.text}</s.Bot>
+          </s.BotChatArea>
+        ) : (
+          <s.MyChatArea>
+            <s.MyChat>{msg.text}</s.MyChat>
+          </s.MyChatArea>
+        ),
+      )}
     </>
   );
 };
