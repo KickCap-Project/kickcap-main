@@ -86,7 +86,15 @@ function App() {
   //     handleOpenEmergency(true);
   //   }
   // }, [emergencyData]);
-
+  const test = {
+    idx: 2,
+    addr: '학하ㄷ동',
+    name: '유현진',
+    phone: '010-9204-6503',
+    time: '2024-10-07T08:01:49.675144Z',
+    lat: 36.35234,
+    lng: 127.35158,
+  };
   return (
     <ThemeProvider theme={basicTheme}>
       <GlobalStyle />
@@ -150,6 +158,7 @@ function App() {
         </BrowserRouter>
       </s.Container>
       {/* <BoardEmergencyModal open={true} toggleModal={handleOpenEmergency} data={emergencyData} /> */}
+      {/* <BoardEmergencyModal open={true} data={test} /> */}
     </ThemeProvider>
   );
 }

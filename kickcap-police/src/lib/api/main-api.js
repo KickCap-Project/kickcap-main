@@ -23,7 +23,7 @@ export const getEmergency = async () => {
   return response.data; // 응답의 데이터를 반환
 };
 
-export const getMove = async (idx, success, fail) => {
+export const postMove = async (idx, success, fail) => {
   //출동
   await local.post(`/reports/accident/${idx}`).then(success).catch(fail);
 };
