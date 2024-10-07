@@ -4,6 +4,7 @@ import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,6 +14,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Entity
+@Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
