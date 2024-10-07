@@ -18,7 +18,11 @@ image_queue = asyncio.Queue()
 
 async def broadcast_images():
     while True:
+        if image_queue.empty():
+            print('empty queue')
+            continue
         frame = await image_queue.get()  # Queue에서 데이터를 가져옴 (대기)
+        print(image_queue.qsize())
         for client in connected_clients:
             try:
                 await client.send_bytes(frame)  # 브로드캐스트
