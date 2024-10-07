@@ -77,8 +77,7 @@ export const BannerContent = {
           subcontent: (
             <>
               <TextIndent>
-                킥보드의 불량 이용 상황을 목격했을 때 제보 기능을 통해 신고하실 수 있습니다. 제보 시에는
-                <RedText>상황 사진과 킥보드 번호</RedText>를 입력해야 합니다.
+                킥보드의 불량 이용 상황을 목격했을 때 제보 기능을 통해 신고하실 수 있습니다. 제보 시에는  <RedText>상황 사진과 킥보드 번호</RedText>를 입력해야 합니다.
               </TextIndent>
               <br />
               <TextIndent>신고 대상은 다음과 같습니다.</TextIndent>
@@ -189,8 +188,7 @@ export const BannerContent = {
                 지원합니다.
               </TextIndent>
               <TextIndent>
-                챗봇은 사용자의 질문에 따라 <RedText>관련 법률 조항</RedText>을 빠르게 안내하며,
-                <RedText>메인 페이지 우측 하단</RedText>의 아이콘을 눌러 언제든지 편리하게 이용 가능합니다.
+                챗봇은 사용자의 질문에 따라 <RedText>관련 법률 조항</RedText>을 빠르게 안내하며,  <RedText>메인 페이지 우측 하단</RedText>의 아이콘을 눌러 언제든지 편리하게 이용 가능합니다.
               </TextIndent>
             </>
           ),
