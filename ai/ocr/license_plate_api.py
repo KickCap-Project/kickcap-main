@@ -263,7 +263,7 @@ async def insert_crackdown(request: GetResultRequests):
 
         # 고지서 만들기
         async with httpx.AsyncClient() as client:
-            response = await client.post(f'http://localhost:8081/bills/crackdown/{last_inserted_id}')
+            response = await client.post(f'https://www.arraylist.xyz/bills/crackdown/{last_inserted_id}')
             print(response)
 
 
