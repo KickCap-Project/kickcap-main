@@ -9,26 +9,35 @@ from dotenv import load_dotenv
 # .env 파일에서 환경 변수 로드
 load_dotenv()
 
-# 환경 변수에서 DB 연결 정보 가져오기
 API_ENDPOINT = os.getenv("API_ENDPOINT")
-
 connected_clients = set()
-image_queue = asyncio.Queue()
+image_queue = asyncio.Queue()  # 이미지 데이터를 저장할 큐
 
 
 async def broadcast_images():
     while True:
-        if image_queue.empty():
-            print('empty queue')
-            continue
-        frame = await image_queue.get()  # Queue에서 데이터를 가져옴 (대기)
-        print(image_queue.qsize())
-        for client in connected_clients:
-            try:
-                await client.send_bytes(frame)  # 브로드캐스트
-            except Exception as e:
-                print(f"Error broadcasting to client: {e}")
-        image_queue.task_done()  # Queue에서 작업이 완료되었음을 알림
+        try:
+            # 1초마다 큐에서 최대 3장의 이미지를 꺼내옴
+            images_to_broadcast = []
+            for _ in range(3):
+                try:
+                    # 큐에서 이미지를 비동기적으로 가져옴 (1초에 3장 처리)
+                    frame = await asyncio.wait_for(image_queue.get(), timeout=1)
+                    images_to_broadcast.append(frame)
+                except asyncio.TimeoutError:
+                    # 큐에 더 이상 이미지가 없는 경우, 남은 이미지만 처리
+                    break
+
+            # 이미지가 있는 경우만 브로드캐스트
+            if images_to_broadcast:
+                for client in connected_clients:
+                    for frame in images_to_broadcast:
+                        await client.send_bytes(frame)
+        except Exception as e:
+            print(f"Error during broadcasting: {e}")
+        finally:
+            # 다음 처리로 넘어가기 전에 1초 대기
+            await asyncio.sleep(1)
 
 
 async def video_stream(request):
@@ -49,7 +58,7 @@ async def video_stream(request):
                     # 웹소켓으로부터 프레임 데이터 수신
                     frame = msg.data
 
-                    # 원본 프레임을 Queue에 넣음
+                    # 큐에 프레임 추가 (1초마다 브로드캐스트됨)
                     await image_queue.put(frame)
 
                     # 넘파이 배열로 변환
@@ -66,10 +75,11 @@ async def video_stream(request):
                             if resp.status != 200:
                                 print(f"Error from FastAPI endpoint: {resp.status}")
 
-                        # 주석 처리된 이미지를 다른 클라이언트들에게 브로드캐스트 (Queue에 넣음)
+                        # 이미지 크기를 조정하고 주석 처리된 이미지를 큐에 추가
                         resized_image = cv2.resize(image, (640, 360))
                         _, resize_image_encoded = cv2.imencode('.jpg', resized_image)
                         annotated_image_bytes = resize_image_encoded.tobytes()
+
                         await image_queue.put(annotated_image_bytes)
                 elif msg.type == aiohttp.WSMsgType.ERROR:
                     print('ws connection closed with exception %s' % ws.exception())
@@ -84,9 +94,7 @@ async def video_stream(request):
 app = web.Application()
 app.router.add_get('/video', video_stream)
 
-# 브로드캐스트 작업을 별도의 비동기 태스크로 실행
+# 웹소켓 서버를 실행하면서, 큐의 데이터를 브로드캐스트하는 작업도 비동기로 실행
 loop = asyncio.get_event_loop()
 loop.create_task(broadcast_images())
-
-# 앱 실행
 web.run_app(app, port=8765)
