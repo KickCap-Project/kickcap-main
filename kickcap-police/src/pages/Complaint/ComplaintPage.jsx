@@ -107,7 +107,7 @@
 // };
 
 // export default ComplaintPage;
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import { ReactComponent as search } from '../../asset/svg/search.svg';
@@ -160,10 +160,10 @@ const ComplaintPage = () => {
   const location = useLocation();
 
   // useRef를 사용하여 name 상태를 관리
-  const nameRef = useRef('');
+  const phoneRef = useRef('');
 
   const handleChangeSearch = (e) => {
-    nameRef.current = e.target.value; // useRef를 통해 현재 입력값을 업데이트
+    phoneRef.current = e.target.value; // useRef를 통해 현재 입력값을 업데이트
   };
 
   const handleEnterSearch = (e) => {
@@ -200,15 +200,20 @@ const ComplaintPage = () => {
   //   alert('데이터를 불러오는 도중 에러가 발생했습니다.');
   // }
 
+  // useEffect(() => {
+  //   setSearchParams({ state, pageNo: 1 });
+  //   setPageNo(searchParams.get('pageNo'));
+  //   setState(searchParams.get('state'));
+  // }, [searchParams]);
+
   const handleClickSearch = async () => {
-    const name = nameRef.current; // useRef에서 현재 값을 가져옴
-    console.log(name);
-    setSearchParams({ state, pageNo: 1 });
+    const phone = phoneRef.current; // useRef에서 현재 값을 가져옴
+
     // refetchTotalPage();
     // refetchComplaintData();
     await getComplaintTotalCount(
-      state,
-      name ? name : null,
+      searchParams.get('state'),
+      phone ? phone : null,
       (resp) => {
         setTotalPage(resp.data);
       },
@@ -218,9 +223,9 @@ const ComplaintPage = () => {
     );
 
     await getComplaintList(
-      state,
-      pageNo,
-      name ? name : null,
+      searchParams.get('state'),
+      searchParams.get('pageNo'),
+      phone ? phone : null,
       (resp) => {
         setData(resp.data);
       },
@@ -236,17 +241,17 @@ const ComplaintPage = () => {
       {location.pathname === '/complaint' && (
         <s.searchArea>
           <s.searchInput
-            placeholder="작성자를 입력하세요"
+            placeholder="연락처로 검색해보세요. (-를 포함해주세요.)"
             type="text"
             onChange={handleChangeSearch}
-            defaultValue={nameRef.current} // 초기 값 설정
+            defaultValue={phoneRef.current} // 초기 값 설정
             onKeyDown={handleEnterSearch}
           />
           <IconSvg Ico={search} width={'30px'} cursor={'pointer'} onClick={handleClickSearch} />
         </s.searchArea>
       )}
       <s.mainArea>
-        <Outlet context={{ name: nameRef.current, data, setData, totalPage, setTotalPage }} />
+        <Outlet context={{ phone: phoneRef.current, data, setData, totalPage, setTotalPage }} />
       </s.mainArea>
     </s.Container>
   );

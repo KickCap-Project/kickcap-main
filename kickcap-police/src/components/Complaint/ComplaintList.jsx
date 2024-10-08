@@ -85,7 +85,7 @@ const ComplaintList = () => {
   const [state, setState] = useState(searchParams.get('state'));
   const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
   const [render, setRender] = useState(false);
-  const { name, data, setData, totalPage, setTotalPage } = useOutletContext();
+  const { phone, data, setData, totalPage, setTotalPage } = useOutletContext();
 
   useEffect(() => {
     setState(searchParams.get('state'));
@@ -124,7 +124,7 @@ const ComplaintList = () => {
     }
     getComplaintTotalCount(
       state,
-      name ? name : null,
+      phone ? phone : null,
       (resp) => {
         setTotalPage(resp.data);
       },
@@ -135,7 +135,7 @@ const ComplaintList = () => {
     getComplaintList(
       state,
       pageNo,
-      name ? name : null,
+      phone ? phone : null,
       (resp) => {
         setData(resp.data);
       },
