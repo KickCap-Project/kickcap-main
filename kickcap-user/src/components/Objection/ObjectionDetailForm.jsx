@@ -149,7 +149,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   const toModifyComplete = async (objectionId, title, content) => {
     try {
       const response = await putObjectionDetail(objectionId, title, content);
-      console.log(response.status);
 
       if (response.status === 204) {
         alert('수정이 정상적으로 완료되었습니다.');
