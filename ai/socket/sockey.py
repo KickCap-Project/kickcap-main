@@ -69,50 +69,49 @@ async def websocket_handler(request):
             await ws.close(message='Another camera is already connected with this camera_idx')
             return ws
         connected_cameras[camera_idx] = ws
+        async with ClientSession() as session:
+            try:
+                async for msg in ws:
+                    if msg.type == WSMsgType.BINARY:
+                        # 수신받은 데이터 크기 출력
+                        data_size = len(msg.data)
+                        print(f"Received data size: {data_size} bytes")
 
-        try:
-            async for msg in ws:
-                if msg.type == WSMsgType.BINARY:
-                    # 수신받은 데이터 크기 출력
-                    data_size = len(msg.data)
-                    print(f"Received data size: {data_size} bytes")
+                        frame_data = msg.data
 
-                    frame_data = msg.data
+                        # 큐가 가득 찼을 경우 가장 오래된 데이터를 제거
+                        queue = image_queues[camera_idx]
+                        if queue.full():
+                            print(f"Queue for camera_idx {camera_idx} is full. Discarding oldest frame.")
+                            await queue.get()
+                            queue.task_done()
 
-                    # 큐가 가득 찼을 경우 가장 오래된 데이터를 제거
-                    queue = image_queues[camera_idx]
-                    if queue.full():
-                        print(f"Queue for camera_idx {camera_idx} is full. Discarding oldest frame.")
-                        await queue.get()
-                        queue.task_done()
+                        # 큐에 이미지 데이터 저장
+                        await queue.put(frame_data)
 
-                    # 큐에 이미지 데이터 저장
-                    await queue.put(frame_data)
+                        # 넘파이 배열로 변환
+                        nparr = np.frombuffer(msg.data, np.uint8)
+                        # 이미지를 디코딩
+                        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-                    # 넘파이 배열로 변환
-                    nparr = np.frombuffer(msg.data, np.uint8)
-                    # 이미지를 디코딩
-                    image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                        if image is not None:
+                            # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+                            _, image_encoded = cv2.imencode('.jpg', image)
+                            # FastAPI 엔드포인트로 이미지 전송
+                            files = {
+                                'image_file': image_encoded.tobytes()
+                            }
+                            async with session.post(API_ENDPOINT, data=files) as resp:
+                                if resp.status != 200:
+                                    print(f"Error from FastAPI endpoint: {resp.status}")
 
-                    if image is not None:
-                        # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
-                        _, image_encoded = cv2.imencode('.jpg', image)
-                        # FastAPI 엔드포인트로 이미지 전송
-                        files = {
-                            'image_file': image_encoded.tobytes()
-                        }
-                        async with session.post(API_ENDPOINT, data=files) as resp:
-                            if resp.status != 200:
-                                print(f"Error from FastAPI endpoint: {resp.status}")
-
-                elif msg.type == WSMsgType.ERROR:
-                    print(f"Camera connection closed with exception {ws.exception()}")
-        except Exception as e:
-            print(f"Camera WebSocket error: {e}")
-        finally:
-            del connected_cameras[camera_idx]
-            print(f"Camera disconnected with camera_idx: {camera_idx}")
-
+                    elif msg.type == WSMsgType.ERROR:
+                        print(f"Camera connection closed with exception {ws.exception()}")
+            except Exception as e:
+                print(f"Camera WebSocket error: {e}")
+            finally:
+                del connected_cameras[camera_idx]
+                print(f"Camera disconnected with camera_idx: {camera_idx}")
     elif role == 'client':
         connected_clients[camera_idx].add(ws)
         try:
