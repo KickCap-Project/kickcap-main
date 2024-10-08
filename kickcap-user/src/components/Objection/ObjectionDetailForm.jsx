@@ -123,7 +123,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
       : {
           defaultValue: fieldType === 'title' ? title : content,
           mode: 'read',
-          minheight: '20vh',
+          minheight: contentType === 'content' ? '30vh' : '15vh',
           readOnly: true,
           ref: contentType === 'content' ? contentAreaRef : responseContentAreaRef,
         };
