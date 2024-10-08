@@ -143,8 +143,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
         }, 0);
       }
     } catch (err) {
-      console.log(`이의제기 삭제 중 문제 발생: ${err}`);
-      alert(`이의제기 삭제 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.`);
     }
   };
 
@@ -161,8 +159,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
         window.location.reload();
       }
     } catch (err) {
-      console.log(`이의제기 삭제 중 문제 발생: ${err}`);
-      alert(`이의제기 수정 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.`);
     }
   };
 

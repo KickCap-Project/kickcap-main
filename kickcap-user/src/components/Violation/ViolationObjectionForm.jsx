@@ -45,20 +45,15 @@ const ViolationObjectionForm = ({ id }) => {
     }
 
     setError('');
-    console.log(`title: ${title}`);
-    console.log(`content: ${content}`);
 
     try {
       const response = await submitObjection(id, title, content);
-
-      console.log(`response.status: ${response.status}`);
 
       if (response && response.status === 201) {
         navigate('success');
       }
     } catch (err) {
-      console.log(`이의제기 제출 중 오류 발생: ${err}`);
-      setError('이의제기 제출에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      setError('이의제기 제출에 실패했습니다.');
     }
   };
 

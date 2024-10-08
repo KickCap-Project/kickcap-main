@@ -126,9 +126,8 @@ const ViolationDetailPage = () => {
           }
 
           setDetail(detailResponse);
-          console.log('세부 항목을 불러오는 데 성공했습니다.');
         } catch (err) {
-          console.error(`Error fetching detail data: ${err}`);
+          // console.error(`Error fetching detail data: ${err}`);
         } finally {
           setIsLoading(false);
         }
@@ -149,7 +148,7 @@ const ViolationDetailPage = () => {
           const imgFileURL = URL.createObjectURL(imgFileResponse);
           setImgFile(imgFileURL);
         } catch (err) {
-          console.error(`Error fetching image data: ${err}`);
+          // console.error(`Error fetching image data: ${err}`);
         }
       }
     };

@@ -45,7 +45,6 @@ const ObjectionDetailPage = () => {
         setObjectionDetail(response.data);
       }
     } catch (err) {
-      console.log(`이의제기 상세 조회를 불러오는 중 문제가 발생했습니다: ${err}`);
     }
   };
 

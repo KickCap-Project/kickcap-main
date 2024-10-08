@@ -49,7 +49,6 @@ const ReportMainPage = () => {
 
   const navigate = useNavigate();
   const handleMovePage = (path) => {
-    console.log(path);
     navigate(path);
   };
 

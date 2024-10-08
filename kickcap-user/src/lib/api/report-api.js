@@ -7,9 +7,9 @@ export const uploadImg = async (imgFile, violationType) => {
     formData.append('image', imgFile);
 
     const response = await imgLocalAxios.post(`/image/upload/type${violationType}`, formData);
-    console.log(response.data);
+
     return response.data;
   } catch (err) {
-    console.log(`uploadImg error: ${err}`);
+    alert('이미지 업로드 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
   }
 };

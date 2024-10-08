@@ -134,11 +134,6 @@ const OneClickReportPage = () => {
     try {
       const { lat, lng, address, code } = await reportSOS();
 
-      console.log(`lat: ${lat}`);
-      console.log(`lng: ${lng}`);
-      console.log(`addr: ${address}`);
-      console.log(`code: ${code}`);
-
       await axiosInstance.post('/reports/accident', {
         lat,
         lng,
