@@ -203,14 +203,6 @@ const ReportMisuseForm = () => {
     }
   }, [typeCheck]);
 
-  useEffect(() => {
-    if (typeRequest) {
-      console.log(`최대 벌금 항목: ${ViolationType[typeRequest].type}`);
-      console.log(`index: ${typeRequest}`);
-      console.log(`벌금: ${ViolationType[typeRequest].fine}`);
-    }
-  }, [typeRequest]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -237,16 +229,11 @@ const ReportMisuseForm = () => {
         reportTime: date,
       };
 
-      const response = await axiosInstance.post('/reports/real-time', payload);
+      await axiosInstance.post('/reports/real-time', payload);
 
-      if (response.status === 201) {
-        navigate('/report/real-time/success');
-      } else {
-        alert('신고 제출에 실패했습니다.');
-      }
+      navigate('/report/real-time/success');
     } catch (error) {
       // 신고 제출 오류
-      console.log('신고 제출 중 오류 발생: ' + error);
       alert('입력 정보를 다시 한 번 확인해주세요.');
     }
   };

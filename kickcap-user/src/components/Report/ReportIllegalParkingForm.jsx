@@ -108,7 +108,6 @@ const ReportIllegalParkingForm = () => {
             // setDate(allMetaData.DateTimeOriginal || '정보 없음');
             const convertDate = convertExifToISO(allMetaData.DateTimeOriginal);
             setDate(convertDate || '정보 없음');
-            console.log(allMetaData);
           });
         };
       };
