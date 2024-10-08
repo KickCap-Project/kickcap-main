@@ -60,9 +60,9 @@ public class ObjectionController {
     @GetMapping("/police")
     @Operation(summary = "이의제기 목록 조회 (경찰용)")
     public ResponseEntity<List<ObjectionListResponse>> getPoliceObjections(@AuthenticationPrincipal User user, @RequestParam int status,
-                                                                     @RequestParam int pageNo, @RequestParam(required = false) String name){
+                                                                     @RequestParam int pageNo, @RequestParam(required = false) String phone){
         Police police = policeService.findByPoliceId(user.getUsername());
-        List<ObjectionListResponse> objections = objectionService.getObjections(police.getId(), status, pageNo, 10, name);
+        List<ObjectionListResponse> objections = objectionService.getObjections(police.getId(), status, pageNo, 10, phone);
         return ResponseEntity.ok(objections);
     }
 

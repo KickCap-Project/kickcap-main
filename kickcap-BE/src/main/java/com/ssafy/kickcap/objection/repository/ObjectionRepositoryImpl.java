@@ -57,13 +57,13 @@ public class ObjectionRepositoryImpl {
                 .fetchOne();
     }
 
-    public List<ObjectionListResponse> findObjections(Long policeId, int status, String name, Pageable pageable) {
+    public List<ObjectionListResponse> findObjections(Long policeId, int status, String phone, Pageable pageable) {
 
 
         BooleanExpression condition = objection.policeIdx.eq(policeId);
 
-        if (name != null && !name.isEmpty()) {
-            condition = condition.and(objection.member.name.eq(name));
+        if (phone != null && !phone.isEmpty()) {
+            condition = condition.and(objection.member.phone.eq(phone));
         }
 
         // Postgres TO_CHAR 사용하여 날짜 형식을 'yyyy.MM.dd'로 변환

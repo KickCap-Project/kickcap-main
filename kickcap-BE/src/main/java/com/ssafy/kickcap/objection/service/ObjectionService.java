@@ -22,12 +22,16 @@ import com.ssafy.kickcap.report.entity.Report;
 import com.ssafy.kickcap.report.repository.ReportRepository;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
+import com.ssafy.kickcap.user.repository.MemberRepository;
+import com.ssafy.kickcap.user.service.MemberService;
+import com.ssafy.kickcap.violationtype.repository.ViolationTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.Period;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -43,6 +47,9 @@ public class ObjectionService {
     private final CrackdownRepository crackdownRepository;
     private final ReportRepository reportRepository;
     private final FirebaseMessageService messageService;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final ViolationTypeRepository violationTypeRepository;
 
     public void modifyObjectionByObjectionId(Member member, Long objectionId, BillObjectionDto objectionDto) {
         // Objection 조회
@@ -92,9 +99,9 @@ public class ObjectionService {
     }
 
     ///// 경찰 이의제기 목록 조회 /////
-    public List<ObjectionListResponse> getObjections(Long policeId, int status, int pageNo, int pageSize, String name) {
+    public List<ObjectionListResponse> getObjections(Long policeId, int status, int pageNo, int pageSize, String phone) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize); // 페이지는 0부터 시작하므로 -1
-        return objectionRepositoryImpl.findObjections(policeId, status, name, pageable);
+        return objectionRepositoryImpl.findObjections(policeId, status, phone, pageable);
     }
 
     ///// 일반 시민 이의제기 목록 조회 /////
@@ -144,14 +151,15 @@ public class ObjectionService {
 
         Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
 
-        // 이의제기 생성 일시와 경찰 답변 일시 사이의 차이를 계산 (Duration 사용)
-        Duration durationBetween = Duration.between(objection.getCreatedAt(), answer.getCreatedAt());
+        // 이의제기 생성 일시와 경찰 답변 일시 사이의 차이를 계산 (Period 사용)
+        Period periodBetween = Period.between(objection.getCreatedAt().toLocalDate(), answer.getCreatedAt().toLocalDate());
 
-        // 계산된 차이를 bill의 deadline에 더함
-        ZonedDateTime plusDay = bill.getDeadline().plus(durationBetween);
+        // 계산된 차이를 bill의 deadline에 더함 (시간은 그대로 유지하고 일수만 더함)
+        ZonedDateTime plusDay = bill.getDeadline().plus(periodBetween);
 
         bill.refusalObjection(plusDay);
         billRepository.save(bill);
+
         messageService.sendMessage(objection.getMember().getId(), NotificationType.REPLY, bill.getId());
     }
 
@@ -170,6 +178,16 @@ public class ObjectionService {
 
         bill.cancelByObjection();
         billRepository.save(bill);
+        Member member = bill.getMember();
+        if (bill.getReportType().equals(ReportType.CCTV)){
+            Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+            member.cancelDemerit(violationTypeRepository.findById(crackdown.getViolationType().getId()).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND)).getScore());
+        } else {
+            Report report = reportRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+            member.cancelDemerit(violationTypeRepository.findById(report.getViolationType().getId()).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND)).getScore());
+        }
+        memberRepository.save(member);
+
         messageService.sendMessage(objection.getMember().getId(), NotificationType.REPLY, bill.getId());
     }
 }
