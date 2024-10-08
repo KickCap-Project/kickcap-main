@@ -65,6 +65,10 @@ async def websocket_handler(request):
         try:
             async for msg in ws:
                 if msg.type == WSMsgType.BINARY:
+                    # 수신받은 데이터 크기 출력
+                    data_size = len(msg.data)
+                    print(f"Received data size: {data_size} bytes")
+
                     frame_data = msg.data
 
                     # 큐가 가득 찼을 경우 가장 오래된 데이터를 제거
