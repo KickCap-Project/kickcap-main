@@ -60,7 +60,6 @@ const s = {
   Td: styled.td`
     vertical-align: middle;
     border-bottom: 1px solid ${(props) => props.theme.btnOff};
-    border: 1px solid red;
   `,
   noData: styled.td`
     vertical-align: middle;
