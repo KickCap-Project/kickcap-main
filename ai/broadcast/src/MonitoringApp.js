@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 
 const MonitoringApp = () => {
     const [annotatedImage, setAnnotatedImage] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
     const socketRef = useRef(null);
     const cameraIdx = 1;
     const reconnectTimeoutRef = useRef(null);
@@ -14,6 +15,7 @@ const MonitoringApp = () => {
 
         socketRef.current.onopen = () => {
             console.log("WebSocket 연결 성공");
+            setIsConnected(true); // 연결 상태를 true로 설정
         };
 
         socketRef.current.onmessage = (event) => {
@@ -25,6 +27,7 @@ const MonitoringApp = () => {
 
         socketRef.current.onclose = () => {
             console.log("WebSocket 연결 종료");
+            setIsConnected(false); // 연결 상태를 false로 설정
             setAnnotatedImage(null); // 연결이 끊어지면 이미지 초기화
 
             // 10초 후에 재연결 시도
@@ -55,7 +58,7 @@ const MonitoringApp = () => {
 
     return (
         <div>
-            {annotatedImage ? (
+            {isConnected && annotatedImage ? (
                 <img src={annotatedImage} alt="Received Frame" style={{ width: "640px", height: "360px" }} />
             ) : (
                 <p>영상 수신 중...</p>
