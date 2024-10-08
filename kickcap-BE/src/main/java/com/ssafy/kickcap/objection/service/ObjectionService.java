@@ -92,9 +92,9 @@ public class ObjectionService {
     }
 
     ///// 경찰 이의제기 목록 조회 /////
-    public List<ObjectionListResponse> getObjections(Long policeId, int status, int pageNo, int pageSize, String name) {
+    public List<ObjectionListResponse> getObjections(Long policeId, int status, int pageNo, int pageSize, String phone) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize); // 페이지는 0부터 시작하므로 -1
-        return objectionRepositoryImpl.findObjections(policeId, status, name, pageable);
+        return objectionRepositoryImpl.findObjections(policeId, status, phone, pageable);
     }
 
     ///// 일반 시민 이의제기 목록 조회 /////
