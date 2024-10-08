@@ -47,6 +47,7 @@ const OneClickReportPage = () => {
     '킥보드 이용 중 긴급 상황 발생 시\n 가까운 관할 경찰서로 신고가 접수됩니다.\n\n[제공 정보]\n신고자 정보 및 GPS 위치';
   const bottomText = '허위 신고 적발 시 112신고처리법에 따라\n형사처벌을 받을 수 있습니다.';
 
+  // 1. 위치 반환
   const getGeolocation = () => {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
@@ -57,21 +58,25 @@ const OneClickReportPage = () => {
     });
   };
 
+  // 위치로부터 주소 및 법정동코드 반환
   const getAddressAndCode = async (lat, lng) => {
     return new Promise((resolve, reject) => {
       if (kakao && kakao.maps.services) {
         const geocoder = new kakao.maps.services.Geocoder();
 
+        // 2. 위치로부터 주소 수신
         geocoder.coord2Address(lng, lat, (result, status) => {
           if (status === kakao.maps.services.Status.OK) {
             const address = result[0].road_address?.address_name || result[0].address?.address_name;
 
             if (!address) return reject('주소 정보를 찾을 수 없습니다.');
 
+            // 3. 위치로부터 법정동코드 수신
             geocoder.coord2RegionCode(lng, lat, (regionResult, regionStatus) => {
               if (regionStatus === kakao.maps.services.Status.OK) {
                 const regionCode = regionResult.find((region) => region.region_type === 'B')?.code;
 
+                // 4. 주소, 법정동코드 반환
                 if (regionCode) {
                   resolve({ address, code: regionCode });
                 } else {
@@ -93,9 +98,11 @@ const OneClickReportPage = () => {
 
   const reportSOS = async () => {
     try {
+      // 위/경도 반환
       const pos = await getGeolocation();
       const { latitude: lat, longitude: lng } = pos.coords;
 
+      // 주소, 법정동코드 반환
       const { address, code } = await getAddressAndCode(lat, lng);
 
       return { lat, lng, address, code };
