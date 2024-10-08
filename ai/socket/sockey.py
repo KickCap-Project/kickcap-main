@@ -16,28 +16,34 @@ API_ENDPOINT = os.getenv("API_ENDPOINT")
 image_queues = defaultdict(asyncio.Queue)  # 각 카메라의 이미지 데이터를 저장하는 큐
 connected_clients = defaultdict(set)  # 각 camera_idx에 연결된 클라이언트
 connected_cameras = {}  # 연결된 카메라들: {camera_idx: websocket}
+last_frames = {}  # 각 camera_idx의 마지막 프레임 저장
 
 # 큐에서 이미지를 가져와 해당 클라이언트들에게 브로드캐스트하는 함수
 async def broadcast_frames():
     while True:
-        tasks = []
-        for camera_idx, queue in image_queues.items():
+        for camera_idx in list(image_queues.keys()):
+            queue = image_queues[camera_idx]
+            frame = None
+
             if not queue.empty():
                 frame = await queue.get()
-                clients = connected_clients.get(camera_idx, [])
+                print(queue.qsize())
+                last_frames[camera_idx] = frame  # 마지막 프레임 저장
+                queue.task_done()
+            else:
+                # 큐가 비어 있을 때 마지막 프레임 사용
+                frame = last_frames.get(camera_idx)
+
+            if frame:
+                clients = connected_clients.get(camera_idx, set())
                 if clients:
-                    for ws in clients:
+                    for ws in clients.copy():
                         try:
                             await ws.send_bytes(frame)
                         except Exception as e:
                             print(f"Error broadcasting to client: {e}")
-                queue.task_done()
-
-                # 필요에 따라 이미지 처리를 위해 추가 작업을 수행할 수 있습니다.
-                # 예: FastAPI 엔드포인트로 이미지 전송 등
-            else:
-                # 큐에 데이터가 없더라도 폴링을 계속 진행
-                await asyncio.sleep(0.1)
+                            connected_clients[camera_idx].remove(ws)
+            await asyncio.sleep(0.1)
         await asyncio.sleep(0.1)
 
 # 카메라와 클라이언트 모두를 처리하는 WebSocket 엔드포인트
