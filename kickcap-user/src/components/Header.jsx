@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Text from './Common/Text';
 import BackSvg from './../asset/img/svg/back.svg';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 
 const s = {
   HeaderArea: styled.div`
@@ -25,12 +25,13 @@ const s = {
 
 const Header = ({ title }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleBackClick = () => {
-    if (window.history.length > 1) {
-      navigate(-1); // 이전 페이지가 있으면 뒤로가기
+    if (location.pathname === '/main/notification') {
+      navigate('/main');
     } else {
-      navigate('/main'); // 이전 페이지가 히스토리 스택에 없으면 메인 페이지로 이동 (ex. 푸시 알림을 눌러 알림 목록 페이지로 이동 시)
+      navigate(-1);
     }
   };
 
