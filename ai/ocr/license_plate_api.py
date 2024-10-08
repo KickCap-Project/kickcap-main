@@ -255,6 +255,7 @@ async def insert_crackdown(request: GetResultRequests):
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                     RETURNING idx
                     '''
+        print(f'{crackdown_time}: ')
         data = (request.camera_idx, accused_idx[0], request.type, request.image_src, crackdown_time, now_kst, request.result_text)
         cursor.execute(insert_query, data)
         last_inserted_id = cursor.fetchone()[0]  # 첫 번째 컬럼이 자동 증가 값 (ai)임
