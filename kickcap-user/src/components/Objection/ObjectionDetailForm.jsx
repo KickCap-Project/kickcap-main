@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import Input from './../Common/Input';
@@ -43,7 +43,7 @@ const s = {
     background-color: ${(props) => props.theme.WriteInput};
     color: ${(props) => props.theme.textColor};
     width: 100%;
-    height: ${(props) => props.height};
+    min-height: ${(props) => props.minheight || '100px'};
     font-weight: ${(props) => props.bold || '500'};
     font-size: ${(props) => props.size || '15px'};
     border-radius: 10px;
@@ -52,6 +52,7 @@ const s = {
     padding: 10px;
     white-space: pre-line;
     outline: none;
+    overflow-y: hidden;
   `,
   Response: styled.div`
     width: 100%;
@@ -75,6 +76,11 @@ const s = {
   `,
 };
 
+const autoResizeTextarea = (textarea) => {
+  textarea.style.height = 'auto';
+  textarea.style.height = `${textarea.scrollHeight}px`;
+};
+
 const ObjectionDetailForm = ({ objectionDetail }) => {
   // 상태관리 추후 변경
   const [modifyMode, setModifyMode] = useState(false);
@@ -86,7 +92,22 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
 
   const id = useLocation().state?.idx || null;
 
-  const inputProps = (fieldType) => {
+  const contentAreaRef = useRef(null);
+  const responseContentAreaRef = useRef(null);
+
+  useEffect(() => {
+    if (contentAreaRef.current) {
+      autoResizeTextarea(contentAreaRef.current);
+    }
+  }, [content]);
+
+  useEffect(() => {
+    if (responseContentAreaRef.current) {
+      autoResizeTextarea(responseContentAreaRef.current);
+    }
+  }, [responseContent]);
+
+  const inputProps = (fieldType, contentType) => {
     const setValue = (fieldType, value) => {
       fieldType === 'title' ? setTitle(value) : setContent(value);
     };
@@ -96,12 +117,15 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
           defaultValue: fieldType === 'title' ? title : content,
           mode: '',
           readOnly: false,
+          minheight: '35vh',
           onChange: (e) => setValue(fieldType, e.target.value),
         }
       : {
           defaultValue: fieldType === 'title' ? title : content,
           mode: 'read',
+          minheight: contentType === 'content' ? '30vh' : '15vh',
           readOnly: true,
+          ref: contentType === 'content' ? contentAreaRef : responseContentAreaRef,
         };
   };
 
@@ -180,7 +204,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
       <s.Form>
         <s.Input type="text" {...inputProps('title')} />
         <br />
-        <s.TextArea type="text" height={'35vh'} {...inputProps('content')} />
+        <s.TextArea type="text" {...inputProps('content', 'content')} />
         {responseContent ? (
           <>
             <s.Response>
@@ -193,7 +217,8 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
                   {convertTimeString(responseDate, 'YMD')}
                 </Text>
               </s.ResponseHeader>
-              <s.TextArea type="text" height={'15vh'} defaultValue={responseContent} mode={'read'} readOnly={true} />
+              {/* <s.TextArea type="text" defaultValue={responseContent} mode={'read'} readOnly={true} /> */}
+              <s.TextArea type="text" defaultValue={responseContent} {...inputProps('content', 'responseContent')} />
               <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('navigate', e)} margin={'15px'}>
                 단속 내역
               </Button>
