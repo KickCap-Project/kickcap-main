@@ -38,6 +38,7 @@ const s = {
     background-color: ${({ InputColor, theme }) => (InputColor ? theme[InputColor] : theme['WriteInput'])};
     color: ${(props) => props.theme.textColor};
     font-weight: ${(props) => props.bold || '500'};
+    font-size: ${(props) => props.size || '15px'};
   `,
   TextArea: styled.textarea`
     background-color: ${(props) => props.theme.WriteInput};
@@ -213,7 +214,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
                   {convertTimeString(responseDate, 'YMD')}
                 </Text>
               </s.ResponseHeader>
-              {/* <s.TextArea type="text" defaultValue={responseContent} mode={'read'} readOnly={true} /> */}
               <s.TextArea type="text" defaultValue={responseContent} {...inputProps('content', 'responseContent')} />
               <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('navigate', e)} margin={'15px'}>
                 단속 내역
