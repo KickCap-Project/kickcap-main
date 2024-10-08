@@ -56,7 +56,6 @@ const NotificationPage = () => {
         const response = await getNotificationList();
         setNoteList(response);
       } catch (err) {
-        console.log(`알림 목록을 불러오는 중 문제가 발생했습니다: ${err}`);
       } finally {
         setIsLoading(false);
       }

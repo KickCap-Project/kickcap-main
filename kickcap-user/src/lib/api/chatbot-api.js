@@ -8,6 +8,6 @@ export const sendMessage = async (input) => {
 
     return response.data;
   } catch (err) {
-    console.error(`메시지 송신 중 오류 발생: ${err}`);
+    alert('메시지를 보내는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
   }
 };

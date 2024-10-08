@@ -108,7 +108,6 @@ const ReportIllegalParkingForm = () => {
             // setDate(allMetaData.DateTimeOriginal || '정보 없음');
             const convertDate = convertExifToISO(allMetaData.DateTimeOriginal);
             setDate(convertDate || '정보 없음');
-            console.log(allMetaData);
           });
         };
       };
@@ -137,17 +136,11 @@ const ReportIllegalParkingForm = () => {
         reportTime: date,
       };
 
-      const response = await axiosInstance.post('/reports/parking', payload);
+      await axiosInstance.post('/reports/parking', payload);
 
-      if (response.status === 201) {
-        navigate('/report/parking/success');
-      } else {
-        console.log(response.status);
-        alert('신고 제출에 실패했습니다.');
-      }
+      navigate('/report/parking/success');
     } catch (error) {
       // 신고 제출 오류
-      console.log('신고 제출 중 오류 발생: ' + error);
       alert('입력 정보를 다시 한 번 확인해주세요.');
     }
   };

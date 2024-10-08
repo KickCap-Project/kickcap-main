@@ -51,6 +51,8 @@ const ChatPage = () => {
     const newMessage = { sender: 'user', text: input };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
 
+    setInput('');
+
     try {
       // axios
       const response = await sendMessage(input);
@@ -60,8 +62,6 @@ const ChatPage = () => {
     } catch (err) {
       alert('메시지 전송에 실패했습니다. 나중에 다시 시도해주세요.');
     }
-
-    setInput('');
   };
 
   return (
