@@ -26,8 +26,8 @@ async def broadcast_frames():
             frame = None
 
             if not queue.empty():
-                frame = await queue.get()
                 print(queue.qsize())
+                frame = await queue.get()
                 last_frames[camera_idx] = frame  # 마지막 프레임 저장
                 queue.task_done()
             else:
