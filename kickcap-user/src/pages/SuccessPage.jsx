@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import OKsvg from './../asset/img/svg/ok.svg';
 import Button from './../components/Common/Button';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { postBillPay } from '../lib/api/violation-api';
 
 const s = {
   Container: styled.div`
@@ -72,6 +73,35 @@ const SuccessPage = ({ message }) => {
   const handleMovePage = (path) => {
     navigate(path);
   };
+
+  const { id } = useParams();
+  useEffect(() => {
+    if (id !== undefined) {
+      const info = JSON.parse(localStorage.getItem('Info'));
+      const demerit = info ? info.demerit : null;
+      if (demerit >= 10) {
+        postBillPay(
+          id,
+          1,
+          (resp) => {},
+          (error) => {
+            alert('납부 중 오류가 발생했습니다. 관할 경찰서에 문의하시기 바랍니다.');
+            navigate('/main');
+          },
+        );
+      } else {
+        postBillPay(
+          id,
+          0,
+          (resp) => {},
+          (error) => {
+            alert('납부 중 오류가 발생했습니다. 관할 경찰서에 문의하시기 바랍니다.');
+            navigate('/main');
+          },
+        );
+      }
+    }
+  }, []);
 
   return (
     <s.Container>

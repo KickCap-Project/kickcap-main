@@ -37,12 +37,8 @@ import ErrorPage from './pages/ErrorPage';
 import CameraMap from './components/Board/CameraMap';
 import ResponsiveWrapper from './lib/hook/useWindowSizeHook';
 import SplashPage from './pages/SplashPage';
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import BoardEmergencyModal from './components/Modal/BoardEmergencyModal';
-import { modalActions, selectIsEmergency } from './store/modal';
-import { useAppDispatch, useAppSelector } from './lib/hook/useReduxHook';
-import { getEmergency } from './lib/api/main-api';
+import EmergencyPage from './pages/EmergencyFramePage';
+import BasicPage from './pages/BasicPage';
 
 const s = {
   Container: styled.div`
@@ -53,72 +49,34 @@ const s = {
     overflow: auto;
   `,
 };
+
 function App() {
-  // const isEmergency = useAppSelector(selectIsEmergency);
-  // const dispatch = useAppDispatch();
-  // const handleOpenEmergency = (isFlag) => {
-  //   dispatch(modalActions.ChangeIsCamera(isFlag));
-  //   if (!isFlag) {
-  //     refetchEmergencyData();
-  //   }
-  // };
-
-  // const {
-  //   data: emergencyData = {},
-  //   error: emergencyDataError,
-  //   refetch: refetchEmergencyData,
-  // } = useQuery({
-  //   queryKey: ['emergencyData'],
-  //   queryFn: () => {
-  //     return getEmergency();
-  //   },
-  //   // enabled: !isEmergency, // 모달이 열려있으면 쿼리 비활성화
-  //   // refetchInterval: isEmergency ? false : 10000, // 모달이 열려있으면 10초마다 쿼리 비활성화
-  //   refetchInterval: 1000,
-  // });
-
-  // if (emergencyDataError) {
-  //   alert('데이터를 불러오는 도중 에러가 발생했습니다.');
-  // }
-
-  // useEffect(() => {
-  //   if (Object.keys(emergencyData).length > 0) {
-  //     handleOpenEmergency(true);
-  //   }
-  // }, [emergencyData]);
-  const test = {
-    idx: 2,
-    addr: '학하ㄷ동',
-    name: '유현진',
-    phone: '010-9204-6503',
-    time: '2024-10-07T08:01:49.675144Z',
-    lat: 36.35234,
-    lng: 127.35158,
-  };
   return (
     <ThemeProvider theme={basicTheme}>
       <GlobalStyle />
-      <s.Container>
-        <BrowserRouter>
-          <Routes>
-            <Route
-              element={
-                <ResponsiveWrapper>
-                  <PublicRoute />
-                </ResponsiveWrapper>
-              }
-            >
-              <Route path="/" element={<SplashPage />} />
+      <BrowserRouter>
+        <Routes>
+          <Route
+            element={
+              <ResponsiveWrapper>
+                <PublicRoute />
+              </ResponsiveWrapper>
+            }
+          >
+            <Route path="/" element={<BasicPage />}>
+              <Route index element={<SplashPage />} />
               <Route path="/login" element={<LoginPage />} />
             </Route>
-            <Route
-              element={
-                <ResponsiveWrapper>
-                  <PrivateRoute />
-                </ResponsiveWrapper>
-              }
-            >
-              <Route path="/" element={<Navigate replace to="/board" />} />
+          </Route>
+          <Route
+            element={
+              <ResponsiveWrapper>
+                <PrivateRoute />
+              </ResponsiveWrapper>
+            }
+          >
+            <Route path="/" element={<EmergencyPage />}>
+              <Route index element={<Navigate replace to="/board" />} />
               <Route path="/board" element={<PoliceBoardPage />}>
                 <Route index element={<AllMap />} />
                 <Route path="seoul" element={<Seoul />} />
@@ -153,12 +111,10 @@ function App() {
                 <Route path="read" element={<ComplaintDetail />} />
               </Route>
             </Route>
-            <Route path="*" element={<ErrorPage />} />
-          </Routes>
-        </BrowserRouter>
-      </s.Container>
-      {/* <BoardEmergencyModal open={true} toggleModal={handleOpenEmergency} data={emergencyData} /> */}
-      {/* <BoardEmergencyModal open={true} data={test} /> */}
+          </Route>
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }

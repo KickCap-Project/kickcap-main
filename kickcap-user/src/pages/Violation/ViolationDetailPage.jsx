@@ -10,6 +10,7 @@ import LoadingSpinner from '../../components/Common/LoadingSpinner';
 import ViolationDetail from '../../components/Violation/ViolationDetail';
 import { getBillDetail, getImgFile } from '../../lib/api/violation-api';
 import { useLocation, useNavigate } from 'react-router';
+import { localAxios } from '../../util/axios-setting';
 
 const s = {
   Container: styled.div`
@@ -68,16 +69,9 @@ const ViolationDetailPage = () => {
   const [detail, setDetail] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [imgFile, setImgFile] = useState(null);
-
+  const [demerit, setDemerit] = useState('');
   const navigate = useNavigate();
   const id = useLocation().state?.idx || null;
-
-  useEffect(() => {
-    if (id === null) {
-      navigate('*');
-      return;
-    }
-  }, [id]);
 
   const objectionEventHandler = () => {
     navigate('../objection', { state: { id } });
@@ -114,6 +108,14 @@ const ViolationDetailPage = () => {
   };
 
   useEffect(() => {
+    if (id === null) {
+      navigate('*');
+      return;
+    }
+
+    const info = JSON.parse(localStorage.getItem('Info'));
+    const name = info ? info.name : null;
+
     const fetchData = async () => {
       if (!isLoading) {
         setIsLoading(true);
@@ -134,6 +136,21 @@ const ViolationDetailPage = () => {
       }
     };
 
+    const getDemerit = async () => {
+      const axiosInstance = localAxios();
+      try {
+        const response = await axiosInstance.get('/members/demerit');
+
+        if (response.status === 200) {
+          setDemerit(response.data);
+          localStorage.setItem('Info', JSON.stringify({ name, demerit: response.data }));
+        }
+      } catch (err) {
+        alert('잠시 후 다시 시도해주세요.');
+      }
+    };
+
+    getDemerit();
     fetchData();
   }, [id]);
 
