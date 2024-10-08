@@ -94,11 +94,10 @@ const ViolationListPage = () => {
         setVList((prevPage) => [...prevPage, ...newList]);
         setPage((prevPage) => prevPage + 1);
       } else {
-        console.log('더 이상 불러올 데이터가 없습니다.');
         setHasMoreData(false);
       }
     } catch (err) {
-      console.error('데이터를 불러오는 중 문제가 발생했습니다: ', err);
+      alert('데이터를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }

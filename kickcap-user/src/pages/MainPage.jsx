@@ -102,7 +102,7 @@ const MainPage = () => {
       const storedInfo = JSON.parse(localStorage.getItem('Info'));
 
       if (!storedInfo) {
-        console.log(`사용자 정보를 확인해주세요.`);
+        alert('사용자 정보를 확인해주세요.');
         return;
       }
 
@@ -114,10 +114,9 @@ const MainPage = () => {
 
           setInfo(updatedInfo);
           localStorage.setItem('Info', JSON.stringify(updatedInfo));
-          console.log(`벌점이 성공적으로 갱신되었습니다.`);
         }
       } catch (err) {
-        console.log(`벌점 조회 중 오류 발생: ${err}`);
+        // console.log(`벌점 조회 중 오류 발생: ${err}`);
       }
     };
 

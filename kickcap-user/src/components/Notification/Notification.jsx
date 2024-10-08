@@ -80,7 +80,7 @@ const Notification = ({ note }) => {
           }
         }
       } catch (err) {
-        console.log(`${type} navigate할 수 없습니다.`);
+        // console.log(`${type} navigate할 수 없습니다.`);
       }
     })();
   };

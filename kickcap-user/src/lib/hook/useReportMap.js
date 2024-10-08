@@ -43,7 +43,6 @@ const useReportMap = (loc) => {
             // 2. 법정동 가져오기
             geocoder.coord2RegionCode(getLng, getLat, callbackRegionCode);
           } else {
-            console.log(`주소 조회 오류: ${status}`);
             reject(`주소 조회 오류: ${status}`);
           }
         };
@@ -57,19 +56,15 @@ const useReportMap = (loc) => {
               }
             });
 
-            console.log(locationData);
-
             dispatch(setLocation(locationData));
             resolve();
           } else {
-            console.log(`법정동 코드 조회 오류: ${status}`);
             reject(`법정동 코드 조회 오류: ${status}`);
           }
         };
 
         geocoder.coord2Address(getLng, getLat, callbackAddr);
       } else {
-        console.log(`Kakao Maps services가 로드되지 않았습니다.`);
         reject(`Kakao Maps services가 로드되지 않았습니다.`);
       }
     });

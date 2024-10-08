@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-import Input from './../Common/Input';
 import Text from './../Common/Text';
-import TextArea from './../Common/TextArea';
 import Button from './../Common/Button';
 import { useLocation, useNavigate } from 'react-router';
 
@@ -38,6 +36,7 @@ const s = {
     background-color: ${({ InputColor, theme }) => (InputColor ? theme[InputColor] : theme['WriteInput'])};
     color: ${(props) => props.theme.textColor};
     font-weight: ${(props) => props.bold || '500'};
+    font-size: ${(props) => props.size || '15px'};
   `,
   TextArea: styled.textarea`
     background-color: ${(props) => props.theme.WriteInput};
@@ -143,8 +142,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
         }, 0);
       }
     } catch (err) {
-      console.log(`이의제기 삭제 중 문제 발생: ${err}`);
-      alert(`이의제기 삭제 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.`);
     }
   };
 
@@ -161,8 +158,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
         window.location.reload();
       }
     } catch (err) {
-      console.log(`이의제기 삭제 중 문제 발생: ${err}`);
-      alert(`이의제기 수정 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.`);
     }
   };
 
@@ -217,7 +212,6 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
                   {convertTimeString(responseDate, 'YMD')}
                 </Text>
               </s.ResponseHeader>
-              {/* <s.TextArea type="text" defaultValue={responseContent} mode={'read'} readOnly={true} /> */}
               <s.TextArea type="text" defaultValue={responseContent} {...inputProps('content', 'responseContent')} />
               <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('navigate', e)} margin={'15px'}>
                 단속 내역

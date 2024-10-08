@@ -49,7 +49,6 @@ const ObjectionList = ({ objectionList }) => {
   const navigate = useNavigate();
   const handleMovePage = (idx) => {
     navigate('detail', { state: { idx } });
-    // console.log(idx);
   };
 
   return (
