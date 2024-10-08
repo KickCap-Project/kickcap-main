@@ -123,7 +123,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
           defaultValue: fieldType === 'title' ? title : (contentType === 'content' ? content : responseContent),
           mode: 'read',
           readOnly: true,
-          minheight: contentType === 'content' ? '30vh' : '15vh',
+          minheight: contentType === 'content' ? '35vh' : '15vh',
           ref: contentType === 'content' ? contentAreaRef : (contentType === 'responseContent' ? responseContentAreaRef : null),
         };
   };
@@ -149,8 +149,9 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
   const toModifyComplete = async (objectionId, title, content) => {
     try {
       const response = await putObjectionDetail(objectionId, title, content);
+      console.log(response.status);
 
-      if (response.status === 200) {
+      if (response.status === 204) {
         alert('수정이 정상적으로 완료되었습니다.');
 
         // 수정 완료 후 objectionId를 sessionStorage에 저장
