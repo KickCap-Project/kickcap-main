@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-import Input from './../Common/Input';
 import Text from './../Common/Text';
-import TextArea from './../Common/TextArea';
 import Button from './../Common/Button';
 import { useLocation, useNavigate } from 'react-router';
 
