@@ -38,17 +38,17 @@ const s = {
 
 const ComplaintSendModal = ({ open, toggleModal, id }) => {
   const navigate = useNavigate();
-  const [message, setMessage] = useState('');
+  const [msg, setMsg] = useState('');
   const handleChangeMessage = (e) => {
-    setMessage(e.target.value);
+    setMsg(e.target.value);
   };
   const handleClickSend = async () => {
     await postAnswer(
       id,
-      message,
+      msg,
       (resp) => {
         alert('답변이 전송되었습니다.');
-        setMessage('');
+        setMsg('');
         toggleModal(false);
         navigate(`../../complaint?state=0&pageNo=1`);
       },
@@ -58,7 +58,7 @@ const ComplaintSendModal = ({ open, toggleModal, id }) => {
     );
   };
   const handleClose = () => {
-    setMessage('');
+    setMsg('');
     toggleModal(false);
   };
   return (
@@ -96,7 +96,7 @@ const ComplaintSendModal = ({ open, toggleModal, id }) => {
             height={'90%'}
             size={'15px'}
             placeholder={'내용을 입력해주세요.'}
-            value={message}
+            value={msg}
             onChange={handleChangeMessage}
           />
         </s.MapArea>

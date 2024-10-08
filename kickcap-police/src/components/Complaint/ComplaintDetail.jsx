@@ -123,6 +123,20 @@ const ComplaintDetail = () => {
     }
   };
 
+  const handleViolationType = (type) => {
+    if (type === 4) {
+      return '불법 주차';
+    } else if (type === 3) {
+      return '안전모 미착용';
+    } else if (type === 1) {
+      return '다인 승차';
+    } else if (type === 2) {
+      return '보도 주행';
+    } else {
+      return '지정차로 위반';
+    }
+  };
+
   useEffect(() => {
     getListDetail(
       complaintId,
@@ -162,7 +176,7 @@ const ComplaintDetail = () => {
             <s.Tr>
               <s.Td>{complaintData.idx}</s.Td>
               <s.Td>{complaintData.name}</s.Td>
-              <s.Td>{complaintData.violationType}</s.Td>
+              <s.Td>{handleViolationType(complaintData.violationType)}</s.Td>
               <s.Td>{complaintData.date}</s.Td>
             </s.Tr>
           </s.Tbody>
