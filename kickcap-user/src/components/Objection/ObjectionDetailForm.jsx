@@ -31,12 +31,12 @@ const s = {
   `,
   Input: styled.input`
     width: 100%;
-    height: 40px;
+    height: ${(props) => (props.height ? props.height : '40px')};
     border: 1px solid #d3d3d3;
     background-color: ${({ InputColor, theme }) => (InputColor ? theme[InputColor] : theme['WriteInput'])};
     color: ${(props) => props.theme.textColor};
-    font-weight: ${(props) => props.bold || '500'};
-    font-size: ${(props) => props.size || '15px'};
+    font-weight: ${(props) => (props.bold ? props.bold : '500')};
+    font-size: ${(props) => (props.size ? props.size : '15px')};
   `,
   TextArea: styled.textarea`
     background-color: ${(props) => props.theme.WriteInput};
@@ -122,9 +122,9 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
       : {
           defaultValue: fieldType === 'title' ? title : content,
           mode: 'read',
-          minheight: contentType === 'content' ? '30vh' : '15vh',
           readOnly: true,
-          ref: contentType === 'content' ? contentAreaRef : responseContentAreaRef,
+          minheight: contentType === 'content' ? '30vh' : '15vh',
+          ref: contentType === 'content' ? contentAreaRef : (contentType === 'responseContent' ? responseContentAreaRef : null),
         };
   };
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
