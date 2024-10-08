@@ -22,6 +22,9 @@ import com.ssafy.kickcap.report.entity.Report;
 import com.ssafy.kickcap.report.repository.ReportRepository;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
+import com.ssafy.kickcap.user.repository.MemberRepository;
+import com.ssafy.kickcap.user.service.MemberService;
+import com.ssafy.kickcap.violationtype.repository.ViolationTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +47,9 @@ public class ObjectionService {
     private final CrackdownRepository crackdownRepository;
     private final ReportRepository reportRepository;
     private final FirebaseMessageService messageService;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final ViolationTypeRepository violationTypeRepository;
 
     public void modifyObjectionByObjectionId(Member member, Long objectionId, BillObjectionDto objectionDto) {
         // Objection 조회
@@ -172,6 +178,16 @@ public class ObjectionService {
 
         bill.cancelByObjection();
         billRepository.save(bill);
+        Member member = bill.getMember();
+        if (bill.getReportType().equals(ReportType.CCTV)){
+            Crackdown crackdown = crackdownRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+            member.cancelDemerit(violationTypeRepository.findById(crackdown.getViolationType().getId()).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND)).getScore());
+        } else {
+            Report report = reportRepository.findById(objection.getBill().getReportId()).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+            member.cancelDemerit(violationTypeRepository.findById(report.getViolationType().getId()).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND)).getScore());
+        }
+        memberRepository.save(member);
+
         messageService.sendMessage(objection.getMember().getId(), NotificationType.REPLY, bill.getId());
     }
 }
