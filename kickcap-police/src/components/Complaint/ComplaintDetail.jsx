@@ -13,6 +13,9 @@ import { useLocation, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { getListDetail, postCancel } from '../../lib/api/complaint-api';
 import { getCrackDetail } from './../../lib/api/crack-api';
+import 'moment/locale/ko';
+import moment from 'moment';
+
 const s = {
   Container: styled.main`
     width: 100%;
@@ -167,9 +170,9 @@ const ComplaintDetail = () => {
           <s.Thead>
             <s.Tr>
               <s.Th style={{ width: '10%' }}>문의 번호</s.Th>
-              <s.Th style={{ width: '30%' }}>작성자</s.Th>
-              <s.Th style={{ width: '30%' }}>단속 종류</s.Th>
-              <s.Th style={{ width: '10%' }}>날 짜</s.Th>
+              <s.Th style={{ width: '20%' }}>작성자</s.Th>
+              <s.Th style={{ width: '20%' }}>단속 종류</s.Th>
+              <s.Th style={{ width: '20%' }}>날 짜</s.Th>
             </s.Tr>
           </s.Thead>
           <s.Tbody>
@@ -177,7 +180,7 @@ const ComplaintDetail = () => {
               <s.Td>{complaintData.idx}</s.Td>
               <s.Td>{complaintData.name}</s.Td>
               <s.Td>{handleViolationType(complaintData.violationType)}</s.Td>
-              <s.Td>{complaintData.date}</s.Td>
+              <s.Td>{moment(complaintData.date).format('YYYY.MM.DD A hh:mm')}</s.Td>
             </s.Tr>
           </s.Tbody>
         </s.Table>

@@ -10,6 +10,7 @@ import { getCrackList, getCrackTotalCount } from './../../lib/api/crack-api';
 import moment from 'moment';
 import PaginationTest from '../Common/PaginationTest';
 import { useQuery } from '@tanstack/react-query';
+import 'moment/locale/ko';
 
 const s = {
   Container: styled.div`
@@ -60,6 +61,10 @@ const s = {
   Td: styled.td`
     vertical-align: middle;
     border-bottom: 1px solid ${(props) => props.theme.btnOff};
+    max-width: 470px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   `,
   noData: styled.td`
     vertical-align: middle;
@@ -215,7 +220,7 @@ const CrackDownList = () => {
           <s.Thead>
             <s.Tr>
               <s.Th style={{ width: '10%' }}>단속 번호</s.Th>
-              <s.Th style={{ width: '40%' }}>단속 주소</s.Th>
+              <s.Th style={{ width: '30%' }}>단속 주소</s.Th>
               <s.Th style={{ width: '15%' }}>단속 종류</s.Th>
               <s.Th style={{ width: '15%' }}>날 짜</s.Th>
             </s.Tr>
@@ -227,7 +232,7 @@ const CrackDownList = () => {
                   <s.Td>{d.idx}</s.Td>
                   <s.Td>{d.addr}</s.Td>
                   <s.Td>{d.type}</s.Td>
-                  <s.Td>{moment(d.date).format('YY-MM-DD HH:MM')}</s.Td>
+                  <s.Td>{moment(d.date).format('YY.MM.DD A hh:mm')}</s.Td>
                 </s.Tr>
               ))
             ) : (
