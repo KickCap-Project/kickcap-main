@@ -59,6 +59,9 @@ public class ReportController {
     public ResponseEntity<AccidentReportResponseDto> getAccidentReport(@AuthenticationPrincipal User user) {
         Police police = policeService.findByPoliceId(user.getUsername());
         AccidentReportResponseDto responseDto = accidentReportService.getAccidentReport(police);
+        if (responseDto == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
         return ResponseEntity.ok(responseDto);
     }
 
