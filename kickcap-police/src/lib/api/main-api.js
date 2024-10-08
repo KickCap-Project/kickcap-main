@@ -20,7 +20,7 @@ export const getRefresh = async (refreshToken, success, fail) => {
 export const getEmergency = async () => {
   // 긴급 신고 조회
   const response = await local.get(`/reports/accident`);
-  return response.data; // 응답의 데이터를 반환
+  return response; // 응답의 데이터를 반환
 };
 
 export const postMove = async (idx, success, fail) => {
