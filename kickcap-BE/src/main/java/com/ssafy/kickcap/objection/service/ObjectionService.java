@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.Period;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -144,14 +145,15 @@ public class ObjectionService {
 
         Bill bill = billRepository.findById(objection.getBill().getId()).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
 
-        // 이의제기 생성 일시와 경찰 답변 일시 사이의 차이를 계산 (Duration 사용)
-        Duration durationBetween = Duration.between(objection.getCreatedAt(), answer.getCreatedAt());
+        // 이의제기 생성 일시와 경찰 답변 일시 사이의 차이를 계산 (Period 사용)
+        Period periodBetween = Period.between(objection.getCreatedAt().toLocalDate(), answer.getCreatedAt().toLocalDate());
 
-        // 계산된 차이를 bill의 deadline에 더함
-        ZonedDateTime plusDay = bill.getDeadline().plus(durationBetween);
+        // 계산된 차이를 bill의 deadline에 더함 (시간은 그대로 유지하고 일수만 더함)
+        ZonedDateTime plusDay = bill.getDeadline().plus(periodBetween);
 
         bill.refusalObjection(plusDay);
         billRepository.save(bill);
+
         messageService.sendMessage(objection.getMember().getId(), NotificationType.REPLY, bill.getId());
     }
 
