@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 const MonitoringApp = () => {
     const [annotatedImage, setAnnotatedImage] = useState(null);
     const socketRef = useRef(null);
-    const cameraIdx = 1;
+    const cameraIdx = 2;
 
     useEffect(() => {
         // WebSocket 서버에 연결
