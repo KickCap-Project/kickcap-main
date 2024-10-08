@@ -100,7 +100,7 @@ function App() {
                 <Route path="payment">
                   <Route index element={<ViolationPaymentPage />} />
                   <Route path="education" element={<ViolationEducationPage />} />
-                  <Route path="success" element={<SuccessPage message="violation" />} />
+                  <Route path="success/:id" element={<SuccessPage message="violation" />} />
                 </Route>
               </Route>
               <Route path="/report">
