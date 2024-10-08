@@ -76,7 +76,7 @@ async def detect(image_file: UploadFile = File(...)):
                     if class_name == "Scooter_No_Helmet":
                         # 전체 이미지에 사각형 그리기
                         cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (255, 255, 0), 3)
-                        current_time_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
+                        current_time_str = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
                         full_image_filename = f'./Scooter_No_Helmet/{current_time_str}_1.jpg'
 
                         _, image_encoded = cv2.imencode('.jpg', annotated_frame)
@@ -90,7 +90,7 @@ async def detect(image_file: UploadFile = File(...)):
                     if class_name == "Scooter_Two":
                         # 전체 이미지에 사각형 그리기
                         cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (255, 255, 255), 3)
-                        current_time_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
+                        current_time_str = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
                         full_image_filename = f'./Scooter_Two/{current_time_str}_1.jpg'
 
                         _, image_encoded = cv2.imencode('.jpg', annotated_frame)
