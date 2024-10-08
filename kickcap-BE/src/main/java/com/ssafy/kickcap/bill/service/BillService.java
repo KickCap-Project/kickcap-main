@@ -169,6 +169,8 @@ public class BillService {
                     .isObjection(setObjection(bill))
                     .imageSrc(crackdown.getImageSrc())
                     .billTime(bill.getCreatedAt().toString())
+                    .objectionId(objectionId)
+                    .response(response)
                     .build();
         }
     }
