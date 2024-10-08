@@ -12,7 +12,6 @@ const VideoStream = () => {
     const socketRef = useRef(null);
     const [annotatedImage, setAnnotatedImage] = useState(null);
     const [labelResult, setLabelResult] = useState("");
-    // 상태 관리 묶음
     const [userInfos, setUserInfos] = useState([
         {
             name: "유현진",
@@ -46,7 +45,6 @@ const VideoStream = () => {
         setCameraIdx(e.target.value);
     };
 
-
     const getCurrentTimeString = () => {
         const now = new Date();
         const pad = (n, width = 2) => n.toString().padStart(width, "0");
@@ -62,7 +60,6 @@ const VideoStream = () => {
         return `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}000`;
     };
 
-    // canvas.toBlob을 Promise로 감싸는 함수
     const getCanvasBlob = (canvas) => {
         return new Promise((resolve) => {
             canvas.toBlob((blob) => {
@@ -80,61 +77,48 @@ const VideoStream = () => {
             const width = 1920;
             const height = 1080;
 
-            // 캔버스 크기 설정
             canvas.width = width;
             canvas.height = height;
 
-            // 환경 감지하여 가로/세로 모드 회전 조정
             const isPortrait = window.innerHeight > window.innerWidth;
 
             if (isPortrait) {
-                context.save(); // 현재 상태 저장
-                context.translate(width / 2, height / 2); // 캔버스의 중앙으로 이동
-                context.rotate(Math.PI / 2); // 90도 회전
-                context.drawImage(videoElement, -height / 2, -width / 2, height, width); // 세로로 그리기
-                context.restore(); // 회전 이전 상태로 복구
+                context.save();
+                context.translate(width / 2, height / 2);
+                context.rotate(Math.PI / 2);
+                context.drawImage(videoElement, -height / 2, -width / 2, height, width);
+                context.restore();
             } else {
                 context.drawImage(videoElement, 0, 0, width, height);
             }
 
             try {
-                // canvas.toBlob을 비동기로 처리
                 const blob = await getCanvasBlob(canvas);
 
-                // FormData 준비
                 const formData = new FormData();
                 formData.append("image", blob, uuidv4() + ".jpg");
 
-                // /image 엔드포인트로 이미지 전송
                 const imageResponse = await axios.post(IMAGE_API_ENDPONT, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
                 });
 
-                console.log("/image로 이미지 전송 성공");
-                console.log(imageResponse);
-
-                // 서버에서 반환된 파일 이름 사용
                 const fileName = imageResponse.data.image_src;
 
-                // /ocr 엔드포인트에 보낼 데이터 준비
                 const ocrData = {
                     camera_idx: inputCameraIdx,
-                    file_name: fileName, // 응답에서 가져온 파일 이름을 사용
+                    file_name: fileName,
                     type: 3,
                     time: getCurrentTimeString(),
                 };
 
-                // /ocr 엔드포인트로 데이터 전송
-                console.log("OCR 시작");
                 const ocrResponse = await axios.post(OCR_API_ENDPONT, ocrData);
 
                 if (ocrResponse.status === 200) {
                     console.log(ocrResponse)
                 }
             } catch (error) {
-                // 에러 처리
                 if (error.response) {
                     console.error("요청 중 오류 발생:", error.response.data.detail);
                 } else {
@@ -159,11 +143,28 @@ const VideoStream = () => {
         }
     };
 
-    useEffect(() => {
-        // WebSocket 서버에 연결, camera_id를 쿼리 파라미터로 전달
-        socketRef.current = new WebSocket(`wss://j11b102.p.ssafy.io/cctv/video?role=camera&camera_idx=2`);
+    const reconnectWebSocket = (newCameraIdx) => {
+        if (socketRef.current) {
+            socketRef.current.close();
+        }
 
-        // 유저의 미디어 스트림을 가져오기
+        socketRef.current = new WebSocket(`wss://j11b102.p.ssafy.io/cctv/video?role=camera&camera_idx=${newCameraIdx}`);
+
+        socketRef.current.onmessage = (event) => {
+            const imageBlob = event.data;
+            const imageUrl = URL.createObjectURL(imageBlob);
+            setAnnotatedImage(imageUrl);
+        };
+    };
+
+    const handleCameraChange = (newCameraIdx) => {
+        setCameraIdx(newCameraIdx);
+        reconnectWebSocket(newCameraIdx);
+    };
+
+    useEffect(() => {
+        reconnectWebSocket(inputCameraIdx);
+
         navigator.mediaDevices
             .getUserMedia({
                 video: {
@@ -192,45 +193,33 @@ const VideoStream = () => {
                                 const context = canvas.getContext("2d");
                                 context.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
                                 canvas.toBlob((blob) => {
-                                    socketRef.current.send(blob); // 프레임 전송
+                                    socketRef.current.send(blob);
                                 }, "image/jpeg");
                             })
                             .catch((error) => {
                                 console.error("프레임 캡처 중 오류 발생:", error);
                             });
                     };
-                    setInterval(sendFrame, 333); // 3 FPS로 프레임 전송
+                    setInterval(sendFrame, 333);
                 };
             })
             .catch((error) => {
                 console.error("웹캠 접근 오류:", error);
             });
 
-        // 현재 기기가 모바일이 아닌 경우에만 WebSocket으로 수신한 데이터를 처리
-        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
-        if (!isMobile) {
-            // WebSocket을 통해 수신한 데이터 처리 (모바일이 아닌 경우에만)
-            socketRef.current.onmessage = (event) => {
-                const imageBlob = event.data;
-                const imageUrl = URL.createObjectURL(imageBlob);
-                setAnnotatedImage(imageUrl); // 수신한 이미지 URL을 상태에 저장
-            };
-        }
-
         return () => {
             if (socketRef.current) {
                 socketRef.current.close();
             }
         };
-    }, []);
+    }, [inputCameraIdx]);
 
     return (
         <div>
             <div
                 style={{
                     position: "relative",
-                    width: "640px", // 화면 크기를 800x600으로 조정
+                    width: "640px",
                     height: "360px",
                     backgroundColor: "#000",
                 }}
@@ -238,7 +227,7 @@ const VideoStream = () => {
                 <video
                     ref={videoRef}
                     autoPlay
-                    style={{ width: "100%", height: "100%" }} // 컨테이너에 맞게 조정
+                    style={{ width: "100%", height: "100%" }}
                 />
                 <div
                     style={{
@@ -261,11 +250,29 @@ const VideoStream = () => {
                             top: 0,
                             left: 0,
                             width: "100%",
-                            height: "100%", // 컨테이너에 맞게 조정
+                            height: "100%",
                         }}
                     />
                 )}
             </div>
+
+            <div>
+                <h3>카메라 선택</h3>
+                {[1, 2, 3, 4, 5].map((idx) => (
+                    <button
+                        key={idx}
+                        onClick={() => handleCameraChange(idx)}
+                        style={{
+                            width: "50px",
+                            height: "50px",
+                            margin: "5px",
+                        }}
+                    >
+                        {idx}
+                    </button>
+                ))}
+            </div>
+
             <div>
                 <div>
                     <label>킥보드 번호: </label>
@@ -294,7 +301,6 @@ const VideoStream = () => {
                     <label>유지 시간(분): </label>
                     <input value={inputMinute} onChange={handleInputMinuteChange} />
                 </div>
-
 
                 <div>
                     <label>사용자 정보: </label>

@@ -14,7 +14,7 @@ load_dotenv()
 API_ENDPOINT = os.getenv("API_ENDPOINT")
 
 # 각 camera_idx에 대한 큐와 연결된 클라이언트 저장
-image_queues = defaultdict(asyncio.Queue)  # 각 카메라의 이미지 데이터를 저장하는 큐
+image_queues = defaultdict(lambda: asyncio.Queue(maxsize=10))  # 각 카메라의 이미지 데이터를 저장하는 큐
 connected_clients = defaultdict(set)  # 각 camera_idx에 연결된 클라이언트
 connected_cameras = {}  # 연결된 카메라들: {camera_idx: websocket}
 last_frames = {}  # 각 camera_idx의 마지막 프레임 저장
@@ -28,7 +28,7 @@ async def broadcast_frames():
             frame_data = None
 
             if not queue.empty():
-                print(queue.qsize())
+                print(f"Queue size for camera_idx {camera_idx}: {queue.qsize()}")
                 # 카메라 ID와 이미지를 함께 저장했으므로 (camera_idx, frame) 형식으로 가져옴
                 frame_info = await queue.get()
                 frame_camera_idx, frame_data = frame_info['camera_idx'], frame_info['frame']
@@ -49,6 +49,8 @@ async def broadcast_frames():
                         except Exception as e:
                             print(f"Error broadcasting to client: {e}")
                             connected_clients[camera_idx].remove(ws)
+                else:
+                    print(f"No connected clients for camera_idx {camera_idx}, but frame exists.")
             await asyncio.sleep(0.1)
         await asyncio.sleep(0.1)
 
