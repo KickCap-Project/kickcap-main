@@ -160,8 +160,8 @@ const VideoStream = () => {
     };
 
     useEffect(() => {
-        // WebSocket 서버에 연결
-        socketRef.current = new WebSocket("wss://j11b102.p.ssafy.io/cctv/video");
+        // WebSocket 서버에 연결, camera_id를 쿼리 파라미터로 전달
+        socketRef.current = new WebSocket(`wss://j11b102.p.ssafy.io/cctv/video?camera_idx=1`);
 
         // 유저의 미디어 스트림을 가져오기
         navigator.mediaDevices
