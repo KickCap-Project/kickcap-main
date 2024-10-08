@@ -102,7 +102,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
 
                 .logout(logout -> logout // 로그아웃 설정
                         .logoutSuccessUrl(REDIRECT_PATH+"/login") // 로그아웃 완료되었을 떄 이동할 경로 설정
-                        .invalidateHttpSession(true) // 로그아웃 이후에 세션에서 전체 삭제할지 여부 설정
+//                        .invalidateHttpSession(true) // 로그아웃 이후에 세션에서 전체 삭제할지 여부 설정
                 )
 
 
