@@ -101,3 +101,55 @@ REACT_APP_FCM_APPID=${REACT_APP_FCM_APPID}
 REACT_APP_FCM_MEASUREMENT_ID=${REACT_APP_FCM_MEASUREMENT_ID}
 REACT_APP_FCM_VAPID=${REACT_APP_FCM_VAPID}
 ```
+
+
+1. Kakao 로그인
+```
+서비스 가입
+가입 위치: Kakao
+가입 필요사항: 카카오 계정 필요 (개인/비즈니스 구분 가능), 관리자의 테스트 계정 등록 필요
+활용 API: Kakao OAuth 2.0 인증 API, 사용자 정보 조회 API
+주요 설정:
+Client ID: 카카오에서 발급된 REST API 키 사용
+Client Secret: 선택 사항으로, 보안을 위해 활성화 가능
+Redirect URI: 로그인 완료 후 리다이렉션될 URL 설정
+환경 설정
+Authorization URI: https://kauth.kakao.com/oauth/authorize
+Token URI: https://kauth.kakao.com/oauth/token
+User Info URI: https://kapi.kakao.com/v2/user/me
+Scope (요청 범위):
+account_email: 사용자 이메일
+name: 사용자 이름
+phone_number: 사용자 전화번호
+인증 방식: client_secret_post
+주요 설정 항목:
+Client ID (KAKAO_CLIENT_ID): 카카오 개발자 콘솔에서 발급
+Client Secret (KAKAO_CLIENT_SECRET): 추가적인 보안을 위해 사용
+Redirect URI: ${BASE_URL}/login/oauth2/code/kakao
+사용자 속성: id 사용
+```
+
+2. Naver 로그인
+```
+서비스 가입
+가입 위치: Naver
+가입 필요사항: 네이버 계정 필요 (개인/비즈니스 계정), 관리자의 테스트 계정 등록 필요
+활용 API: Naver OAuth 2.0 인증 API, 사용자 정보 조회 API
+주요 설정:
+Client ID: 네이버 개발자 센터에서 발급된 Client ID
+Client Secret: 네이버 API 설정에서 발급
+Redirect URI: 네이버 로그인 완료 후 리다이렉션될 URL 설정
+환경 설정
+Authorization URI: https://nid.naver.com/oauth2.0/authorize
+Token URI: https://nid.naver.com/oauth2.0/token
+User Info URI: https://openapi.naver.com/v1/nid/me
+Scope (요청 범위):
+profile: 사용자 프로필 정보
+email: 사용자 이메일
+인증 방식: client_secret_post
+주요 설정 항목:
+Client ID (NAVER_CLIENT_ID): 네이버 개발자 콘솔에서 발급
+Client Secret (NAVER_CLIENT_SECRET): 추가적인 보안을 위해 사용
+Redirect URI: ${BASE_URL}/login/oauth2/code/naver
+사용자 속성: id 사용
+```
