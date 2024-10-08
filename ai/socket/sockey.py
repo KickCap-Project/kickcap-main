@@ -102,7 +102,7 @@ async def websocket_handler(request):
     return ws
 
 app = web.Application()
-app.router.add_get('/ws', websocket_handler)
+app.router.add_get('/video', websocket_handler)
 
 # 백그라운드에서 프레임을 처리하는 태스크 시작
 async def start_background_tasks(app):
