@@ -37,6 +37,7 @@ public class AccidentReportService {
 
         Police police = policeRepository.findById(stationId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
+
         AccidentReport accidentReport = AccidentReport.builder()
                 .address(requestDto.getAddr())
                 .latitude(requestDto.getLat())
@@ -44,7 +45,6 @@ public class AccidentReportService {
                 .reportTime(LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul")))
                 .member(member)
                 .police(police)
-                .isRead("N")
                 .build();
 
         accidentReportRepository.save(accidentReport);
@@ -52,6 +52,10 @@ public class AccidentReportService {
 
     public AccidentReportResponseDto getAccidentReport(Police police) {
         AccidentReport accidentReport = accidentReportRepository.findByAccidentReport(police);
+
+        if(accidentReport == null) {
+            return null;
+        }
 
         return AccidentReportResponseDto.builder()
                 .idx(accidentReport.getId())
