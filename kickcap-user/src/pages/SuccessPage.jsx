@@ -74,21 +74,32 @@ const SuccessPage = ({ message }) => {
     navigate(path);
   };
 
-  const location = useLocation();
   const { id } = useParams();
   useEffect(() => {
     if (id !== undefined) {
-      postBillPay(
-        id,
-        1,
-        (resp) => {
-          alert('정상 납부되었습니다.');
-        },
-        (error) => {
-          alert('납부 중 오류가 발생했습니다. 관할 경찰서에 문의하시기 바랍니다.');
-          navigate('/main');
-        },
-      );
+      const info = JSON.parse(localStorage.getItem('Info'));
+      const demerit = info ? info.demerit : null;
+      if (demerit >= 10) {
+        postBillPay(
+          id,
+          1,
+          (resp) => {},
+          (error) => {
+            alert('납부 중 오류가 발생했습니다. 관할 경찰서에 문의하시기 바랍니다.');
+            navigate('/main');
+          },
+        );
+      } else {
+        postBillPay(
+          id,
+          0,
+          (resp) => {},
+          (error) => {
+            alert('납부 중 오류가 발생했습니다. 관할 경찰서에 문의하시기 바랍니다.');
+            navigate('/main');
+          },
+        );
+      }
     }
   }, []);
 
