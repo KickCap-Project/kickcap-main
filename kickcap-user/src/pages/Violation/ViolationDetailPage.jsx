@@ -244,7 +244,7 @@ const ViolationDetailPage = () => {
                       height={'30px'}
                       size={'0.75rem'}
                       bold={'700'}
-                      onClick={handlePreventDefault}
+                      onClick={() => paymentEventHandler()}
                     >
                       납부하기
                     </Button>
