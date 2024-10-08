@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 from collections import defaultdict
 from queue import Queue
 
-
 # .env 파일에서 환경 변수 로드
 load_dotenv()
 
@@ -20,33 +19,39 @@ connected_clients = defaultdict(set)  # 각 camera_idx에 연결된 클라이언
 connected_cameras = {}  # 연결된 카메라들: {camera_idx: websocket}
 last_frames = {}  # 각 camera_idx의 마지막 프레임 저장
 
+
 # 큐에서 이미지를 가져와 해당 클라이언트들에게 브로드캐스트하는 함수
 async def broadcast_frames():
     while True:
         for camera_idx in list(image_queues.keys()):
             queue = image_queues[camera_idx]
-            frame = None
+            frame_data = None
 
             if not queue.empty():
                 print(queue.qsize())
-                frame = await queue.get()
-                last_frames[camera_idx] = frame  # 마지막 프레임 저장
+                # 카메라 ID와 이미지를 함께 저장했으므로 (camera_idx, frame) 형식으로 가져옴
+                frame_info = await queue.get()
+                frame_camera_idx, frame_data = frame_info['camera_idx'], frame_info['frame']
+                last_frames[camera_idx] = frame_data  # 마지막 프레임 저장
                 queue.task_done()
             else:
                 # 큐가 비어 있을 때 마지막 프레임 사용
-                frame = last_frames.get(camera_idx)
+                frame_data = last_frames.get(camera_idx)
 
-            if frame:
+            if frame_data:
                 clients = connected_clients.get(camera_idx, set())
                 if clients:
                     for ws in clients.copy():
                         try:
-                            await ws.send_bytes(frame)
+                            # 클라이언트의 camera_idx와 프레임의 camera_idx가 같을 때만 전송
+                            if camera_idx == frame_camera_idx:
+                                await ws.send_bytes(frame_data)
                         except Exception as e:
                             print(f"Error broadcasting to client: {e}")
                             connected_clients[camera_idx].remove(ws)
             await asyncio.sleep(0.1)
         await asyncio.sleep(0.1)
+
 
 # 카메라와 클라이언트 모두를 처리하는 WebSocket 엔드포인트
 async def websocket_handler(request):
@@ -86,8 +91,8 @@ async def websocket_handler(request):
                             await queue.get()
                             queue.task_done()
 
-                        # 큐에 이미지 데이터 저장
-                        await queue.put(frame_data)
+                        # 큐에 camera_idx와 frame_data를 함께 저장
+                        await queue.put({'camera_idx': camera_idx, 'frame': frame_data})
 
                         # 넘파이 배열로 변환
                         nparr = np.frombuffer(msg.data, np.uint8)
@@ -129,12 +134,15 @@ async def websocket_handler(request):
 
     return ws
 
+
 app = web.Application()
 app.router.add_get('/video', websocket_handler)
+
 
 # 백그라운드에서 프레임을 처리하는 태스크 시작
 async def start_background_tasks(app):
     app['broadcast_task'] = asyncio.create_task(broadcast_frames())
+
 
 app.on_startup.append(start_background_tasks)
 
