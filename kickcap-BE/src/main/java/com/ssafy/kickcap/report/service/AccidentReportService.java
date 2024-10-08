@@ -45,6 +45,7 @@ public class AccidentReportService {
                 .reportTime(LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul")))
                 .member(member)
                 .police(police)
+                .isRead("N")
                 .build();
 
         accidentReportRepository.save(accidentReport);
