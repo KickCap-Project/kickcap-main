@@ -64,6 +64,13 @@ const ChatPage = () => {
     }
   };
 
+  const handleKeyPress = e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSend();
+    };
+  };
+
   return (
     <s.Container>
       <Header title={'법률 지원 챗봇'} />
@@ -78,6 +85,7 @@ const ChatPage = () => {
             height={'40px'}
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
           <Button
             bold={'700'}
