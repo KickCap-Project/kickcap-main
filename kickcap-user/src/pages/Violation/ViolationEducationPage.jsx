@@ -91,11 +91,11 @@ const ViolationEducationPage = () => {
         1,
         (resp) => {
           alert('정상 납부되었습니다.');
-          navigate('../../../main');
+          navigate('/violation/payment/success');
         },
         (error) => {
           alert('납부 중 오류가 발생했습니다. 관할 경찰서에 문의하시기 바랍니다.');
-          navigate('../../../main');
+          navigate('/main');
         },
       );
     } else {
