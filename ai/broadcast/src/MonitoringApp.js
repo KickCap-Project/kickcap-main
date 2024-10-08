@@ -3,11 +3,11 @@ import React, { useRef, useEffect, useState } from "react";
 const MonitoringApp = () => {
     const [annotatedImage, setAnnotatedImage] = useState(null);
     const socketRef = useRef(null);
-    const cameraIdx = 2;
+    const cameraIdx = 1;
 
     useEffect(() => {
         // WebSocket 서버에 연결
-        socketRef.current = new WebSocket(`wss://j11b102.p.ssafy.io/cctv/video?camera_idx=${cameraIdx}`);
+        socketRef.current = new WebSocket(`wss://j11b102.p.ssafy.io/cctv/video?role=client&camera_idx=${cameraIdx}`);
 
         socketRef.current.binaryType = "arraybuffer"; // 이진 데이터 수신을 위해 설정
 
