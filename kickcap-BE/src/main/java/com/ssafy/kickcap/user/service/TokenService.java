@@ -20,7 +20,7 @@ public class TokenService {
     private final PoliceService userService;
 
     public String createNewAccessToken(String refreshToken) {
-        // 토큰 유효성 검사에 실패하면 예외 발생
+        // access 토큰 유효성 검사에 실패하면 예외 발생 -> 401
         if (!tokenProvider.validToken(refreshToken)){
             throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
         }
@@ -34,7 +34,7 @@ public class TokenService {
             // 사옹자 찾은 후 토큰 제공자의 새로운 액세스 토큰 생성
             return tokenProvider.generateMemberToken(deviceInfo.getMember(), Duration.ofHours(2));
         } else {
-            throw new RestApiException(ErrorCode.NOT_FOUND);
+            throw new RestApiException(ErrorCode.NOT_FOUND); // refresh 토큰으로 찾은 사용자가 시민도 경찰도 아닐때
         }
     }
 }
