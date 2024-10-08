@@ -14,14 +14,14 @@ const local = localAxios();
 //   return response.data; // 응답의 데이터를 반환
 // };
 
-export const getComplaintTotalCount = async (status, name, success, fail) => {
+export const getComplaintTotalCount = async (status, phone, success, fail) => {
   // 이의게시판 총 개수
-  await local.get(`/objections/policeCount`, { params: { status, name } }).then(success).catch(fail);
+  await local.get(`/objections/policeCount`, { params: { status, phone } }).then(success).catch(fail);
 };
 
-export const getComplaintList = async (status, pageNo, name, success, fail) => {
+export const getComplaintList = async (status, pageNo, phone, success, fail) => {
   // 이의목록 조회
-  await local.get(`/objections/police`, { params: { status, pageNo, name } }).then(success).catch(fail);
+  await local.get(`/objections/police`, { params: { status, pageNo, phone } }).then(success).catch(fail);
 };
 
 export const getListDetail = async (objectionId, success, fail) => {
