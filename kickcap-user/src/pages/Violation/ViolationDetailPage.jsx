@@ -175,7 +175,9 @@ const ViolationDetailPage = () => {
                   size={'0.75rem'}
                   bold={'700'}
                   onClick={() => objectionDetailHandler()}
-                />
+                >
+                  이의 내역
+                </Button>
               ) : // 2-2. PAID, CANCEL 상태고 이의를 제기한 적이 없을 경우(objectionId === -1)
               // 아무 버튼도 띄우지 않기
               null
