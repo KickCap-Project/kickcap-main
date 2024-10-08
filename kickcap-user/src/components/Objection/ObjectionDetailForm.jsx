@@ -213,7 +213,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
                 </Text>
               </s.ResponseHeader>
               <s.TextArea type="text" defaultValue={responseContent} {...inputProps('content', 'responseContent')} />
-              <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('navigate', e)} margin={'15px'}>
+              <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('navigate', e)} margin={'3vh'}>
                 단속 내역
               </Button>
             </s.Response>
