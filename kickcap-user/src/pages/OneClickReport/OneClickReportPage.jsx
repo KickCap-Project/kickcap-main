@@ -51,7 +51,22 @@ const OneClickReportPage = () => {
   const getGeolocation = () => {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
+        navigator.geolocation.getCurrentPosition(resolve, (error) => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              reject('위치 접근 권한이 거부되었습니다.');
+              break;
+            case error.POSITION_UNAVAILABLE:
+              reject('위치 정보를 사용할 수 없습니다.');
+              break;
+            case error.TIMEOUT:
+              reject('위치 요청이 시간이 초과되었습니다.');
+              break;
+            default:
+              reject('알 수 없는 오류가 발생했습니다.');
+              break;
+          }
+        });
       } else {
         reject('Geolocation을 사용할 수 없습니다.');
       }
@@ -118,6 +133,11 @@ const OneClickReportPage = () => {
 
     try {
       const { lat, lng, address, code } = await reportSOS();
+
+      console.log(`lat: ${lat}`);
+      console.log(`lng: ${lng}`);
+      console.log(`addr: ${address}`);
+      console.log(`code: ${code}`);
 
       await axiosInstance.post('/reports/accident', {
         lat,
