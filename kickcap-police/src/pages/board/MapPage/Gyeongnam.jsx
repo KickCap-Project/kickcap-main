@@ -48,8 +48,8 @@ const Gyeongnam = () => {
         version="1.2"
         baseProfile="tiny"
         viewBox="0 0 800 815"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <g id="경상남도_시군구_경계">
           <path

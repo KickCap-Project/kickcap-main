@@ -48,8 +48,8 @@ const Chungbuk = () => {
         version="1.2"
         baseProfile="tiny"
         viewBox="0 0 800 903"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <g id="충청북도_시군구_경계">
           <path

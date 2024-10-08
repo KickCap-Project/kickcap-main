@@ -48,8 +48,8 @@ const Gwangju = () => {
         version="1.2"
         baseProfile="tiny"
         viewBox="0 0 800 537"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <g id="광주광역시_시군구_경계">
           <path

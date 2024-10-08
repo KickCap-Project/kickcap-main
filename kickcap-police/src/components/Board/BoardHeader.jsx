@@ -143,4 +143,4 @@ const BoardHeader = () => {
   );
 };
 
-export default BoardHeader;
+export default React.memo(BoardHeader);

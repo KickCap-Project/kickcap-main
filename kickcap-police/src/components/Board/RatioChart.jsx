@@ -17,16 +17,7 @@ const s = {
 const RatioChart = ({ title, datas, labels }) => {
   return (
     <s.Container>
-      <Text
-        children={title}
-        size={'13px'}
-        bold={'600'}
-        textalian={'center'}
-        width={'80px'}
-        color={'textBasic'}
-        display={'block'}
-      />
-      <CircleChart datas={datas} labels={labels} />
+      <CircleChart title={title} datas={datas} labels={labels} />
     </s.Container>
   );
 };

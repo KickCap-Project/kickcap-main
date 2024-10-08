@@ -17,16 +17,7 @@ const s = {
 const TimeChart = ({ title, datas, labels }) => {
   return (
     <s.Container>
-      <Text
-        children={title}
-        size={'13px'}
-        bold={'600'}
-        textalian={'center'}
-        width={'120px'}
-        color={'textBasic'}
-        display={'block'}
-      />
-      <BarChart datas={datas} labels={labels} />
+      <BarChart title={title} datas={datas} labels={labels} />
     </s.Container>
   );
 };

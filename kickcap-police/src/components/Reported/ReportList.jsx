@@ -10,6 +10,7 @@ import Pagination from 'react-js-pagination';
 import ReactPaginate from 'react-paginate';
 import { useSearchParams } from 'react-router-dom';
 import '../../styles/Pagination.css';
+import { useQuery } from '@tanstack/react-query';
 
 const s = {
   Container: styled.div`
@@ -28,11 +29,11 @@ const s = {
     height: 30px;
     text-align: center;
     font-weight: 700;
-    font-size: ${(props) => props.size || '25px'};
+    font-size: ${(props) => props.size || '20px'};
     color: ${(props) => props.color || props.theme.textBasic2};
     cursor: pointer;
     &:hover {
-      font-size: 30px;
+      font-size: 25px;
     }
   `,
   TableArea: styled.div`
@@ -104,10 +105,10 @@ const ReportList = () => {
   const type = useAppSelector(selectReportNav);
   const dispatch = useAppDispatch();
   const [violationType, setViolationType] = useState(searchParams.get('violationType'));
-  const [totalPage, setTotalPage] = useState(0);
+  // const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(Number(searchParams.get('pageNo')));
   const [isEnd, setIsEnd] = useState(false);
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
 
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeReportType(mode));
@@ -120,12 +121,68 @@ const ReportList = () => {
     return type === mode ? '#0054A6' : undefined;
   };
   const getSize = (mode) => {
-    return type === mode ? '30px' : undefined;
+    return type === mode ? '25px' : undefined;
   };
 
+  const {
+    data: totalPage,
+    error: totalPageError,
+    refetch: refetchTotalPage,
+  } = useQuery({
+    queryKey: ['reportTotalPage', searchParams.get('violationType')],
+    queryFn: () => {
+      return isEnd
+        ? getReportEndTotalCount(searchParams.get('violationType'))
+        : getReportTotalCount(searchParams.get('violationType'));
+    },
+    enabled: false,
+  });
+
+  const {
+    data: reportData = [],
+    error: reportDataError,
+    refetch: refetchReportData,
+  } = useQuery({
+    queryKey: ['reportData', searchParams.get('violationType'), searchParams.get('pageNo')],
+    queryFn: () => {
+      return isEnd
+        ? getReportEndList(searchParams.get('violationType'), searchParams.get('pageNo'))
+        : getReportList(searchParams.get('violationType'), searchParams.get('pageNo'));
+    },
+    enabled: false,
+  });
+
+  // const {
+  //   data: totalEndPage,
+  //   error: totalEndPageError,
+  //   refetch: refetchTotalEndPage,
+  // } = useQuery({
+  //   queryKey: ['weekData', searchParams.get('violationType')],
+  //   queryFn: () => {
+  //     return getReportEndTotalCount(searchParams.get('violationType'));
+  //   },
+  //   enabled: false,
+  // });
+
+  // const {
+  //   data: reportEndData = [],
+  //   error: reportEndDataError,
+  //   refetch: refetchReportEndData,
+  // } = useQuery({
+  //   queryKey: ['weekData', searchParams.get('violationType'), searchParams.get('pageNo')],
+  //   queryFn: () => {
+  //     return getReportEndList(searchParams.get('violationType'), searchParams.get('pageNo'));
+  //   },
+  //   enabled: false,
+  // });
+
+  if (totalPageError || reportDataError) {
+    alert('데이터를 불러오는 도중 에러가 발생했습니다.');
+  }
+
   useEffect(() => {
-    setViolationType(searchParams.get('violationType'));
-    setPageNo(Number(searchParams.get('pageNo')));
+    // setViolationType(searchParams.get('violationType'));
+    // setPageNo(Number(searchParams.get('pageNo')));
     const newViolationType =
       searchParams.get('violationType') === '4'
         ? 'park'
@@ -137,7 +194,9 @@ const ReportList = () => {
         ? 'sideWalk'
         : 'road';
     dispatch(pageActions.changeReportType(newViolationType));
-  }, [searchParams]);
+    refetchTotalPage();
+    refetchReportData();
+  }, [searchParams, isEnd]);
 
   const navigate = useNavigate();
   const handleMovePage = (reportId) => {
@@ -149,51 +208,51 @@ const ReportList = () => {
     setSearchParams({ violationType, pageNo });
   };
 
-  useEffect(() => {
-    if (isEnd) {
-      // 완료
-      getReportEndTotalCount(
-        violationType,
-        (resp) => {
-          setTotalPage(resp.data);
-        },
-        (error) => {
-          alert('잠시 후 다시 시도해주세요.');
-        },
-      );
-      getReportEndList(
-        violationType,
-        pageNo,
-        (resp) => {
-          setData(resp.data);
-        },
-        (error) => {
-          alert('잠시 후 다시 시도해주세요.');
-        },
-      );
-    } else {
-      // 일반
-      getReportTotalCount(
-        violationType,
-        (resp) => {
-          setTotalPage(resp.data);
-        },
-        (error) => {
-          alert('잠시 후 다시 시도해주세요.');
-        },
-      );
-      getReportList(
-        violationType,
-        pageNo,
-        (resp) => {
-          setData(resp.data);
-        },
-        (error) => {
-          alert('잠시 후 다시 시도해주세요.');
-        },
-      );
-    }
-  }, [violationType, isEnd, pageNo]);
+  // useEffect(() => {
+  //   if (isEnd) {
+  //     // 완료
+  //     getReportEndTotalCount(
+  //       violationType,
+  //       (resp) => {
+  //         setTotalPage(resp.data);
+  //       },
+  //       (error) => {
+  //         alert('잠시 후 다시 시도해주세요.');
+  //       },
+  //     );
+  //     getReportEndList(
+  //       violationType,
+  //       pageNo,
+  //       (resp) => {
+  //         setData(resp.data);
+  //       },
+  //       (error) => {
+  //         alert('잠시 후 다시 시도해주세요.');
+  //       },
+  //     );
+  //   } else {
+  //     // 일반
+  //     getReportTotalCount(
+  //       violationType,
+  //       (resp) => {
+  //         setTotalPage(resp.data);
+  //       },
+  //       (error) => {
+  //         alert('잠시 후 다시 시도해주세요.');
+  //       },
+  //     );
+  //     getReportList(
+  //       violationType,
+  //       pageNo,
+  //       (resp) => {
+  //         setData(resp.data);
+  //       },
+  //       (error) => {
+  //         alert('잠시 후 다시 시도해주세요.');
+  //       },
+  //     );
+  //   }
+  // }, [violationType, isEnd, pageNo]);
   return (
     <s.Container>
       <s.TypeArea>
@@ -219,16 +278,16 @@ const ReportList = () => {
             <s.Tr>
               <s.Th style={{ width: '10%' }}>신고 번호</s.Th>
               <s.Th style={{ width: '55%' }}>단속 주소</s.Th>
-              <s.Th style={{ width: '10%' }}>날 짜</s.Th>
+              <s.Th style={{ width: '15%' }}>날 짜</s.Th>
             </s.Tr>
           </s.Thead>
           <s.Tbody>
-            {data.length !== 0 ? (
-              data.map((d, index) => (
+            {reportData.length !== 0 ? (
+              reportData.map((d, index) => (
                 <s.Tr key={index} cursor={'pointer'} onClick={() => handleMovePage(d.idx)}>
                   <s.Td>{d.idx}</s.Td>
                   <s.Td>{d.addr}</s.Td>
-                  <s.Td>{moment(d.createTime).format('YY-MM-DD')}</s.Td>
+                  <s.Td>{moment(d.createTime).format('YY-MM-DD HH:MM')}</s.Td>
                 </s.Tr>
               ))
             ) : (

@@ -31,4 +31,4 @@ const Text = ({ width, bold, size, cursor, color, display, margin, textalian, ch
   );
 };
 
-export default Text;
+export default React.memo(Text);

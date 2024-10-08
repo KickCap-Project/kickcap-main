@@ -6,6 +6,10 @@ import Text from '../Common/Text';
 import Button from '../Common/Button';
 import CrackInfoTable from '../Common/CrackInfoTable';
 import test from '../../asset/policeLogo.png';
+import EmergencyMap from './EmergencyMap';
+import { postMove } from '../../lib/api/main-api';
+import moment from 'moment';
+import 'moment/locale/ko';
 
 const s = {
   Container: styled.div`
@@ -24,23 +28,20 @@ const s = {
   `,
   MainArea: styled.div`
     width: 750px;
-    margin: 40px auto;
+    margin: 30px auto;
     display: flex;
     justify-content: space-between;
   `,
   MapArea: styled.div`
     width: 350px;
     height: 350px;
-    border: 1px solid red;
   `,
   InfoArea: styled.div`
     width: 350px;
-    border: 1px solid red;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   `,
-  //
   Table: styled.table`
     width: 100%;
     margin: 0 auto;
@@ -69,15 +70,23 @@ const s = {
   `,
 };
 
-const BoardEmergencyModal = ({ open, toggleModal }) => {
+const BoardEmergencyModal = ({ open, toggleModal, data }) => {
+  const hanldleMove = async () => {
+    if (window.confirm('신고자 연락처를 확인하셨습니까?')) {
+      await postMove(
+        data.idx,
+        (resp) => {
+          alert('신고자에게 출동 알림을 보냈습니다.');
+          toggleModal(false);
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
+    }
+  };
   return (
-    <ReactModal
-      isOpen={open}
-      ariaHideApp={false}
-      onRequestClose={toggleModal}
-      className="centerSmallModal"
-      overlayClassName="Overlay"
-    >
+    <ReactModal isOpen={open} ariaHideApp={false} className="centerSmallModal" overlayClassName="Overlay">
       <s.Container>
         <s.Header>
           <Text
@@ -90,25 +99,27 @@ const BoardEmergencyModal = ({ open, toggleModal }) => {
           />
         </s.Header>
         <s.MainArea>
-          <s.MapArea></s.MapArea>
+          <s.MapArea>
+            <EmergencyMap accident={{ lat: data.lat, lng: data.lng }} />
+          </s.MapArea>
           <s.InfoArea>
             <s.Table>
               <s.Tbody>
                 <s.Tr>
                   <s.Th>신고자 성함</s.Th>
-                  <s.Td>홍길동</s.Td>
+                  <s.Td>{data.name}</s.Td>
                 </s.Tr>
                 <s.Tr>
                   <s.Th>신고 주소</s.Th>
-                  <s.Td>대전 유성구 한밭대로 15-12</s.Td>
+                  <s.Td>{data.addr}</s.Td>
                 </s.Tr>
                 <s.Tr>
                   <s.Th>신고 시각</s.Th>
-                  <s.Td>2024. 08. 15. 오후 2시 16분</s.Td>
+                  <s.Td>{moment(data.time).format('YYYY-MM-DD A hh:mm')}</s.Td>
                 </s.Tr>
                 <s.Tr>
                   <s.Th>연락처</s.Th>
-                  <s.Td>010-1111-1111</s.Td>
+                  <s.Td>{data.phone}</s.Td>
                 </s.Tr>
               </s.Tbody>
             </s.Table>
@@ -128,6 +139,7 @@ const BoardEmergencyModal = ({ open, toggleModal }) => {
               size={'20px'}
               display={'block'}
               margin={'0 auto'}
+              onClick={hanldleMove}
             />
           </s.InfoArea>
         </s.MainArea>

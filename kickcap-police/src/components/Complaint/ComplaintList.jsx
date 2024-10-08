@@ -78,6 +78,7 @@ const s = {
 };
 
 const ComplaintList = () => {
+  console.log('rt');
   const [searchParams, setSearchParams] = useSearchParams();
   const type = useAppSelector(selectComplaintNav);
   const dispatch = useAppDispatch();
@@ -161,7 +162,7 @@ const ComplaintList = () => {
               <s.Th style={{ width: '10%' }}>문의 번호</s.Th>
               <s.Th style={{ width: '40%' }}>제목</s.Th>
               <s.Th style={{ width: '15%' }}>작성자</s.Th>
-              <s.Th style={{ width: '10%' }}>날 짜</s.Th>
+              <s.Th style={{ width: '15%' }}>날 짜</s.Th>
             </s.Tr>
           </s.Thead>
           <s.Tbody>
