@@ -1,5 +1,7 @@
 package com.ssafy.kickcap.user.service;
 
+import com.ssafy.kickcap.exception.ErrorCode;
+import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.user.dto.LogoutRequest;
 import com.ssafy.kickcap.user.dto.SocialLoginResponse;
 import com.ssafy.kickcap.user.dto.TokenRequest;
@@ -19,7 +21,7 @@ public class DeviceInfoService {
     // 전달받은 리프레시 토큰으로 리프레시 토큰 객체를 검색해서 전달
     public DeviceInfo findByRefreshToken(String refreshToken) {
         return deviceInfoRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(()->new IllegalArgumentException("Unexpected token"));
+                .orElseThrow(()-> new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST));
     }
 
     // 경찰 FCM 토큰과 리프레시 토큰 저장
@@ -35,7 +37,7 @@ public class DeviceInfoService {
     // FCM 토큰으로 DeviceInfo 삭제
     @Transactional
     public void deleteByFcmToken(Long id, LogoutRequest logoutRequest) {
-        DeviceInfo deviceInfo = deviceInfoRepository.findByFcmToken(logoutRequest.getFcmToken()).orElseThrow(()->new IllegalArgumentException("Unexpected token"));
+        DeviceInfo deviceInfo = deviceInfoRepository.findByFcmToken(logoutRequest.getFcmToken()).orElseThrow(()-> new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST));
         if (deviceInfo != null) {
             if(deviceInfo.getPolice()!=null) {
                 deviceInfoRepository.deleteByPolice_IdAndFcmToken(id, logoutRequest.getFcmToken());
@@ -50,7 +52,7 @@ public class DeviceInfoService {
     @Transactional
     public void deleteRefreshToken(Long id, LogoutRequest logoutRequest) {
         DeviceInfo deviceInfo = deviceInfoRepository.findByFcmToken(logoutRequest.getFcmToken())
-                .orElseThrow(() -> new IllegalArgumentException("Unexpected token"));
+                .orElseThrow(() -> new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST));
 
         if (deviceInfo != null && deviceInfo.getPolice() != null && deviceInfo.getPolice().getId().equals(id)) {
             deviceInfoRepository.updatePoliceRefreshTokenToNull(id, logoutRequest.getFcmToken());

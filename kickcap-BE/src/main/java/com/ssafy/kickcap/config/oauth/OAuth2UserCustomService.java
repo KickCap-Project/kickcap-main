@@ -120,5 +120,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
                         .build());
 
         memberRepository.save(member);
+        System.out.println(member.toString());
+        System.out.println("저장완료");
     }
 }

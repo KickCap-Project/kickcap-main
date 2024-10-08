@@ -6,10 +6,14 @@ import com.ssafy.kickcap.bill.repository.BillRepository;
 import com.ssafy.kickcap.bill.service.BillService;
 import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.exception.RestApiException;
+import com.ssafy.kickcap.fcm.service.FirebaseMessageService;
+import com.ssafy.kickcap.notification.entity.NotificationType;
 import com.ssafy.kickcap.report.dto.ReportListResponseDto;
 import com.ssafy.kickcap.report.dto.ReportResponseDto;
 import com.ssafy.kickcap.report.entity.ApproveStatus;
+import com.ssafy.kickcap.report.entity.Informer;
 import com.ssafy.kickcap.report.entity.Report;
+import com.ssafy.kickcap.report.repository.InformerRepository;
 import com.ssafy.kickcap.report.repository.ReportRepository;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
@@ -35,7 +39,10 @@ public class ReportService {
     private final ViolationTypeRepository violationTypeRepository;
     private final BillRepository billRepository;
     private final MemberRepository memberRepository;
+    private final InformerRepository informerRepository;
     private final BillService billService;
+    private final FirebaseMessageService messageService;
+
     private static final int DEFAULT_PAGE_SIZE = 10;
     private static final List<ApproveStatus> COMPLETED_STATUSES = Arrays.asList(ApproveStatus.APPROVED, ApproveStatus.REJECTED);
 
@@ -102,7 +109,7 @@ public class ReportService {
                 .memberId(member.getId())
                 .violationType(violationType.getName())
                 .description(report.getDescription())
-                .reportTime(report.getReportTime().toString())
+                .createTime(report.getCreatedAt().toString())
                 .addr(report.getAddress())
                 .imageSrc(report.getImageSrc())
                 .lat(report.getLatitude())
@@ -125,12 +132,24 @@ public class ReportService {
         Member member = report.getMember();
 
         // 단속 유형에 따른 벌점 update , 고지서 생성될 때마다 update
-        member.updateDemerit(report.getViolationType().getScore());
+        member.updateDemerit(member.getDemerit() + report.getViolationType().getScore());
 
         memberRepository.save(member);
 
         // 고지서 생성
-        billService.createBillFromReport(report, police);
+        Bill bill = billService.createBillFromReport(report, police);
+
+        // member에게 푸시 알림
+        messageService.sendMessage(member.getId(), NotificationType.BILL, bill.getId());
+
+        // 신고자에게 푸시 알림 (accused_idx가 memberIdx랑 같으면서 report의 kickboardNumber가 같으면서 is_Sent가 N인 컬럼 member
+        List<Informer> informerList = informerRepository.findByAccusedIdxAndKickboardNumberAndIsSent(member.getId(), report.getKickboardNumber());
+        for (Informer informer : informerList) {
+            messageService.sendMessage(informer.getMember().getId(), NotificationType.APPROVE, bill.getId());
+            // 알림 보냄 유무 업데이트 N -> Y로
+            informer.updateIsSent("Y");
+            informerRepository.save(informer);
+        }
     }
 
     public void rejectReport(Police police, Long reportId) {
@@ -143,5 +162,14 @@ public class ReportService {
         // 신고 상태 업데이트 UPAPPROVED -> APPROVED
         report.updateApproveStatus(ApproveStatus.REJECTED);
         reportRepository.save(report);
+
+        // 신고자에게 푸시 알림 (accused_idx가 memberIdx랑 같으면서 report의 kickboardNumber가 같으면서 is_Sent가 N인 컬럼 member
+        List<Informer> informerList = informerRepository.findByAccusedIdxAndKickboardNumberAndIsSent(report.getMember().getId(), report.getKickboardNumber());
+        for (Informer informer : informerList) {
+            messageService.sendMessage(informer.getMember().getId(), NotificationType.REJECT, null);
+            // 알림 보냄 유무 업데이트 N -> Y로
+            informer.updateIsSent("Y");
+            informerRepository.save(informer);
+        }
     }
 }

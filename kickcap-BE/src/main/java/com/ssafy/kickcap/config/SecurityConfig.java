@@ -119,6 +119,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
         configuration.addAllowedOrigin("http://localhost:3001");
         configuration.addAllowedOrigin("https://j11b102.p.ssafy.io");
         configuration.addAllowedOrigin("https://www.bardisue.store");
+        configuration.addAllowedOrigin("https://www.arraylist.xyz"); // 허용할 도메인
         configuration.addAllowedMethod("*");  // 모든 메서드 허용 (GET, POST, PUT 등)
         configuration.addAllowedHeader("*");  // 모든 헤더 허용
         configuration.setAllowCredentials(true);  // 쿠키 및 인증 정보 허용

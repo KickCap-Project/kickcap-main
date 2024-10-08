@@ -4,6 +4,7 @@ import com.ssafy.kickcap.bill.entity.Bill;
 import com.ssafy.kickcap.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,6 +16,7 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "objection")
@@ -53,7 +55,7 @@ public class Objection {
     }
 
     // Relationships
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bill_idx", nullable = false)
     private Bill bill;
 
@@ -63,4 +65,9 @@ public class Objection {
 
     @OneToOne(mappedBy = "objection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Answer answer;
+
+    public void updateObjection(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
