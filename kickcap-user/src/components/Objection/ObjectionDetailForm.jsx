@@ -120,7 +120,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
           onChange: (e) => setValue(fieldType, e.target.value),
         }
       : {
-          defaultValue: fieldType === 'title' ? title : content,
+          defaultValue: fieldType === 'title' ? title : (contentType === 'content' ? content : responseContent),
           mode: 'read',
           readOnly: true,
           minheight: contentType === 'content' ? '30vh' : '15vh',
