@@ -143,11 +143,13 @@ const VideoStream = () => {
         }
     };
 
+    // WebSocket 연결을 관리하는 함수 (기존 연결이 있으면 종료 후 새로 연결)
     const reconnectWebSocket = (newCameraIdx) => {
         if (socketRef.current) {
-            socketRef.current.close();
+            socketRef.current.close();  // 기존 WebSocket 연결 종료
         }
 
+        // 새로운 WebSocket 연결
         socketRef.current = new WebSocket(`wss://j11b102.p.ssafy.io/cctv/video?role=camera&camera_idx=${newCameraIdx}`);
 
         socketRef.current.onmessage = (event) => {
@@ -155,16 +157,27 @@ const VideoStream = () => {
             const imageUrl = URL.createObjectURL(imageBlob);
             setAnnotatedImage(imageUrl);
         };
+
+        socketRef.current.onclose = () => {
+            console.log(`WebSocket closed for camera_idx ${newCameraIdx}`);
+        };
+
+        socketRef.current.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
     };
 
+    // camera_idx 변경 시 WebSocket 재연결
     const handleCameraChange = (newCameraIdx) => {
-        setCameraIdx(newCameraIdx);
-        reconnectWebSocket(newCameraIdx);
+        setCameraIdx(newCameraIdx);  // 카메라 ID 상태 업데이트
+        reconnectWebSocket(newCameraIdx);  // WebSocket 재연결
     };
 
     useEffect(() => {
+        // 컴포넌트가 마운트될 때 또는 camera_idx 변경될 때 WebSocket 연결
         reconnectWebSocket(inputCameraIdx);
 
+        // 비디오 스트림 설정
         navigator.mediaDevices
             .getUserMedia({
                 video: {
@@ -200,19 +213,20 @@ const VideoStream = () => {
                                 console.error("프레임 캡처 중 오류 발생:", error);
                             });
                     };
-                    setInterval(sendFrame, 333);
+                    setInterval(sendFrame, 333);  // 매 333ms마다 프레임 전송
                 };
             })
             .catch((error) => {
                 console.error("웹캠 접근 오류:", error);
             });
 
+        // 컴포넌트 언마운트 시 WebSocket 연결 종료
         return () => {
             if (socketRef.current) {
                 socketRef.current.close();
             }
         };
-    }, [inputCameraIdx]);
+    }, [inputCameraIdx]);  // camera_idx 변경 시 WebSocket 재연결
 
     return (
         <div>
