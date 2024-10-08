@@ -96,7 +96,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                 .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(oAuth2UserCustomService))
                     // 인증 성공 시 실행할 핸들러
 //                    .failureUrl("https://www.bardisue.store/login?error=true") // 로그인 실패 시 리디렉션할 URL 설정
-                    .defaultSuccessUrl(REDIRECT_PATH+"/social", true) // 로그인 성공 시 리디렉션할 URL 설정
+//                    .defaultSuccessUrl(REDIRECT_PATH+"/social", true) // 로그인 성공 시 리디렉션할 URL 설정
                     .successHandler(oAuth2SuccessHandler()))
                 // 인증 성공 시 실행할 핸들러도 설정
 
@@ -107,9 +107,14 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
 
 
             // 예외 처리
-            .exceptionHandling(exceptionHandling -> exceptionHandling
-                .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher("/api/**")))
-            .build();
+//            .exceptionHandling(exceptionHandling -> exceptionHandling
+//                .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher("/api/**")))
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                        .accessDeniedHandler((request, response, accessDeniedException) -> response.sendError(HttpStatus.FORBIDDEN.value()))
+                )
+
+                .build();
     }
 
     @Bean
