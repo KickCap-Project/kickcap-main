@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import LoadingSpinner from '../../components/Common/LoadingSpinner';
 
 import ObjectionList from '../../components/Objection/ObjectionList';
 import ObjectionEmpty from '../../components/Objection/ObjectionEmpty';
@@ -145,16 +146,23 @@ const ObjectionListPage = () => {
           완료 내역
         </s.ControlItem>
       </s.ControlBar>
-      {objectionList.length !== 0 ? (
+
+      {isLoading && objectionList.length === 0 ? ( // 최초 로딩 시 로딩 스피너 표시
+        <s.MainAreaEmpty>
+          <LoadingSpinner />
+        </s.MainAreaEmpty>
+      ) : objectionList.length !== 0 ? (
         <s.MainArea>
           <ObjectionList objectionList={objectionList} />
           <s.ObserveArea ref={observerRef} />
+          {isLoading && <LoadingSpinner />} {/* 추가 데이터 로딩 시 스피너 표시 */}
         </s.MainArea>
       ) : (
         <s.MainAreaEmpty>
           <ObjectionEmpty />
         </s.MainAreaEmpty>
       )}
+
       <Footer />
     </s.Container>
   );

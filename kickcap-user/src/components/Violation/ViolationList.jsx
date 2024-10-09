@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ViolationType, isFlagType } from '../../lib/data/Violation';
+import { isFlagType } from '../../lib/data/Violation';
 import { useNavigate } from 'react-router';
 import { convertToKoreanTimeString } from '../../lib/data/ConvertTime';
 
