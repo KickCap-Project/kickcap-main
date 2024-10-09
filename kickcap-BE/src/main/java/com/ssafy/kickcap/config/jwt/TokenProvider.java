@@ -125,6 +125,8 @@ public class TokenProvider {
 
         Set<SimpleGrantedAuthority> authorities;
 
+        System.out.println(userType);
+
         if ("POLICE".equals(userType)) {
             // 경찰 사용자일 경우
             authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_POLICE"));
