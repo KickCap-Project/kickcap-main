@@ -15,7 +15,7 @@ public enum ErrorCode {
     /*
      * 401 UNAUTHORIZED: 인증되지 않은 사용자의 요청
      */
-    UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "Unauthorized."),
+    UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "Unauthorized request"),
 
     /*
      * 403 FORBIDDEN: 권한이 없는 사용자의 요청
