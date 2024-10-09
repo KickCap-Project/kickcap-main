@@ -10,16 +10,18 @@ const s = {
     justify-content: start;
   `,
 };
-const MonitoringApp = () => {
+const MonitoringApp = ({ idx }) => {
   const [annotatedImage, setAnnotatedImage] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef(null);
   const cameraIdx = 1;
   const reconnectTimeoutRef = useRef(null);
 
+  console.log(idx);
+
   const connectWebSocket = () => {
     // WebSocket 서버에 연결
-    socketRef.current = new WebSocket(`wss://j11b102.p.ssafy.io/cctv/video?role=client&camera_idx=${cameraIdx}`);
+    socketRef.current = new WebSocket(`wss://j11b102.p.ssafy.io/cctv/video?role=client&camera_idx=${idx}`);
 
     socketRef.current.binaryType = 'arraybuffer'; // 이진 데이터 수신을 위해 설정
 
@@ -44,7 +46,7 @@ const MonitoringApp = () => {
       reconnectTimeoutRef.current = setTimeout(() => {
         console.log('WebSocket 재연결 시도');
         connectWebSocket();
-      }, 10000);
+      }, 10000); //10000
     };
 
     socketRef.current.onerror = (error) => {
@@ -57,11 +59,14 @@ const MonitoringApp = () => {
 
     return () => {
       // 컴포넌트 언마운트 시 WebSocket 연결 해제 및 타임아웃 클리어
+      console.log('해제');
       if (socketRef.current) {
+        console.log('해제2');
         socketRef.current.close();
+        clearTimeout(reconnectTimeoutRef.current);
       }
       if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
+        console.log('해제3');
       }
     };
   }, []);
