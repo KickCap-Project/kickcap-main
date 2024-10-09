@@ -94,11 +94,15 @@ public class TokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
+            System.out.println("here!!");
             System.out.println("Token expired: " + e.getMessage()); // 만료된 토큰
-            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST); // 명확한 에러 던지기
+//            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST); // 명확한 에러 던지기
+            return false;
         } catch (Exception e) {
+            System.out.println("here!!3");
             System.out.println("Invalid Token: " + e.getMessage());
-            throw new RestApiException(ErrorCode.NOT_FOUND); // 예외를 던지기
+//            throw new RestApiException(ErrorCode.NOT_FOUND); // 예외를 던지기
+            return false;
         }
     }
 
