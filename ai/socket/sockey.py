@@ -105,10 +105,15 @@ async def websocket_handler(request):
                             # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
                             _, image_encoded = cv2.imencode('.jpg', image)
                             # FastAPI 엔드포인트로 이미지 전송
-                            files = {
-                                'image_file': image_encoded.tobytes()
-                            }
-                            async with session.post(API_ENDPOINT, data=files) as resp:
+                            form = FormData()
+                            form.add_field(
+                                'image_file',
+                                image_encoded.tobytes(),
+                                filename='image.jpg',  # You can set the filename as needed
+                                content_type='image/jpeg'
+                            )
+                            form.add_field('camera_idx', str(camera_idx))
+                            async with session.post(API_ENDPOINT, data=form) as resp:
                                 if resp.status != 200:
                                     print(f"Error from FastAPI endpoint: {resp.status}")
 
