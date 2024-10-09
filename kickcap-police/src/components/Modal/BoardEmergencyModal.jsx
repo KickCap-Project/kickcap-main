@@ -4,8 +4,6 @@ import ReactModal from 'react-modal';
 import '../../styles/modal.css';
 import Text from '../Common/Text';
 import Button from '../Common/Button';
-import CrackInfoTable from '../Common/CrackInfoTable';
-import test from '../../asset/policeLogo.png';
 import EmergencyMap from './EmergencyMap';
 import { postMove } from '../../lib/api/main-api';
 import moment from 'moment';

@@ -39,7 +39,7 @@ export const localAxios = () => {
       const originalRequest = error.config;
 
       // 401 에러 (액세스 토큰 만료 등)
-      if (error.response && error.response.status === 500) {
+      if (error.response && error.response.status === 401) {
         const refreshToken = getRefreshToken(); // 스토리지에서 리프레시 토큰 가져오기
 
         if (refreshToken) {
@@ -67,6 +67,11 @@ export const localAxios = () => {
           window.location.href = '/login'; // 로그인 페이지로 리다이렉트
           return Promise.reject(error);
         }
+      } else if (error.response && error.response.status === 403) {
+        // 리프레시 토큰이 만료되었거나 오류가 발생한 경우 로그아웃 처리
+        removeTokens();
+        window.location.href = '/login'; // 로그인 페이지로 리다이렉트
+        return Promise.reject(error);
       }
 
       return Promise.reject(error);

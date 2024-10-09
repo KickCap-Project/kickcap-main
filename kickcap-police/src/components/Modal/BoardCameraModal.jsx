@@ -48,6 +48,7 @@ const s = {
 };
 
 const BoardCameraModal = ({ open, toggleModal, idx, data }) => {
+  console.log('카메라 번호 : ' + idx);
   return (
     <ReactModal
       isOpen={open}
@@ -77,7 +78,7 @@ const BoardCameraModal = ({ open, toggleModal, idx, data }) => {
             />
           </s.Header>
           <s.MainArea>
-            <MonitoringApp />
+            <MonitoringApp idx={idx} />
             <s.InfoArea>
               {data.crackdown.length !== 0 ? (
                 data.crackdown.map((data, index) => <CameraCrackList key={index} data={data} />)

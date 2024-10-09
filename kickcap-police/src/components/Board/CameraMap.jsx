@@ -417,6 +417,7 @@ const CameraMap = ({ point }) => {
   }, [searchParams]);
 
   const calculateRatios = (data) => {
+    // console.log(data);
     const sum = Array(8).fill(0);
     const indexName = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'];
     data.forEach((camera) => {
@@ -425,10 +426,14 @@ const CameraMap = ({ point }) => {
       }
     });
 
+    for (let i = 0; i < 8; i++) {
+      console.log(sum[i]);
+    }
+
     const ratios = data.map((camera) => {
       const ratioObj = { lat: camera.lat, lng: camera.lng, idx: camera.idx };
       for (let i = 0; i < 8; i++) {
-        ratioObj[i] = sum[i] === 0 ? 0 : (camera[i] / sum[i]).toFixed(2);
+        ratioObj[i] = sum[i] === 0 ? 0 : (camera[indexName[i]] / sum[i]).toFixed(2);
       }
       return ratioObj;
     });
@@ -436,6 +441,7 @@ const CameraMap = ({ point }) => {
   };
 
   const result = mapData.camDataResponses !== undefined ? calculateRatios(mapData.camDataResponses) : [];
+  console.log(result);
 
   const handleChangeTimeType = (e) => {
     setTimeType(e.target.value);
@@ -496,6 +502,7 @@ const CameraMap = ({ point }) => {
       });
 
       kakao.maps.event.addListener(marker, 'click', async () => {
+        setCameraIdx(data.idx);
         await getCCTVInfo(
           data.idx,
           timeType,
@@ -603,8 +610,8 @@ const CameraMap = ({ point }) => {
             <s.selectValue value={1}>3 ~ 5시</s.selectValue>
             <s.selectValue value={2}>6 ~ 8시</s.selectValue>
             <s.selectValue value={3}>9 ~ 11시</s.selectValue>
-            <s.selectValue value={4}>12 ~ 15시</s.selectValue>
-            <s.selectValue value={5}>15 ~ 18시</s.selectValue>
+            <s.selectValue value={4}>12 ~ 14시</s.selectValue>
+            <s.selectValue value={5}>15 ~ 17시</s.selectValue>
             <s.selectValue value={6}>18 ~ 20시</s.selectValue>
             <s.selectValue value={7}>21 ~ 23시</s.selectValue>
           </s.selectArea>
