@@ -104,9 +104,13 @@ public class Member {
         return this;
     }
 
-//    public void updateDemerit(int demerit) {
-//        this.demerit += demerit;
-//    }
+    public void cancelDemerit(int demerit) {
+        this.demerit -= demerit;
+        if (this.demerit <= 0) {
+            this.demerit = 0;
+        }
+    }
+
     public void updateDemerit(int demerit) {
         this.demerit = demerit;
     }
