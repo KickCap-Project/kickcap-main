@@ -1,13 +1,12 @@
 package com.ssafy.kickcap.config.jwt;
 
+import com.ssafy.kickcap.exception.ErrorCode;
 import com.ssafy.kickcap.config.oauth.CustomOAuth2User;
+import com.ssafy.kickcap.exception.RestApiException;
 import com.ssafy.kickcap.user.entity.Member;
 import com.ssafy.kickcap.user.entity.Police;
 import com.ssafy.kickcap.user.service.MemberService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,38 +37,71 @@ public class TokenProvider {
     }
 
     // JWT 토큰 생성 메서드
-    private String makeToken(Date expiry, String email, Long id, String type) { // 인자는 만료 시간, 유저 정보 받음
-        Date now = new Date();
+//    private String makeToken(Date expiry, String email, Long id, String type) { // 인자는 만료 시간, 유저 정보 받음
+//        Date now = new Date();
+//
+//        return Jwts.builder()
+//                .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // 헤더 typ 타입 : JWT
+//                // 내용 iss 발급자 : minipeach0923@gmail.com (propertise 파일에서 설정한 값)
+//                .setIssuer(jwtProperties.getIssuer())
+//                .setIssuedAt(now) // 내용 iat 발급일시 : 현재 시간
+//                .setExpiration(expiry) // 내용 exp 만료 일시 : expiry 멤버 변숫값
+//                .setSubject(email) // 내용 sub 토큰 제목 : 유저의 이메일
+//                .claim("id",id) // 클레임 id : 유저 ID
+//                .claim("type", type)  // 사용자 타입 추가
+//                // 서명 : 비밀값과 함께 해시값을 HS256 방식으로 암호화
+//                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+//                .compact();
+//    }
+
+    private String makeToken(Date expiry, String email, Long id, String type) {
+        if (email == null || id == null || type == null) {
+            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
+        }
 
         return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // 헤더 typ 타입 : JWT
-                // 내용 iss 발급자 : minipeach0923@gmail.com (propertise 파일에서 설정한 값)
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer(jwtProperties.getIssuer())
-                .setIssuedAt(now) // 내용 iat 발급일시 : 현재 시간
-                .setExpiration(expiry) // 내용 exp 만료 일시 : expiry 멤버 변숫값
-                .setSubject(email) // 내용 sub 토큰 제목 : 유저의 이메일
-                .claim("id",id) // 클레임 id : 유저 ID
-                .claim("type", type)  // 사용자 타입 추가
-                // 서명 : 비밀값과 함께 해시값을 HS256 방식으로 암호화
+                .setIssuedAt(new Date())
+                .setExpiration(expiry)
+                .setSubject(email)
+                .claim("id", id)
+                .claim("type", type)
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
     }
 
-    // JWT 토큰 유효성 검증 메서드
-    public boolean validToken(String token) {
-        try{
-            // 프로퍼티즈 파일에 선언한 비밀값과 함께 토큰 복호화 진행
-            Jwts.parser()
-                    .setSigningKey(jwtProperties.getSecretKey()) // 비밀값으로 복호화
-                    .parseClaimsJws(token);
 
-            System.out.println("Token is valid");
+    // JWT 토큰 유효성 검증 메서드
+//    public boolean validToken(String token) {
+//        try{
+//            // 프로퍼티즈 파일에 선언한 비밀값과 함께 토큰 복호화 진행
+//            Jwts.parser()
+//                    .setSigningKey(jwtProperties.getSecretKey()) // 비밀값으로 복호화
+//                    .parseClaimsJws(token);
+//
+//            System.out.println("Token is valid");
+//            return true;
+//        } catch (Exception e) { // 복호화 과정에서 에러가 나면 유효하지 않은 토큰
+//            System.out.println("Invalid Token: " + e.getMessage());
+//            return false;
+//        }
+//    }
+    public boolean validToken(String token) {
+        try {
+            Jwts.parser()
+                    .setSigningKey(jwtProperties.getSecretKey())
+                    .parseClaimsJws(token);
             return true;
-        } catch (Exception e) { // 복호화 과정에서 에러가 나면 유효하지 않은 토큰
+        } catch (ExpiredJwtException e) {
+            System.out.println("Token expired: " + e.getMessage()); // 만료된 토큰
+            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST); // 명확한 에러 던지기
+        } catch (Exception e) {
             System.out.println("Invalid Token: " + e.getMessage());
-            return false;
+            throw new RestApiException(ErrorCode.NOT_FOUND); // 예외를 던지기
         }
     }
+
 
 //    // 토큰 기반으로 인증 정보를 가져오는 메서드
 //    public Authentication getAuthentication(String token) {
