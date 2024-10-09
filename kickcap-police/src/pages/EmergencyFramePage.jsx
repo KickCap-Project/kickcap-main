@@ -35,8 +35,9 @@ const EmergencyPage = () => {
     queryFn: () => {
       return getEmergency();
     },
-    enabled: !isEmergency, // 모달이 열려있으면 쿼리 비활성화
-    refetchInterval: isEmergency ? false : 10000, // 모달이 열려있으면 10초마다 쿼리 비활성화
+    // enabled: !isEmergency, // 모달이 열려있으면 쿼리 비활성화
+    // refetchInterval: isEmergency ? false : 10000, // 모달이 열려있으면 10초마다 쿼리 비활성화
+    enabled: false,
   });
   useEffect(() => {
     if (emergencyData.status === 200) {

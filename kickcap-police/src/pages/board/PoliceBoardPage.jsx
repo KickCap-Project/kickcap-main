@@ -116,16 +116,37 @@ const PoliceBoardPage = () => {
   }, [searchParams, sido, gugun, refetchWeekData, refetchBottomData]);
 
   const ButtomFunc = useCallback((today, yesterday) => {
-    if (today === 0 && yesterday === 0) {
+    // if (today === 0 && yesterday === 0) {
+    //   return 0;
+    // }
+    // if (today === 0) {
+    //   return 0 - yesterday * 100;
+    // }
+    // if (yesterday === 0) {
+    //   return today * 100;
+    // }
+    // return ((today - yesterday) / yesterday) * 100;
+
+    if (today === yesterday) {
       return 0;
     }
-    if (today === 0) {
-      return 0 - yesterday * 100;
-    }
     if (yesterday === 0) {
-      return today * 100;
+      return 100;
     }
-    return ((today - yesterday) / yesterday) * 100;
+    if (today < yesterday) {
+      return -(1 - today / yesterday) * 100;
+    }
+    if (today > yesterday) {
+      return (today / yesterday - 1) * 100;
+    }
+    // return ((today - yesterday) / yesterday) * 100;
+
+    //     if 오늘 신고 < 어제 신고
+    //  (1 - (오늘 신고 / 어제 신고)) * 100 (감소함) >> ex) - 80%
+    // elif 오늘 신고 == 어제 신고
+    //  0%로 동일 >> ex) 0% 또는 한글로 동일
+    // elif 오늘 신고 > 어제 신고
+    //  ((오늘 신고 / 어제 신고) - 1) * 100 (증가함) >> ex) + 5%
   }, []);
 
   const crackLabel = ['안전모 미착용', '다인 승차'];

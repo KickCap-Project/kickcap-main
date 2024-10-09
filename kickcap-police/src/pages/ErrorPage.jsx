@@ -6,8 +6,15 @@ import { useNavigate } from 'react-router';
 import Button from '../components/Common/Button';
 import Image from './../components/Common/Image';
 const s = {
-  Container: styled.section`
-    height: 100%;
+  // Container: styled.section`
+  //   height: 100%;
+  //   background-color: ${(props) => props.theme.bgColor};
+  //   overflow: auto;
+  // `,
+  Container: styled.div`
+    height: 100vh;
+    position: relative;
+    margin: 0 auto;
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
   `,
