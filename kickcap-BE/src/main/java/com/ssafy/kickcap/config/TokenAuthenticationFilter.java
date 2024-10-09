@@ -23,17 +23,54 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer ";
 
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//        // 요청 헤더의 Authorization 키의 값 조회
+//        String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
+//        // 가져온 값에서 접두사 제거
+//        String token = getAccessToken(authorizationHeader);
+//
+//        // 가져온 토큰이 유효한지 확인하고, 유효한 떄는 인증 정보 설정
+//        if (tokenProvider.validToken(token)){
+//            Authentication authentication = tokenProvider.getAuthentication(token); // 인증 정보를 가져오면 유저 객체가 반환된다.
+//            // 유저 객체에는 유저 이름과 권한 목록과 같은 인증 정보가 포함
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//        }
+////        else {
+////            // 토큰이 만료되거나 유효하지 않을 경우
+////            SecurityContextHolder.clearContext();
+////            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired or invalid");
+////            return;
+////        }
+//
+//        filterChain.doFilter(request, response);
+//    }
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        // 요청 경로 확인
+        String requestURI = request.getRequestURI();
+
+        // 로그인 또는 토큰 재발급 요청이면 토큰 검증을 하지 않음
+        if (requestURI.equals("/police/login") || requestURI.equals("/tokens/refresh")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 요청 헤더의 Authorization 키의 값 조회
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         // 가져온 값에서 접두사 제거
         String token = getAccessToken(authorizationHeader);
 
-        // 가져온 토큰이 유효한지 확인하고, 유효한 떄는 인증 정보 설정
-        if (tokenProvider.validToken(token)){
+        System.out.println("Authorization Header: " + authorizationHeader);
+        System.out.println("Token: " + token);
+
+        // 가져온 토큰이 유효한지 확인하고, 유효한 때는 인증 정보 설정
+        if (token != null && tokenProvider.validToken(token)) {
             Authentication authentication = tokenProvider.getAuthentication(token); // 인증 정보를 가져오면 유저 객체가 반환된다.
             // 유저 객체에는 유저 이름과 권한 목록과 같은 인증 정보가 포함
+            System.out.println("Authentication: " + authentication);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             // 토큰이 만료되거나 유효하지 않을 경우
@@ -44,6 +81,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 
     private String getAccessToken(String authorizationHeader) {
         if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
