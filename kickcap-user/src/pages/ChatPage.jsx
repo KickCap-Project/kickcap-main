@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
 import Chat from '../components/Chat/Chat';
@@ -45,6 +45,8 @@ const ChatPage = () => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
 
+  const messageAreaRef = useRef(null);
+
   const handleSend = async () => {
     if (input.trim() === '') return;
 
@@ -64,18 +66,24 @@ const ChatPage = () => {
     }
   };
 
-  const handleKeyPress = e => {
+  const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       handleSend();
-    };
+    }
   };
+
+  useEffect(() => {
+    if (messageAreaRef.current) {
+      messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <s.Container>
       <Header title={'법률 지원 챗봇'} />
       <s.MainArea>
-        <s.MessageArea>
+        <s.MessageArea ref={messageAreaRef}>
           <Chat messages={messages} />
         </s.MessageArea>
         <s.SendArea>
