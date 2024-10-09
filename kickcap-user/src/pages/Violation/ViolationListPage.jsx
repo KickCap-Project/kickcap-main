@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import LoadingSpinner from '../../components/Common/LoadingSpinner';
 import ViolationEmpty from '../../components/Violation/ViolationEmpty';
 import ViolationList from '../../components/Violation/ViolationList';
 import { isFlagType } from '../../lib/data/Violation';
@@ -78,9 +79,9 @@ const IndexComponent = ({ color, title }) => {
 const ViolationListPage = () => {
   const [vList, setVList] = useState([]);
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
   const observerRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 데이터 로드 함수
   const loadMoreData = async () => {
@@ -132,8 +133,12 @@ const ViolationListPage = () => {
   return (
     <s.Container>
       <Header title={'나의 단속 내역'} />
-      
-      {vList.length === 0 ? (
+
+      {isLoading && vList.length === 0 ? ( // 최초 로딩 시 로딩 스피너 표시
+        <s.MainAreaEmpty>
+          <LoadingSpinner />
+        </s.MainAreaEmpty>
+      ) : vList.length === 0 ? ( // 데이터가 없을 때 빈 화면 표시
         <s.MainAreaEmpty>
           <ViolationEmpty />
         </s.MainAreaEmpty>
@@ -147,6 +152,8 @@ const ViolationListPage = () => {
           <s.MainArea>
             <ViolationList vList={vList} />
             <s.ObserveArea ref={observerRef} />
+            {/* 추가 데이터 로딩 중일 때 스피너 표시 */}
+            {isLoading && <LoadingSpinner />}
           </s.MainArea>
         </>
       )}
