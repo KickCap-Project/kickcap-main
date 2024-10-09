@@ -5,6 +5,7 @@ import Button from '../Common/Button';
 import Input from '../Common/Input';
 import TextArea from '../Common/TextArea';
 import UploadImgButton from '../../components/Report/UploadImgButtom';
+import LoadingSpinner from '../Common/LoadingSpinner';
 
 import { localAxios } from '../../util/axios-setting';
 import EXIF from 'exif-js';
@@ -53,6 +54,14 @@ const s = {
     display: flex;
     justify-content: center;
   `,
+  Text: styled.div`
+    color: ${(props) => (props.color ? props.color : props.theme.mainColor)};
+    font-size: ${(props) => props.size};
+    font-weight: 600;
+    white-space: pre-line;
+    text-align: center;
+    margin: ${(props) => props.margin};
+  `,
 };
 
 const ReportIllegalParkingForm = () => {
@@ -67,6 +76,9 @@ const ReportIllegalParkingForm = () => {
   const [date, setDate] = useState(null);
 
   const fileInputRef = useRef(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const loadingText = '신고 중입니다.\n\n잠시만 기다려주세요...';
 
   const handleChangeKickNumber = (e) => {
     setKickboardNumber(e.target.value);
@@ -118,16 +130,19 @@ const ReportIllegalParkingForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const imgUrl = await uploadImg(imgFile, 4);
-
-    if (!imgUrl) {
-      alert('이미지 업로드에 실패했습니다.');
-      return;
-    }
+    setIsLoading(true);
 
     // 신고 - 불법주차 신고
     // axios.post
     try {
+      const imgUrl = await uploadImg(imgFile, 4);
+
+      if (!imgUrl) {
+        alert('이미지 업로드에 실패했습니다.');
+        setIsLoading(false);
+        return;
+      }
+
       const payload = {
         violationType: 4,
         image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/type4/${imgUrl}`,
@@ -142,6 +157,8 @@ const ReportIllegalParkingForm = () => {
     } catch (error) {
       // 신고 제출 오류
       alert('입력 정보를 다시 한 번 확인해주세요.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -151,71 +168,86 @@ const ReportIllegalParkingForm = () => {
 
   return (
     <s.Form>
-      {selectedImage ? (
-        <s.ImageArea>
-          <s.ImageBtn onClick={handleDeleteClick}>X</s.ImageBtn>
-          <s.Image src={selectedImage}></s.Image>
-        </s.ImageArea>
+      {isLoading ? (
+        <>
+          <s.Text size={'20px'} margin={'5vh'}>
+            {loadingText}
+          </s.Text>
+          <LoadingSpinner />
+        </>
       ) : (
-        <UploadImgButton paddingY={'4vh'} onClick={handleUploadClick} />
+        <>
+          {selectedImage ? (
+            <s.ImageArea>
+              <s.ImageBtn onClick={handleDeleteClick}>X</s.ImageBtn>
+              <s.Image src={selectedImage}></s.Image>
+            </s.ImageArea>
+          ) : (
+            <UploadImgButton paddingY={'4vh'} onClick={handleUploadClick} />
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: 'none' }}
+            onChange={handleImageChange}
+          />
+          <s.InputArea>
+            <Input
+              id={'kickboardNumber'}
+              name={'kickboardNumber'}
+              width={'33%'}
+              height={'40px'}
+              bold={'500'}
+              size={'12px'}
+              placeholder={'킥보드 번호판 입력'}
+              text-align={'center'}
+              value={kickboardNumber}
+              onChange={handleChangeKickNumber}
+            />
+            <Input
+              mode={'read'}
+              id={'image'}
+              name={'image'}
+              width={'66%'}
+              height={'40px'}
+              bold={'500'}
+              size={'12px'}
+              InputColor="AreaColor"
+              placeholder={'사진 첨부 시 정보가 입력됩니다.'}
+              value={date}
+            />
+          </s.InputArea>
+          <TextArea
+            id={'desciption'}
+            name={'description'}
+            width={'100%'}
+            height={'35vh'}
+            bold={'500'}
+            size={'15px'}
+            placeholder={'내용을 입력하세요.'}
+            margin={'10px'}
+            value={description}
+            onChange={handleChangeDescription}
+          />
+
+          <s.ButtonArea>
+            <Button
+              type={imgFile && description && kickboardNumber && date && !isLoading ? '' : 'sub'}
+              width={'90%'}
+              height={'40px'}
+              bold={'700'}
+              size={'24px'}
+              onClick={
+                imgFile && description && kickboardNumber && date && !isLoading ? handleSubmit : handlePreventDefault
+              }
+            >
+              작성 완료
+            </Button>
+          </s.ButtonArea>
+        </>
       )}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        style={{ display: 'none' }}
-        onChange={handleImageChange}
-      />
-      <s.InputArea>
-        <Input
-          id={'kickboardNumber'}
-          name={'kickboardNumber'}
-          width={'33%'}
-          height={'40px'}
-          bold={'500'}
-          size={'12px'}
-          placeholder={'킥보드 번호판 입력'}
-          text-align={'center'}
-          value={kickboardNumber}
-          onChange={handleChangeKickNumber}
-        />
-        <Input
-          mode={'read'}
-          id={'image'}
-          name={'image'}
-          width={'66%'}
-          height={'40px'}
-          bold={'500'}
-          size={'12px'}
-          InputColor="AreaColor"
-          placeholder={'사진 첨부 시 정보가 입력됩니다.'}
-          value={date}
-        />
-      </s.InputArea>
-      <TextArea
-        id={'desciption'}
-        name={'description'}
-        width={'100%'}
-        height={'35vh'}
-        bold={'500'}
-        size={'15px'}
-        placeholder={'내용을 입력하세요.'}
-        margin={'10px'}
-        value={description}
-        onChange={handleChangeDescription}
-      />
-      <s.ButtonArea>
-        {imgFile && description && kickboardNumber && date ? (
-          <Button width={'90%'} height={'40px'} bold={'700'} size={'24px'} onClick={handleSubmit}>
-            작성 완료
-          </Button>
-        ) : (
-          <Button type={'sub'} width={'90%'} height={'40px'} bold={'700'} size={'24px'} onClick={handlePreventDefault}>
-            작성 완료
-          </Button>
-        )}
-      </s.ButtonArea>
     </s.Form>
   );
 };

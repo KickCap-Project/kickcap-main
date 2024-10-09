@@ -8,6 +8,7 @@ import { uploadImg } from '../../lib/api/report-api';
 import Button from '../Common/Button';
 import Input from '../Common/Input';
 import TextArea from '../Common/TextArea';
+import LoadingSpinner from '../Common/LoadingSpinner';
 
 import { ViolationType } from '../../lib/data/Violation';
 import UploadImgButton from '../../components/Report/UploadImgButtom';
@@ -88,6 +89,14 @@ const s = {
     display: flex;
     justify-content: center;
   `,
+  Text: styled.div`
+    color: ${(props) => (props.color ? props.color : props.theme.mainColor)};
+    font-size: ${(props) => props.size};
+    font-weight: 600;
+    white-space: pre-line;
+    text-align: center;
+    margin: ${(props) => props.margin};
+  `,
 };
 
 const ReportMisuseForm = () => {
@@ -111,6 +120,9 @@ const ReportMisuseForm = () => {
     });
     return initialState;
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const loadingText = '신고 중입니다.\n\n잠시만 기다려주세요...';
 
   const isMap = useAppSelector(selectIsMap);
   const latitude = useAppSelector(selectLatitude) || null;
@@ -205,18 +217,20 @@ const ReportMisuseForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // 이미지 파일을 이미지 서버에 업로드하고 주소 반환
-    const imgUrl = await uploadImg(imgFile, typeRequest);
-
-    if (!imgUrl) {
-      alert('이미지 업로드에 실패했습니다.');
-      return;
-    }
+    setIsLoading(true);
 
     // 신고 - 실시간 이용 신고
     // axios.post
     try {
+      // 이미지 파일을 이미지 서버에 업로드하고 주소 반환
+      const imgUrl = await uploadImg(imgFile, typeRequest);
+
+      if (!imgUrl) {
+        alert('이미지 업로드에 실패했습니다.');
+        setIsLoading(false);
+        return;
+      }
+
       const payload = {
         violationType: typeRequest,
         image: `${process.env.REACT_APP_IMG_SERVER_BASE_URL}/image/type${typeRequest}/${imgUrl}`,
@@ -235,6 +249,8 @@ const ReportMisuseForm = () => {
     } catch (error) {
       // 신고 제출 오류
       alert('입력 정보를 다시 한 번 확인해주세요.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -244,100 +260,137 @@ const ReportMisuseForm = () => {
 
   return (
     <s.Form>
-      {selectedImage ? (
-        <s.ImageArea>
-          <s.ImageBtn onClick={handleDeleteClick}>X</s.ImageBtn>
-          <s.Image src={selectedImage}></s.Image>
-        </s.ImageArea>
+      {isLoading ? (
+        <>
+          <s.Text size={'20px'} margin={'5vh'}>
+            {loadingText}
+          </s.Text>
+          <LoadingSpinner />
+        </>
       ) : (
-        <UploadImgButton paddingY={'1vh'} onClick={handleUploadClick} />
-      )}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        style={{ display: 'none' }}
-        onChange={handleImageChange}
-      />
-      <s.InputArea>
-        <Input
-          id={'kickboardNumber'}
-          name={'kickboardNumber'}
-          width={'33%'}
-          height={'40px'}
-          bold={'500'}
-          size={'12px'}
-          placeholder={'킥보드 번호판 입력'}
-          text-align={'center'}
-          value={kickboardNumber}
-          onChange={handleChangeKickNumber}
-        />
-        <Input
-          mode={'read'}
-          id={'image'}
-          name={'image'}
-          width={'66%'}
-          height={'40px'}
-          bold={'500'}
-          size={'12px'}
-          InputColor="AreaColor"
-          placeholder={'사진 첨부 시 정보가 입력됩니다.'}
-          value={date}
-        />
-        <s.InputArea height={'10px'} />
-        <s.LocationArea onClick={() => handleOpenMapModal(true)}>
-          <Input
-            mode={'read'}
-            id={'location'}
-            name={'location'}
+        <>
+          {selectedImage ? (
+            <s.ImageArea>
+              <s.ImageBtn onClick={handleDeleteClick}>X</s.ImageBtn>
+              <s.Image src={selectedImage}></s.Image>
+            </s.ImageArea>
+          ) : (
+            <UploadImgButton paddingY={'1vh'} onClick={handleUploadClick} />
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: 'none' }}
+            onChange={handleImageChange}
+          />
+          <s.InputArea>
+            <Input
+              id={'kickboardNumber'}
+              name={'kickboardNumber'}
+              width={'33%'}
+              height={'40px'}
+              bold={'500'}
+              size={'12px'}
+              placeholder={'킥보드 번호판 입력'}
+              text-align={'center'}
+              value={kickboardNumber}
+              onChange={handleChangeKickNumber}
+            />
+            <Input
+              mode={'read'}
+              id={'image'}
+              name={'image'}
+              width={'66%'}
+              height={'40px'}
+              bold={'500'}
+              size={'12px'}
+              InputColor="AreaColor"
+              placeholder={'사진 첨부 시 정보가 입력됩니다.'}
+              value={date}
+            />
+            <s.InputArea height={'10px'} />
+            <s.LocationArea onClick={() => handleOpenMapModal(true)}>
+              <Input
+                mode={'read'}
+                id={'location'}
+                name={'location'}
+                width={'100%'}
+                height={'40px'}
+                bold={'500'}
+                size={'15px'}
+                InputColor="AreaColor"
+                placeholder={address ? address : '클릭하여 위치정보를 입력해주세요.'}
+                value={address}
+              />
+            </s.LocationArea>
+          </s.InputArea>
+          <s.CheckboxArea>
+            {typeIdx.map((value, idx) => (
+              <s.CheckboxWrapper key={idx}>
+                <s.Checkbox
+                  type="checkbox"
+                  id={`checkbox-${idx}`}
+                  name={ViolationType[value].type}
+                  checked={typeCheck[ViolationType[value].type]}
+                  onChange={handleCheckboxChange}
+                />
+                <s.CheckboxLabel htmlFor={`checkbox-${idx}`}>{ViolationType[value].type}</s.CheckboxLabel>
+              </s.CheckboxWrapper>
+            ))}
+          </s.CheckboxArea>
+          <TextArea
+            id={'desciption'}
+            name={'description'}
             width={'100%'}
-            height={'40px'}
+            height={'35vh'}
             bold={'500'}
             size={'15px'}
-            InputColor="AreaColor"
-            placeholder={address ? address : '클릭하여 위치정보를 입력해주세요.'}
-            value={address}
+            placeholder={'내용을 입력하세요.'}
+            margin={'10px'}
+            value={description}
+            onChange={handleChangeDescription}
           />
-        </s.LocationArea>
-      </s.InputArea>
-      <s.CheckboxArea>
-        {typeIdx.map((value, idx) => (
-          <s.CheckboxWrapper key={idx}>
-            <s.Checkbox
-              type="checkbox"
-              id={`checkbox-${idx}`}
-              name={ViolationType[value].type}
-              checked={typeCheck[ViolationType[value].type]}
-              onChange={handleCheckboxChange}
-            />
-            <s.CheckboxLabel htmlFor={`checkbox-${idx}`}>{ViolationType[value].type}</s.CheckboxLabel>
-          </s.CheckboxWrapper>
-        ))}
-      </s.CheckboxArea>
-      <TextArea
-        id={'desciption'}
-        name={'description'}
-        width={'100%'}
-        height={'35vh'}
-        bold={'500'}
-        size={'15px'}
-        placeholder={'내용을 입력하세요.'}
-        margin={'10px'}
-        value={description}
-        onChange={handleChangeDescription}
-      />
-      <s.ButtonArea>
-        {imgFile && kickboardNumber && address && latitude && longitude && code && description && typeRequest ? (
-          <Button width={'90%'} height={'40px'} bold={'700'} size={'24px'} onClick={handleSubmit}>
-            작성 완료
-          </Button>
-        ) : (
-          <Button type={'sub'} width={'90%'} height={'40px'} bold={'700'} size={'24px'} onClick={handlePreventDefault}>
-            작성 완료
-          </Button>
-        )}
-      </s.ButtonArea>
+
+          <s.ButtonArea>
+            <Button
+              type={
+                imgFile &&
+                kickboardNumber &&
+                address &&
+                latitude &&
+                longitude &&
+                code &&
+                description &&
+                typeRequest &&
+                !isLoading
+                  ? ''
+                  : 'sub'
+              }
+              width={'90%'}
+              height={'40px'}
+              bold={'700'}
+              size={'24px'}
+              onClick={
+                imgFile &&
+                kickboardNumber &&
+                address &&
+                latitude &&
+                longitude &&
+                code &&
+                description &&
+                typeRequest &&
+                !isLoading
+                  ? handleSubmit
+                  : handlePreventDefault
+              }
+            >
+              작성 완료
+            </Button>
+          </s.ButtonArea>
+        </>
+      )}
 
       <ReportGetPositionModal open={isMap} toggleModal={handleOpenMapModal} />
     </s.Form>
