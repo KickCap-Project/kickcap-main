@@ -11,6 +11,7 @@ import ReactPaginate from 'react-paginate';
 import { useSearchParams } from 'react-router-dom';
 import '../../styles/Pagination.css';
 import { useQuery } from '@tanstack/react-query';
+import 'moment/locale/ko';
 
 const s = {
   Container: styled.div`
@@ -61,6 +62,10 @@ const s = {
   Td: styled.td`
     vertical-align: middle;
     border-bottom: 1px solid ${(props) => props.theme.btnOff};
+    max-width: 700px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   `,
   noData: styled.td`
     vertical-align: middle;
@@ -277,8 +282,8 @@ const ReportList = () => {
           <s.Thead>
             <s.Tr>
               <s.Th style={{ width: '10%' }}>신고 번호</s.Th>
-              <s.Th style={{ width: '55%' }}>단속 주소</s.Th>
-              <s.Th style={{ width: '15%' }}>날 짜</s.Th>
+              <s.Th style={{ width: '50%' }}>단속 주소</s.Th>
+              <s.Th style={{ width: '20%' }}>날 짜</s.Th>
             </s.Tr>
           </s.Thead>
           <s.Tbody>
@@ -287,7 +292,7 @@ const ReportList = () => {
                 <s.Tr key={index} cursor={'pointer'} onClick={() => handleMovePage(d.idx)}>
                   <s.Td>{d.idx}</s.Td>
                   <s.Td>{d.addr}</s.Td>
-                  <s.Td>{moment(d.createTime).format('YY-MM-DD HH:MM')}</s.Td>
+                  <s.Td>{moment(d.createTime).format('YY.MM.DD A hh:mm')}</s.Td>
                 </s.Tr>
               ))
             ) : (

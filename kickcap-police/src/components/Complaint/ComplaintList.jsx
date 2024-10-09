@@ -7,6 +7,8 @@ import { useSearchParams } from 'react-router-dom';
 import '../../styles/Pagination.css';
 import Pagination from 'react-js-pagination';
 import { getComplaintList, getComplaintTotalCount } from '../../lib/api/complaint-api';
+import 'moment/locale/ko';
+import moment from 'moment';
 
 const s = {
   Container: styled.div`
@@ -57,6 +59,10 @@ const s = {
   Td: styled.td`
     vertical-align: middle;
     border-bottom: 1px solid ${(props) => props.theme.btnOff};
+    max-width: 500px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   `,
   noData: styled.td`
     vertical-align: middle;
@@ -160,9 +166,13 @@ const ComplaintList = () => {
           <s.Thead>
             <s.Tr>
               <s.Th style={{ width: '10%' }}>문의 번호</s.Th>
-              <s.Th style={{ width: '40%' }}>제목</s.Th>
-              <s.Th style={{ width: '15%' }}>작성자</s.Th>
+              <s.Th style={{ width: '30%' }}>제목</s.Th>
+              <s.Th style={{ width: '10%' }}>작성자</s.Th>
               <s.Th style={{ width: '15%' }}>날 짜</s.Th>
+              {/* <s.Th style={{ width: '50px' }}>문의 번호</s.Th>
+              <s.Th style={{ width: '100px' }}>제목</s.Th>
+              <s.Th style={{ width: '80px' }}>작성자</s.Th>
+              <s.Th style={{ width: '80px' }}>날 짜</s.Th> */}
             </s.Tr>
           </s.Thead>
           <s.Tbody>
@@ -172,7 +182,7 @@ const ComplaintList = () => {
                   <s.Td>{d.idx}</s.Td>
                   <s.Td>{d.title}</s.Td>
                   <s.Td>{d.name}</s.Td>
-                  <s.Td>{d.date}</s.Td>
+                  <s.Td>{moment(d.date).format('YY.MM.DD A hh:mm')}</s.Td>
                 </s.Tr>
               ))
             ) : (

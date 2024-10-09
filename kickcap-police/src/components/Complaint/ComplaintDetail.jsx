@@ -13,6 +13,9 @@ import { useLocation, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { getListDetail, postCancel } from '../../lib/api/complaint-api';
 import { getCrackDetail } from './../../lib/api/crack-api';
+import 'moment/locale/ko';
+import moment from 'moment';
+
 const s = {
   Container: styled.main`
     width: 100%;
@@ -123,6 +126,20 @@ const ComplaintDetail = () => {
     }
   };
 
+  const handleViolationType = (type) => {
+    if (type === 4) {
+      return '불법 주차';
+    } else if (type === 3) {
+      return '안전모 미착용';
+    } else if (type === 1) {
+      return '다인 승차';
+    } else if (type === 2) {
+      return '보도 주행';
+    } else {
+      return '지정차로 위반';
+    }
+  };
+
   useEffect(() => {
     getListDetail(
       complaintId,
@@ -153,17 +170,17 @@ const ComplaintDetail = () => {
           <s.Thead>
             <s.Tr>
               <s.Th style={{ width: '10%' }}>문의 번호</s.Th>
-              <s.Th style={{ width: '30%' }}>작성자</s.Th>
-              <s.Th style={{ width: '30%' }}>단속 종류</s.Th>
-              <s.Th style={{ width: '10%' }}>날 짜</s.Th>
+              <s.Th style={{ width: '20%' }}>작성자</s.Th>
+              <s.Th style={{ width: '20%' }}>단속 종류</s.Th>
+              <s.Th style={{ width: '20%' }}>날 짜</s.Th>
             </s.Tr>
           </s.Thead>
           <s.Tbody>
             <s.Tr>
               <s.Td>{complaintData.idx}</s.Td>
               <s.Td>{complaintData.name}</s.Td>
-              <s.Td>{complaintData.violationType}</s.Td>
-              <s.Td>{complaintData.date}</s.Td>
+              <s.Td>{handleViolationType(complaintData.violationType)}</s.Td>
+              <s.Td>{moment(complaintData.date).format('YYYY.MM.DD A hh:mm')}</s.Td>
             </s.Tr>
           </s.Tbody>
         </s.Table>

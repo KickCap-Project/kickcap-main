@@ -6,6 +6,8 @@ import { useLocation, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { getCrackDetail } from '../../lib/api/crack-api';
 import moment from 'moment';
+import 'moment/locale/ko';
+
 const s = {
   Container: styled.main`
     width: 90%;
@@ -95,9 +97,9 @@ const CrackDownDetail = () => {
           <s.Thead>
             <s.Tr>
               <s.Th style={{ width: '10%' }}>단속 번호</s.Th>
-              <s.Th style={{ width: '40%' }}>단속 주소</s.Th>
+              <s.Th style={{ width: '25%' }}>단속 주소</s.Th>
               <s.Th style={{ width: '15%' }}>단속 종류</s.Th>
-              <s.Th style={{ width: '10%' }}>날 짜</s.Th>
+              <s.Th style={{ width: '15%' }}>날 짜</s.Th>
             </s.Tr>
           </s.Thead>
           <s.Tbody>
@@ -105,7 +107,7 @@ const CrackDownDetail = () => {
               <s.Td>{crackData.idx}</s.Td>
               <s.Td>{crackData.crackAddr}</s.Td>
               <s.Td>{crackData.violationType}</s.Td>
-              <s.Td>{moment(crackData.date).format('YY-MM-DD')}</s.Td>
+              <s.Td>{moment(crackData.date).format('YYYY.MM.DD A hh:mm')}</s.Td>
             </s.Tr>
           </s.Tbody>
         </s.Table>
