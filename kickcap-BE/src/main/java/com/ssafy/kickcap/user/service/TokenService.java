@@ -42,7 +42,7 @@ public class TokenService {
     public String createNewAccessToken(String refreshToken) {
         // access 토큰 유효성 검사에 실패하면 예외 발생 -> 401
         if (!tokenProvider.validToken(refreshToken)){
-            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
+            throw new RestApiException(ErrorCode.FORBIDDEN_ACCESS);
         }
 
         // 유효한 토큰일 때 리프레시 토큰으로 사용자 ID 찾음
