@@ -12,6 +12,8 @@ import { useLocation, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { getCrackInfo, getListDetail, getParkData, postApprove, postReject } from '../../lib/api/report-api';
 import moment from 'moment';
+import 'moment/locale/ko';
+
 const s = {
   Container: styled.main`
     width: 90%;
@@ -170,9 +172,9 @@ const ReportDetail = () => {
           <s.Thead>
             <s.Tr>
               <s.Th style={{ width: '10%' }}>신고 번호</s.Th>
-              <s.Th style={{ width: '40%' }}>단속 주소</s.Th>
+              <s.Th style={{ width: '25%' }}>단속 주소</s.Th>
               <s.Th style={{ width: '15%' }}>신고 종류</s.Th>
-              <s.Th style={{ width: '10%' }}>날 짜</s.Th>
+              <s.Th style={{ width: '15%' }}>날 짜</s.Th>
             </s.Tr>
           </s.Thead>
           <s.Tbody>
@@ -180,7 +182,7 @@ const ReportDetail = () => {
               <s.Td>{reportData.idx}</s.Td>
               <s.Td>{reportData.addr}</s.Td>
               <s.Td>{reportData.violationType}</s.Td>
-              <s.Td>{moment(reportData.createTime).format('YY-MM-DD')}</s.Td>
+              <s.Td>{moment(reportData.createTime).format('YYYY.MM.DD A hh:mm')}</s.Td>
             </s.Tr>
           </s.Tbody>
         </s.Table>

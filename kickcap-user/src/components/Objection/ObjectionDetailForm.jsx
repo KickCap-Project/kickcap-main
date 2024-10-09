@@ -123,7 +123,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
           defaultValue: fieldType === 'title' ? title : (contentType === 'content' ? content : responseContent),
           mode: 'read',
           readOnly: true,
-          minheight: contentType === 'content' ? '30vh' : '15vh',
+          minheight: contentType === 'content' ? '35vh' : '15vh',
           ref: contentType === 'content' ? contentAreaRef : (contentType === 'responseContent' ? responseContentAreaRef : null),
         };
   };
@@ -150,7 +150,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
     try {
       const response = await putObjectionDetail(objectionId, title, content);
 
-      if (response.status === 200) {
+      if (response.status === 204) {
         alert('수정이 정상적으로 완료되었습니다.');
 
         // 수정 완료 후 objectionId를 sessionStorage에 저장
@@ -213,7 +213,7 @@ const ObjectionDetailForm = ({ objectionDetail }) => {
                 </Text>
               </s.ResponseHeader>
               <s.TextArea type="text" defaultValue={responseContent} {...inputProps('content', 'responseContent')} />
-              <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('navigate', e)} margin={'15px'}>
+              <Button width={'120px'} height={'40px'} onClick={(e) => onClickButton('navigate', e)} margin={'3vh'}>
                 단속 내역
               </Button>
             </s.Response>

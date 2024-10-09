@@ -23,12 +23,14 @@ const s = {
   MainArea: styled.div`
     flex: 1;
     width: 90%;
-    height: 80%;
-    padding-top: 5vh;
+    height: 100%;
+    padding-top: 6vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+    flex-basis: 0;
+    overflow: auto;
   `,
 };
 
