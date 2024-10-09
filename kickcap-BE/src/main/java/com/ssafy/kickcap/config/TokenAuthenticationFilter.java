@@ -53,7 +53,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // 로그인 또는 토큰 재발급 요청이면 토큰 검증을 하지 않음
-        if (requestURI.equals("/police/login") || requestURI.equals("/tokens/refresh")) {
+        if (requestURI.equals("/police/login") || requestURI.equals("/tokens/refresh") || requestURI.equals("/health-check")) {
             filterChain.doFilter(request, response);
             return;
         }
