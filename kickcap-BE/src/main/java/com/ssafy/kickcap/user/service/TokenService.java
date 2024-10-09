@@ -29,10 +29,12 @@ public class TokenService {
         DeviceInfo deviceInfo = refreshTokenService.findByRefreshToken(refreshToken);
         if (deviceInfo.getPolice() != null) {
             // 사옹자 찾은 후 토큰 제공자의 새로운 액세스 토큰 생성
-            return tokenProvider.generatePoliceToken(deviceInfo.getPolice(), Duration.ofHours(2));
+//            return tokenProvider.generatePoliceToken(deviceInfo.getPolice(), Duration.ofHours(2));
+            return tokenProvider.generatePoliceToken(deviceInfo.getPolice(), Duration.ofSeconds(15));
         } else if (deviceInfo.getMember() != null) {
             // 사옹자 찾은 후 토큰 제공자의 새로운 액세스 토큰 생성
-            return tokenProvider.generateMemberToken(deviceInfo.getMember(), Duration.ofHours(2));
+//            return tokenProvider.generateMemberToken(deviceInfo.getMember(), Duration.ofHours(2));
+            return tokenProvider.generateMemberToken(deviceInfo.getMember(), Duration.ofSeconds(15));
         } else {
             throw new RestApiException(ErrorCode.NOT_FOUND); // refresh 토큰으로 찾은 사용자가 시민도 경찰도 아닐때
         }
