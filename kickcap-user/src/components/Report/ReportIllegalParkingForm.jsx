@@ -78,7 +78,7 @@ const ReportIllegalParkingForm = () => {
   const fileInputRef = useRef(null);
 
   const [isLoading, setIsLoading] = useState(false);
-  const loadingText = '신고 중입니다.\n\n잠시만 기다려주세요...';
+  const loadingText = '제보 중입니다.\n\n잠시만 기다려주세요...';
 
   const handleChangeKickNumber = (e) => {
     setKickboardNumber(e.target.value);
