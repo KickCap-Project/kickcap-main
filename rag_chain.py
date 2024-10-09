@@ -59,6 +59,7 @@ def get_rag_chain_response(related_texts, question):
         4. If the question is unrelated to traffic laws, politely ask the user to ask a relevant question.
 
         Now, based on the information above, please provide the most relevant and accurate response to the user's question in the specified format.
+        Specified format: Please do not include the question, just your answer.
     """
 
     # 프롬프트와 질문을 사용하여 최종 답변 생성
