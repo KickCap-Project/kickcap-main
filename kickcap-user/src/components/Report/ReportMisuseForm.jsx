@@ -219,6 +219,12 @@ const ReportMisuseForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!date || date === '정보 없음') {
+      alert('사진에서 시각 정보를 찾을 수 없습니다. 다시 한 번 확인해주세요.');
+      return;
+    }
+
     setIsLoading(true);
 
     // 신고 - 실시간 이용 신고
