@@ -22,6 +22,7 @@ client_tasks = {}  # 클라이언트 태스크 저장용 딕셔너리
 connected_clients_lock = asyncio.Lock()
 client_tasks_lock = asyncio.Lock()
 
+
 # 클라이언트에게 프레임을 전송하는 개별 태스크
 async def client_send_loop(ws, camera_idx):
     try:
@@ -32,9 +33,9 @@ async def client_send_loop(ws, camera_idx):
         pass
     except Exception as e:
         print(f"Error in client_send_loop for camera_idx {camera_idx}: {e}")
-        break  # 루프 종료
     finally:
         ws.client_queue = None
+
 
 # 프레임을 처리하는 함수
 async def process_frame(camera_idx):
@@ -65,6 +66,7 @@ async def process_frame(camera_idx):
                 if client_task:
                     client_task.cancel()
 
+
 # 큐에서 이미지를 가져와 각 클라이언트의 큐에 분배하는 함수
 async def broadcast_frames():
     while True:
@@ -76,6 +78,7 @@ async def broadcast_frames():
             await asyncio.gather(*tasks)
         else:
             await asyncio.sleep(0.05)  # 프레임이 없을 때 슬립 시간 증가
+
 
 # 카메라와 클라이언트 모두를 처리하는 WebSocket 엔드포인트
 async def websocket_handler(request):
@@ -180,12 +183,15 @@ async def websocket_handler(request):
 
     return ws
 
+
 app = web.Application()
 app.router.add_get('/video', websocket_handler)
+
 
 # 백그라운드에서 프레임을 처리하는 태스크 시작
 async def start_background_tasks(app):
     app['broadcast_task'] = asyncio.create_task(broadcast_frames())
+
 
 app.on_startup.append(start_background_tasks)
 
