@@ -63,7 +63,7 @@ const ViolationPaymentPage = () => {
       amount: 100, // 결제금액
       name: '킥보드 범칙금', // 상품명
       buyer_name: name, // 구매자 이름
-      m_redirect_url: `http://localhost:3000/violation/payment/success/${id}`,
+      m_redirect_url: `https://www.bardisue.store/violation/payment/success/${id}`,
     };
 
     IMP.request_pay(data, callback);
