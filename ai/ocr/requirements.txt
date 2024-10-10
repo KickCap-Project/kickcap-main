@@ -1,0 +1,12 @@
+requests
+pydantic
+opencv-python
+numpy
+redis
+pytz
+psycopg2-binary
+python-dotenv
+fastapi
+httpx
+uvicorn
+python-multipart
