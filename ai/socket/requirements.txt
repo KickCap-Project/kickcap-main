@@ -1,0 +1,5 @@
+aiohttp
+aiohttp-cors
+opencv-python-headless
+numpy
+python-dotenv
