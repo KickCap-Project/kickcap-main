@@ -316,7 +316,7 @@ const ReportMisuseForm = () => {
               size={'12px'}
               InputColor="AreaColor"
               placeholder={'사진 첨부 시 정보가 입력됩니다.'}
-              value={date === '' ? '' : date !== '정보 없음' ? moment(date).format('YYYY.MM.DD A hh:MM') : '정보 없음'}
+              value={date === '' ? '' : date !== '정보 없음' ? moment(date).format('YYYY.MM.DD A hh:mm') : '정보 없음'}
             />
             <s.InputArea height={'10px'} />
             <s.LocationArea onClick={() => handleOpenMapModal(true)}>
