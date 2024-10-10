@@ -107,10 +107,6 @@ const CameraMap = ({ point }) => {
       }
     });
 
-    for (let i = 0; i < 8; i++) {
-      console.log(sum[i]);
-    }
-
     const ratios = data.map((camera) => {
       const ratioObj = { lat: camera.lat, lng: camera.lng, idx: camera.idx };
       for (let i = 0; i < 8; i++) {
@@ -122,7 +118,6 @@ const CameraMap = ({ point }) => {
   };
 
   const result = mapData.camDataResponses !== undefined ? calculateRatios(mapData.camDataResponses) : [];
-  console.log(result);
 
   const handleChangeTimeType = (e) => {
     setTimeType(e.target.value);
