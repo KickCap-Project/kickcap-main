@@ -30,7 +30,7 @@ const s = {
     align-items: center;
   `,
   ImageArea: styled.div`
-    width: 70%;
+    width: 80%;
     /* height: fit-content; */
     position: relative;
     margin: 20px auto;
@@ -38,6 +38,7 @@ const s = {
   Image: styled.img`
     width: 100%;
     max-height: 300px;
+    object-fit: contain;
   `,
   ImageBtn: styled.button`
     width: 30px;
@@ -316,7 +317,7 @@ const ReportMisuseForm = () => {
               size={'12px'}
               InputColor="AreaColor"
               placeholder={'사진 첨부 시 정보가 입력됩니다.'}
-              value={date === '' ? '' : date !== '정보 없음' ? moment(date).format('YYYY.MM.DD A hh:MM') : '정보 없음'}
+              value={date === '' ? '' : date !== '정보 없음' ? moment(date).format('YYYY.MM.DD A hh:mm') : '정보 없음'}
             />
             <s.InputArea height={'10px'} />
             <s.LocationArea onClick={() => handleOpenMapModal(true)}>
