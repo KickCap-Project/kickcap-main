@@ -26,6 +26,7 @@ async def broadcast_frames():
         for camera_idx in list(image_queues.keys()):
             queue = image_queues[camera_idx]
             frame_data = None
+            frame_camera_idx = None
 
             if not queue.empty():
                 print(f"Queue size for camera_idx {camera_idx}: {queue.qsize()}")
