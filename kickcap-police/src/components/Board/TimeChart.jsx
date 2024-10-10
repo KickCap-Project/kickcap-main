@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Text from '../Common/Text';
 import BarChart from './Chart/BarChart';
 
 const s = {

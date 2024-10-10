@@ -7,7 +7,6 @@ import Input from './../Common/Input';
 import { getReportEndList, getReportEndTotalCount, getReportList, getReportTotalCount } from '../../lib/api/report-api';
 import moment from 'moment';
 import Pagination from 'react-js-pagination';
-import ReactPaginate from 'react-paginate';
 import { useSearchParams } from 'react-router-dom';
 import '../../styles/Pagination.css';
 import { useQuery } from '@tanstack/react-query';
@@ -110,10 +109,8 @@ const ReportList = () => {
   const type = useAppSelector(selectReportNav);
   const dispatch = useAppDispatch();
   const [violationType, setViolationType] = useState(searchParams.get('violationType'));
-  // const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(Number(searchParams.get('pageNo')));
   const [isEnd, setIsEnd] = useState(false);
-  // const [data, setData] = useState([]);
 
   const handleClickIcon = (mode) => {
     dispatch(pageActions.changeReportType(mode));
@@ -157,37 +154,13 @@ const ReportList = () => {
     enabled: false,
   });
 
-  // const {
-  //   data: totalEndPage,
-  //   error: totalEndPageError,
-  //   refetch: refetchTotalEndPage,
-  // } = useQuery({
-  //   queryKey: ['weekData', searchParams.get('violationType')],
-  //   queryFn: () => {
-  //     return getReportEndTotalCount(searchParams.get('violationType'));
-  //   },
-  //   enabled: false,
-  // });
-
-  // const {
-  //   data: reportEndData = [],
-  //   error: reportEndDataError,
-  //   refetch: refetchReportEndData,
-  // } = useQuery({
-  //   queryKey: ['weekData', searchParams.get('violationType'), searchParams.get('pageNo')],
-  //   queryFn: () => {
-  //     return getReportEndList(searchParams.get('violationType'), searchParams.get('pageNo'));
-  //   },
-  //   enabled: false,
-  // });
-
   if (totalPageError || reportDataError) {
     alert('데이터를 불러오는 도중 에러가 발생했습니다.');
   }
 
   useEffect(() => {
-    // setViolationType(searchParams.get('violationType'));
-    // setPageNo(Number(searchParams.get('pageNo')));
+    setViolationType(searchParams.get('violationType'));
+    setPageNo(Number(searchParams.get('pageNo')));
     const newViolationType =
       searchParams.get('violationType') === '4'
         ? 'park'
@@ -212,52 +185,6 @@ const ReportList = () => {
     setPageNo(pageNo);
     setSearchParams({ violationType, pageNo });
   };
-
-  // useEffect(() => {
-  //   if (isEnd) {
-  //     // 완료
-  //     getReportEndTotalCount(
-  //       violationType,
-  //       (resp) => {
-  //         setTotalPage(resp.data);
-  //       },
-  //       (error) => {
-  //         alert('잠시 후 다시 시도해주세요.');
-  //       },
-  //     );
-  //     getReportEndList(
-  //       violationType,
-  //       pageNo,
-  //       (resp) => {
-  //         setData(resp.data);
-  //       },
-  //       (error) => {
-  //         alert('잠시 후 다시 시도해주세요.');
-  //       },
-  //     );
-  //   } else {
-  //     // 일반
-  //     getReportTotalCount(
-  //       violationType,
-  //       (resp) => {
-  //         setTotalPage(resp.data);
-  //       },
-  //       (error) => {
-  //         alert('잠시 후 다시 시도해주세요.');
-  //       },
-  //     );
-  //     getReportList(
-  //       violationType,
-  //       pageNo,
-  //       (resp) => {
-  //         setData(resp.data);
-  //       },
-  //       (error) => {
-  //         alert('잠시 후 다시 시도해주세요.');
-  //       },
-  //     );
-  //   }
-  // }, [violationType, isEnd, pageNo]);
   return (
     <s.Container>
       <s.TypeArea>
@@ -315,14 +242,6 @@ const ReportList = () => {
             nextPageText={'›'} // "다음"을 나타낼 텍스트
             onChange={handleClickPage} // 페이지 변경을 핸들링하는 함수
           />
-          {/* <ReactPaginate
-            pageCount={totalPage}
-            previousLabel={'<'}
-            nextLabel={'>'}
-            onPageChange={handleClickPage}
-            pageRangeDisplayed={10}
-            renderOnZeroPageCount={null}
-          /> */}
         </s.pageArea>
         <s.BtnArea>
           <Input
