@@ -66,8 +66,6 @@ async def broadcast_frames():
                         except Exception as e:
                             print(f"Error distributing frame to client: {e}")
                             connected_clients[camera_idx].remove(ws)
-                else:
-                    print(f"No connected clients for camera_idx {camera_idx}, but frame exists.")
             await asyncio.sleep(0.01)
         await asyncio.sleep(0.01)
 
