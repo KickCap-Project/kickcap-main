@@ -51,8 +51,6 @@ async def broadcast_frames():
                             connected_clients[camera_idx].remove(ws)
                 else:
                     print(f"No connected clients for camera_idx {camera_idx}, but frame exists.")
-            await asyncio.sleep(0.1)
-        await asyncio.sleep(0.1)
 
 
 # 카메라와 클라이언트 모두를 처리하는 WebSocket 엔드포인트
@@ -91,7 +89,7 @@ async def websocket_handler(request):
 
                         if image is not None:
                             # 이미지를 640x360 크기로 리사이즈
-                            resized_image = cv2.resize(image, (640, 360))
+                            resized_image = cv2.resize(image, (320, 180))
                             # 리사이즈된 이미지를 JPEG로 인코딩
                             _, resized_image_encoded = cv2.imencode('.jpg', resized_image)
                             # 인코딩된 이미지를 바이트로 변환
