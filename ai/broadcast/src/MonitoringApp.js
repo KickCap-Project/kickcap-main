@@ -49,8 +49,6 @@ const MonitoringApp = () => {
             // 컴포넌트 언마운트 시 WebSocket 연결 해제 및 타임아웃 클리어
             if (socketRef.current) {
                 socketRef.current.close();
-            }
-            if (reconnectTimeoutRef.current) {
                 clearTimeout(reconnectTimeoutRef.current);
             }
         };

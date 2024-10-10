@@ -24,6 +24,10 @@ const VideoStream = () => {
         {
             name: "오진영",
             phone: "010-5056-6221",
+        },
+        {
+            name: "박윤아",
+            phone: "010-3011-0568",
         }
     ]);
     const [selectedUserInfo, setSelectedUserInfo] = useState(0);
@@ -340,6 +344,13 @@ const VideoStream = () => {
                             onChange={() => handleUserInfoChange(2)}
                         />
                         오진영 (010-5056-6221)
+                        <input
+                            type="radio"
+                            value={3}
+                            checked={selectedUserInfo === 3}
+                            onChange={() => handleUserInfoChange(3)}
+                        />
+                        박병준 (010-3011-0568)
                     </div>
                 </div>
 
