@@ -230,7 +230,7 @@ async def insert_crackdown(request: GetResultRequests):
             AND kickboard_number = %s;
             '''
 
-        cursor.execute(select_query, (now_kst, request.kickboard_number, ))
+        cursor.execute(select_query, (now_kst, request.result_text, ))
         results = cursor.fetchall()
         if not results:
             print('Gcooter Not Found')
