@@ -84,7 +84,6 @@ const s = {
 };
 
 const ComplaintList = () => {
-  console.log('rt');
   const [searchParams, setSearchParams] = useSearchParams();
   const type = useAppSelector(selectComplaintNav);
   const dispatch = useAppDispatch();
@@ -169,10 +168,6 @@ const ComplaintList = () => {
               <s.Th style={{ width: '30%' }}>제목</s.Th>
               <s.Th style={{ width: '10%' }}>작성자</s.Th>
               <s.Th style={{ width: '15%' }}>날 짜</s.Th>
-              {/* <s.Th style={{ width: '50px' }}>문의 번호</s.Th>
-              <s.Th style={{ width: '100px' }}>제목</s.Th>
-              <s.Th style={{ width: '80px' }}>작성자</s.Th>
-              <s.Th style={{ width: '80px' }}>날 짜</s.Th> */}
             </s.Tr>
           </s.Thead>
           <s.Tbody>
@@ -195,13 +190,13 @@ const ComplaintList = () => {
       </s.TableArea>
       <s.pageArea>
         <Pagination
-          activePage={Number(pageNo)} // 현재 페이지
-          itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
-          totalItemsCount={Number(totalPage)} // 총 아이템 갯수
-          pageRangeDisplayed={10} // paginator의 페이지 범위
-          prevPageText={'‹'} // "이전"을 나타낼 텍스트
-          nextPageText={'›'} // "다음"을 나타낼 텍스트
-          onChange={handleClickPage} // 페이지 변경을 핸들링하는 함수
+          activePage={Number(pageNo)}
+          itemsCountPerPage={10}
+          totalItemsCount={Number(totalPage)}
+          pageRangeDisplayed={10}
+          prevPageText={'‹'}
+          nextPageText={'›'}
+          onChange={handleClickPage}
         />
       </s.pageArea>
     </s.Container>

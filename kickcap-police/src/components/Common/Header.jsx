@@ -10,7 +10,8 @@ import { logout } from '../../lib/api/main-api';
 
 const s = {
   Container: styled.header`
-    height: 150px;
+    height: 250px;
+    /* border: 3px solid blue; */
   `,
   fixedArea: styled.div`
     width: 100%;
@@ -18,6 +19,7 @@ const s = {
     position: fixed;
     background-color: ${(props) => props.theme.textBasic};
     z-index: 100;
+    /* border: 1px solid red; */
   `,
   topArea: styled.div`
     height: 100%;
@@ -27,13 +29,15 @@ const s = {
     padding: 0 15px 0 15px;
   `,
   mainArea: styled.div`
-    height: 150px;
+    height: 250px;
     background-color: ${(props) => props.theme.AreaColor};
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 50px;
+    /* margin-top: 50px; */
+    padding-top: 50px;
+    /* border: 1px solid black; */
   `,
   TitleArea: styled.div`
     width: 40%;
@@ -117,32 +121,32 @@ const Header = ({ title, subTitle }) => {
   };
   return (
     <>
-      <s.fixedArea>
-        <s.topArea>
-          <s.TitleArea>
-            <IconSvg Ico={logo} width={'30px'} margin={'0 10px 0 0'} />
-            <s.Title>
-              {policeName}
-              <s.Btn onClick={handleLogout}>로그아웃</s.Btn>
-            </s.Title>
-          </s.TitleArea>
-          <s.NavArea>
-            <s.Nav onClick={() => handleClickIcon('board')} color={getColor('board')}>
-              현황 지도
-            </s.Nav>
-            <s.Nav onClick={() => handleClickIcon('crackdown')} color={getColor('crackdown')}>
-              단속 리스트
-            </s.Nav>
-            <s.Nav onClick={() => handleClickIcon('report')} color={getColor('report')}>
-              국민 신고함
-            </s.Nav>
-            <s.Nav onClick={() => handleClickIcon('complaint')} color={getColor('complaint')}>
-              이의 제기
-            </s.Nav>
-          </s.NavArea>
-        </s.topArea>
-      </s.fixedArea>
       <s.Container>
+        <s.fixedArea>
+          <s.topArea>
+            <s.TitleArea>
+              <IconSvg Ico={logo} width={'30px'} margin={'0 10px 0 0'} />
+              <s.Title>
+                {policeName}
+                <s.Btn onClick={handleLogout}>로그아웃</s.Btn>
+              </s.Title>
+            </s.TitleArea>
+            <s.NavArea>
+              <s.Nav onClick={() => handleClickIcon('board')} color={getColor('board')}>
+                현황 지도
+              </s.Nav>
+              <s.Nav onClick={() => handleClickIcon('crackdown')} color={getColor('crackdown')}>
+                단속 리스트
+              </s.Nav>
+              <s.Nav onClick={() => handleClickIcon('report')} color={getColor('report')}>
+                국민 신고함
+              </s.Nav>
+              <s.Nav onClick={() => handleClickIcon('complaint')} color={getColor('complaint')}>
+                이의 제기
+              </s.Nav>
+            </s.NavArea>
+          </s.topArea>
+        </s.fixedArea>
         <s.mainArea>
           <Text
             children={title}

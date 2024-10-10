@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import BoardHeader from '../../components/Board/BoardHeader';
 import WeekChart from '../../components/Board/WeekChart';
@@ -14,6 +14,11 @@ import { useSearchParams } from 'react-router-dom';
 import { getBottomData, gettest, getWeekData } from '../../lib/api/board-api';
 import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
+import sound from '../../asset/accidentSound.mp3';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { modalActions, selectIsEmergency } from '../../store/modal';
+import BoardEmergencyModal from '../../components/Modal/BoardEmergencyModal';
+import { getEmergency } from '../../lib/api/main-api';
 
 const s = {
   Container: styled.div`
@@ -116,17 +121,6 @@ const PoliceBoardPage = () => {
   }, [searchParams, sido, gugun, refetchWeekData, refetchBottomData]);
 
   const ButtomFunc = useCallback((today, yesterday) => {
-    // if (today === 0 && yesterday === 0) {
-    //   return 0;
-    // }
-    // if (today === 0) {
-    //   return 0 - yesterday * 100;
-    // }
-    // if (yesterday === 0) {
-    //   return today * 100;
-    // }
-    // return ((today - yesterday) / yesterday) * 100;
-
     if (today === yesterday) {
       return 0;
     }
@@ -139,14 +133,6 @@ const PoliceBoardPage = () => {
     if (today > yesterday) {
       return (today / yesterday - 1) * 100;
     }
-    // return ((today - yesterday) / yesterday) * 100;
-
-    //     if 오늘 신고 < 어제 신고
-    //  (1 - (오늘 신고 / 어제 신고)) * 100 (감소함) >> ex) - 80%
-    // elif 오늘 신고 == 어제 신고
-    //  0%로 동일 >> ex) 0% 또는 한글로 동일
-    // elif 오늘 신고 > 어제 신고
-    //  ((오늘 신고 / 어제 신고) - 1) * 100 (증가함) >> ex) + 5%
   }, []);
 
   const crackLabel = ['안전모 미착용', '다인 승차'];
@@ -158,11 +144,11 @@ const PoliceBoardPage = () => {
   const report = weekData.dayTotalResponses && weekData.dayTotalResponses.map((item) => item.report);
   const accident = weekData.dayTotalResponses && weekData.dayTotalResponses.map((item) => item.accident);
   const crackData = [
-    (weekData.noHead / (weekData.noHead + weekData.peoples)) * 100, //데이터 없으면 0나와서 안나옴 수정 예정
+    (weekData.noHead / (weekData.noHead + weekData.peoples)) * 100,
     (weekData.peoples / (weekData.noHead + weekData.peoples)) * 100,
   ];
   const reportData = [
-    (weekData.p / (weekData.p + weekData.n + weekData.h + weekData.d + weekData.w)) * 100, //데이터 없으면 0나와서 안나옴 수정 예정
+    (weekData.p / (weekData.p + weekData.n + weekData.h + weekData.d + weekData.w)) * 100,
     (weekData.n / (weekData.p + weekData.n + weekData.h + weekData.d + weekData.w)) * 100,
     (weekData.h / (weekData.p + weekData.n + weekData.h + weekData.d + weekData.w)) * 100,
     (weekData.d / (weekData.p + weekData.n + weekData.h + weekData.d + weekData.w)) * 100,
@@ -196,6 +182,46 @@ const PoliceBoardPage = () => {
   usePageNavHook('board');
   usePageTypeHook('board');
   useModalExitHook();
+
+  //
+
+  const audioRef = useRef(null);
+  const isEmergency = useAppSelector(selectIsEmergency);
+  const dispatch = useAppDispatch();
+  const handleOpenEmergency = (isFlag) => {
+    dispatch(modalActions.ChangeIsEmergency(isFlag));
+    if (!isFlag) {
+      refetchEmergencyData();
+    }
+  };
+
+  const {
+    data: emergencyData = {},
+    refetch: refetchEmergencyData,
+    status,
+  } = useQuery({
+    queryKey: ['emergencyData'],
+    queryFn: () => {
+      return getEmergency();
+    },
+    enabled: !isEmergency,
+    refetchInterval: isEmergency ? false : 5000,
+  });
+  useEffect(() => {
+    if (emergencyData.status === 200) {
+      handleOpenEmergency(true);
+      if (audioRef.current) {
+        audioRef.current.play();
+        audioRef.current.loop = true;
+      }
+    } else if (emergencyData.status === 204) {
+      handleOpenEmergency(false);
+      refetchEmergencyData();
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  }, [emergencyData.status, isEmergency]);
+
   return (
     <>
       <BoardHeader />
@@ -234,6 +260,10 @@ const PoliceBoardPage = () => {
           <CompareInfo title={'전일 대비 신고'} data={cReport} />
           <CompareInfo title={'전일 대비 사고'} data={cAccident} />
         </s.FooterArea>
+        {emergencyData.data !== undefined && (
+          <BoardEmergencyModal open={isEmergency} toggleModal={handleOpenEmergency} data={emergencyData.data} />
+        )}
+        <audio ref={audioRef} src={sound} />
       </s.Container>
     </>
   );
