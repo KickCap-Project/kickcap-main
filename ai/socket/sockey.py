@@ -16,17 +16,17 @@ API_ENDPOINT = os.getenv("API_ENDPOINT")
 # Executors 생성 (스레드 풀 또는 프로세스 풀 선택 가능)
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)  # 최대 2개의 스레드로 제한
 
-# 기존 데이터 구조들
-image_queues = defaultdict(lambda: asyncio.Queue(maxsize=10))
-connected_clients = defaultdict(set)
-connected_cameras = {}
-last_frames = {}
+# 각 camera_idx에 대한 큐와 연결된 클라이언트 저장
+image_queues = defaultdict(lambda: asyncio.Queue(maxsize=10))  # 각 카메라의 이미지 데이터를 저장하는 큐
+connected_clients = defaultdict(set)  # 각 camera_idx에 연결된 클라이언트
+connected_cameras = {}  # 연결된 카메라들: {camera_idx: websocket}
+last_frames = {}  # 각 camera_idx의 마지막 프레임 저장
 
-client_tasks = {}
+client_tasks = {}  # 클라이언트 태스크 저장용 딕셔너리
 connected_clients_lock = asyncio.Lock()
 client_tasks_lock = asyncio.Lock()
 
-# 클라이언트에게 프레임을 전송하는 개별 태스크 (변경 없음)
+# 클라이언트에게 프레임을 전송하는 개별 태스크
 async def client_send_loop(ws, camera_idx):
     try:
         while True:
@@ -39,7 +39,7 @@ async def client_send_loop(ws, camera_idx):
     finally:
         ws.client_queue = None
 
-# 프레임을 처리하는 함수 (변경 없음)
+# 프레임을 처리하는 함수
 async def process_frame(camera_idx):
     queue = image_queues[camera_idx]
     frame_info = await queue.get()
@@ -55,6 +55,7 @@ async def process_frame(camera_idx):
                 await ws.client_queue.put(frame_data)
             else:
                 if ws.client_queue:
+                    # 큐가 가득 찼을 경우 가장 오래된 프레임 제거
                     ws.client_queue.get_nowait()
                     await ws.client_queue.put(frame_data)
         except Exception as e:
@@ -67,7 +68,7 @@ async def process_frame(camera_idx):
                 if client_task:
                     client_task.cancel()
 
-# 큐에서 이미지를 가져와 각 클라이언트의 큐에 분배하는 함수 (변경 없음)
+# 큐에서 이미지를 가져와 각 클라이언트의 큐에 분배하는 함수
 async def broadcast_frames():
     while True:
         tasks = []
@@ -77,7 +78,7 @@ async def broadcast_frames():
         if tasks:
             await asyncio.gather(*tasks)
         else:
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0.05)  # 프레임이 없을 때 슬립 시간 증가
 
 # 이미지 처리 함수 (동기 함수, executor에서 실행)
 def process_image(data):
@@ -85,9 +86,9 @@ def process_image(data):
     nparr = np.frombuffer(data, np.uint8)
     image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     if image is not None:
-        # 이미지 리사이즈
+        # 이미지를 320x180 크기로 리사이즈
         resized_image = cv2.resize(image, (320, 180))
-        # 이미지 인코딩
+        # 리사이즈된 이미지를 JPEG로 인코딩
         _, resized_image_encoded = cv2.imencode('.jpg', resized_image)
         frame_data = resized_image_encoded.tobytes()
         return frame_data, image
@@ -120,7 +121,7 @@ async def websocket_handler(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
 
-    # 역할과 camera_idx 가져오기
+    # 쿼리 파라미터에서 역할(role)과 camera_idx 가져오기
     role = request.query.get('role')
     camera_idx = request.query.get('camera_idx')
 
@@ -130,7 +131,7 @@ async def websocket_handler(request):
 
     print(f"{role.capitalize()} connected with camera_idx: {camera_idx}")
 
-    # 역할에 따른 처리
+    # 역할에 따라 다른 처리
     if role == 'camera':
         if camera_idx in connected_cameras:
             await ws.close(message='Another camera is already connected with this camera_idx')
@@ -175,12 +176,13 @@ async def websocket_handler(request):
     elif role == 'client':
         async with connected_clients_lock:
             connected_clients[camera_idx].add(ws)
-        ws.client_queue = asyncio.Queue(maxsize=2)
+        ws.client_queue = asyncio.Queue(maxsize=2)  # 클라이언트 큐 생성
         client_task = asyncio.create_task(client_send_loop(ws, camera_idx))
         async with client_tasks_lock:
             client_tasks[ws] = client_task
         try:
-            await ws.wait_closed()
+            async for msg in ws:
+                pass  # 서버는 클라이언트로부터의 메시지를 처리하지 않음
         except Exception as e:
             print(f"Client WebSocket error: {e}")
         finally:
@@ -207,5 +209,6 @@ async def start_background_tasks(app):
 
 app.on_startup.append(start_background_tasks)
 
+# 앱 실행
 if __name__ == '__main__':
     web.run_app(app, port=8765)
