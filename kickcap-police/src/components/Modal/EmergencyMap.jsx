@@ -19,7 +19,7 @@ const EmergencyMap = ({ accident }) => {
   const [map, setMap] = useState(null);
 
   useEffect(() => {
-    const container = document.getElementById('map');
+    const container = document.getElementById('accidentMap');
     const options = { center: new kakao.maps.LatLng(33.450701, 126.570667), level: 4 };
     const kakaoMap = new kakao.maps.Map(container, options);
     setMap(kakaoMap);
@@ -41,7 +41,7 @@ const EmergencyMap = ({ accident }) => {
     }
   }, [accident]);
 
-  return <s.Container id="map"></s.Container>;
+  return <s.Container id="accidentMap"></s.Container>;
 };
 
 export default EmergencyMap;

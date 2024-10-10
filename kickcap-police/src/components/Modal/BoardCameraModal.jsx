@@ -48,7 +48,6 @@ const s = {
 };
 
 const BoardCameraModal = ({ open, toggleModal, idx, data }) => {
-  console.log('카메라 번호 : ' + idx);
   return (
     <ReactModal
       isOpen={open}

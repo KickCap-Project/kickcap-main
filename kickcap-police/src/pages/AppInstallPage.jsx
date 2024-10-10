@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import Logo from '../asset/policeLogo.png';
 import Text from '../components/Common/Text';
-import { useNavigate } from 'react-router';
-import Button from '../components/Common/Button';
 import Image from './../components/Common/Image';
 const s = {
   Container: styled.section`

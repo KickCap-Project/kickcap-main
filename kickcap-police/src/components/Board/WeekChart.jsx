@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Text from '../Common/Text';
 import LineChart from './Chart/LineChart';
 
 const s = {

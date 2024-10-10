@@ -9,7 +9,6 @@ const s = {
   Container: styled.div`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    overflow-y: auto;
   `,
   mainArea: styled.main``,
 };

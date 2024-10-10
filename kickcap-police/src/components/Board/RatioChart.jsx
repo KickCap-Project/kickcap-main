@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Text from '../Common/Text';
 import CircleChart from './Chart/CircleChart';
 
 const s = {

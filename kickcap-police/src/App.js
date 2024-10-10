@@ -39,22 +39,24 @@ import ResponsiveWrapper from './lib/hook/useWindowSizeHook';
 import SplashPage from './pages/SplashPage';
 import EmergencyPage from './pages/EmergencyFramePage';
 import BasicPage from './pages/BasicPage';
+import ScrollToTop from './components/Common/ScrollToTop';
 
-const s = {
-  Container: styled.div`
-    height: 100vh;
-    position: relative;
-    margin: 0 auto;
-    background-color: ${(props) => props.theme.bgColor};
-    overflow: auto;
-  `,
-};
+// const s = {
+//   Container: styled.div`
+//     height: 100vh;
+//     position: relative;
+//     margin: 0 auto;
+//     background-color: ${(props) => props.theme.bgColor};
+//     overflow: auto;
+//   `,
+// };
 
 function App() {
   return (
     <ThemeProvider theme={basicTheme}>
       <GlobalStyle />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route
             element={

@@ -8,7 +8,6 @@ import Pagination from 'react-js-pagination';
 import '../../styles/Pagination.css';
 import { getCrackList, getCrackTotalCount } from './../../lib/api/crack-api';
 import moment from 'moment';
-import PaginationTest from '../Common/PaginationTest';
 import { useQuery } from '@tanstack/react-query';
 import 'moment/locale/ko';
 
@@ -86,15 +85,11 @@ const s = {
 };
 
 const CrackDownList = () => {
-  console.log('리스트');
   const [searchParams, setSearchParams] = useSearchParams();
   const type = useAppSelector(selectCrackNav);
   const dispatch = useAppDispatch();
   const [violationType, setViolationType] = useState(searchParams.get('violationType'));
-  // const [totalPage, setTotalPage] = useState(0);
   const [pageNo, setPageNo] = useState(searchParams.get('pageNo'));
-  const [render, setRender] = useState(false);
-  // const [data, setData] = useState([]);
 
   const {
     data: totalPage,
@@ -129,31 +124,12 @@ const CrackDownList = () => {
   }
 
   useEffect(() => {
-    // setViolationType(searchParams.get('violationType'));
-    // setPageNo(Number(searchParams.get('pageNo')));
+    setViolationType(searchParams.get('violationType'));
+    setPageNo(Number(searchParams.get('pageNo')));
     const newViolationType = searchParams.get('violationType') === '3' ? 'helmet' : 'peoples';
     dispatch(pageActions.changeCrackType(newViolationType));
     refetchTotalPage();
     refetchCrackData();
-    // getCrackTotalCount(
-    //   searchParams.get('violationType'),
-    //   (resp) => {
-    //     setTotalPage(resp.data);
-    //   },
-    //   (error) => {
-    //     alert('잠시 후 다시 시도해주세요.');
-    //   },
-    // );
-    // getCrackList(
-    //   searchParams.get('violationType'),
-    //   Number(searchParams.get('pageNo')),
-    //   (resp) => {
-    //     setData(resp.data);
-    //   },
-    //   (error) => {
-    //     alert('잠시 후 다시 시도해주세요.');
-    //   },
-    // );
   }, [searchParams]);
 
   const handleClickIcon = (mode) => {
@@ -178,32 +154,6 @@ const CrackDownList = () => {
     setPageNo(pageNo);
     setSearchParams({ violationType, pageNo });
   };
-
-  // useEffect(() => {
-  //   if (!render) {
-  //     setRender(true);
-  //     return;
-  //   }
-  //   getCrackTotalCount(
-  //     violationType,
-  //     (resp) => {
-  //       setTotalPage(resp.data);
-  //     },
-  //     (error) => {
-  //       alert('잠시 후 다시 시도해주세요.');
-  //     },
-  //   );
-  //   getCrackList(
-  //     violationType,
-  //     pageNo,
-  //     (resp) => {
-  //       setData(resp.data);
-  //     },
-  //     (error) => {
-  //       alert('잠시 후 다시 시도해주세요.');
-  //     },
-  //   );
-  // }, [violationType, pageNo]);
 
   return (
     <s.Container>
@@ -244,15 +194,14 @@ const CrackDownList = () => {
         </s.Table>
       </s.TableArea>
       <s.pageArea>
-        {/* <PaginationTest currentPage={pageNo} totalPosts={totalPage} postsPerPage={1} onPageChange={handleClickPage} /> */}
         <Pagination
-          activePage={Number(pageNo)} // 현재 페이지
-          itemsCountPerPage={10} // 한 페이지랑 보여줄 아이템 갯수
-          totalItemsCount={Number(totalPage)} // 총 아이템 갯수
-          pageRangeDisplayed={10} // paginator의 페이지 범위
-          prevPageText={'‹'} // "이전"을 나타낼 텍스트
-          nextPageText={'›'} // "다음"을 나타낼 텍스트
-          onChange={handleClickPage} // 페이지 변경을 핸들링하는 함수
+          activePage={Number(pageNo)}
+          itemsCountPerPage={10}
+          totalItemsCount={Number(totalPage)}
+          pageRangeDisplayed={10}
+          prevPageText={'‹'}
+          nextPageText={'›'}
+          onChange={handleClickPage}
         />
       </s.pageArea>
     </s.Container>
