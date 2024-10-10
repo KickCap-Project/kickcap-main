@@ -1,11 +1,10 @@
 import asyncio
-from aiohttp import web, WSMsgType, ClientSession, FormData  # Added FormData import
+from aiohttp import web, WSMsgType, ClientSession, FormData  # FormData 임포트 추가
 import cv2
 import numpy as np
 import os
 from dotenv import load_dotenv
 from collections import defaultdict
-from queue import Queue
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
@@ -85,27 +84,31 @@ async def websocket_handler(request):
                         data_size = len(msg.data)
                         print(f"Received data size: {data_size} bytes")
 
-                        frame_data = msg.data
-
-                        # 큐가 가득 찼을 경우 가장 오래된 데이터를 제거
-                        queue = image_queues[camera_idx]
-                        if queue.full():
-                            print(f"Queue for camera_idx {camera_idx} is full. Discarding oldest frame.")
-                            await queue.get()
-                            queue.task_done()
-
-                        # 큐에 camera_idx와 frame_data를 함께 저장
-                        await queue.put({'camera_idx': camera_idx, 'frame': frame_data})
-
-                        # 넘파이 배열로 변환
+                        # msg.data를 넘파이 배열로 변환
                         nparr = np.frombuffer(msg.data, np.uint8)
                         # 이미지를 디코딩
                         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
                         if image is not None:
-                            # 이미지를 메모리 버퍼로 인코딩 (JPEG 포맷으로 인코딩)
+                            # 이미지를 640x360 크기로 리사이즈
+                            resized_image = cv2.resize(image, (640, 360))
+                            # 리사이즈된 이미지를 JPEG로 인코딩
+                            _, resized_image_encoded = cv2.imencode('.jpg', resized_image)
+                            # 인코딩된 이미지를 바이트로 변환
+                            frame_data = resized_image_encoded.tobytes()
+
+                            # 큐가 가득 찼을 경우 가장 오래된 데이터를 제거
+                            queue = image_queues[camera_idx]
+                            if queue.full():
+                                print(f"Queue for camera_idx {camera_idx} is full. Discarding oldest frame.")
+                                await queue.get()
+                                queue.task_done()
+
+                            # 큐에 camera_idx와 리사이즈된 frame_data를 함께 저장
+                            await queue.put({'camera_idx': camera_idx, 'frame': frame_data})
+
+                            # 원본 이미지를 JPEG로 인코딩하여 API 엔드포인트로 전송
                             _, image_encoded = cv2.imencode('.jpg', image)
-                            # FastAPI 엔드포인트로 이미지 전송
                             form = FormData()
                             form.add_field(
                                 'image_file',
@@ -118,7 +121,8 @@ async def websocket_handler(request):
                             async with session.post(API_ENDPOINT, data=form) as resp:
                                 if resp.status != 200:
                                     print(f"Error from FastAPI endpoint: {resp.status}")
-
+                        else:
+                            print("Failed to decode image")
                     elif msg.type == WSMsgType.ERROR:
                         print(f"Camera connection closed with exception {ws.exception()}")
             except Exception as e:
