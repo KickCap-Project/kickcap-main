@@ -100,7 +100,9 @@ const CrackDownList = () => {
     queryFn: () => {
       return getCrackTotalCount(searchParams.get('violationType'));
     },
-    enabled: false,
+    // enabled: false,
+    cacheTime: 0, // 캐시 비활성화
+    staleTime: 0, // 데이터 신선도 설정
   });
 
   if (totalPageError) {
@@ -116,7 +118,9 @@ const CrackDownList = () => {
     queryFn: () => {
       return getCrackList(searchParams.get('violationType'), searchParams.get('pageNo'));
     },
-    enabled: false,
+    // enabled: false,
+    cacheTime: 0, // 캐시 비활성화
+    staleTime: 0, // 데이터 신선도 설정
   });
 
   if (crackDataError) {

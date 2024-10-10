@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { basicTheme } from './styles/theme';
 import GlobalStyle from './styles/global-styles';
@@ -40,82 +40,71 @@ import SplashPage from './pages/SplashPage';
 import EmergencyPage from './pages/EmergencyFramePage';
 import BasicPage from './pages/BasicPage';
 import ScrollToTop from './components/Common/ScrollToTop';
-import AppInstallPage from './pages/AppInstallPage';
 
 function App() {
-  const [isStandalone, setIsStandalone] = useState(false);
-  useEffect(() => {
-    setIsStandalone(window.matchMedia('(display-mode: standalone)').matches);
-  }, []);
   return (
     <ThemeProvider theme={basicTheme}>
       <GlobalStyle />
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          {isStandalone ? (
-            <>
-              <Route
-                element={
-                  <ResponsiveWrapper>
-                    <PublicRoute />
-                  </ResponsiveWrapper>
-                }
-              >
-                <Route path="/" element={<BasicPage />}>
-                  <Route index element={<SplashPage />} />
-                  <Route path="/login" element={<LoginPage />} />
-                </Route>
+          <Route
+            element={
+              <ResponsiveWrapper>
+                <PublicRoute />
+              </ResponsiveWrapper>
+            }
+          >
+            <Route path="/" element={<BasicPage />}>
+              <Route index element={<SplashPage />} />
+              <Route path="/login" element={<LoginPage />} />
+            </Route>
+          </Route>
+          <Route
+            element={
+              <ResponsiveWrapper>
+                <PrivateRoute />
+              </ResponsiveWrapper>
+            }
+          >
+            <Route path="/" element={<EmergencyPage />}>
+              <Route index element={<Navigate replace to="/board" />} />
+              <Route path="/board" element={<PoliceBoardPage />}>
+                <Route index element={<AllMap />} />
+                <Route path="seoul" element={<Seoul />} />
+                <Route path="incheon" element={<Incheon />} />
+                <Route path="sejong" element={<Sejong />} />
+                <Route path="daejeon" element={<Daejeon />} />
+                <Route path="gwangju" element={<Gwangju />} />
+                <Route path="daegu" element={<Daegu />} />
+                <Route path="ulsan" element={<Ulsan />} />
+                <Route path="busan" element={<Busan />} />
+                <Route path="gyeonggi" element={<Gyeonggi />} />
+                <Route path="chungnam" element={<Chungnam />} />
+                <Route path="chungbuk" element={<Chungbuk />} />
+                <Route path="jeonbuk" element={<Jeonbuk />} />
+                <Route path="jeonnam" element={<Jeonnam />} />
+                <Route path="gangwon" element={<Gangwon />} />
+                <Route path="gyeongbuk" element={<Gyeongbuk />} />
+                <Route path="gyeongnam" element={<Gyeongnam />} />
+                <Route path="jeju" element={<Jeju />} />
+                <Route path=":location/map" element={<CameraMap />} />
               </Route>
-              <Route
-                element={
-                  <ResponsiveWrapper>
-                    <PrivateRoute />
-                  </ResponsiveWrapper>
-                }
-              >
-                <Route path="/" element={<EmergencyPage />}>
-                  <Route index element={<Navigate replace to="/board" />} />
-                  <Route path="/board" element={<PoliceBoardPage />}>
-                    <Route index element={<AllMap />} />
-                    <Route path="seoul" element={<Seoul />} />
-                    <Route path="incheon" element={<Incheon />} />
-                    <Route path="sejong" element={<Sejong />} />
-                    <Route path="daejeon" element={<Daejeon />} />
-                    <Route path="gwangju" element={<Gwangju />} />
-                    <Route path="daegu" element={<Daegu />} />
-                    <Route path="ulsan" element={<Ulsan />} />
-                    <Route path="busan" element={<Busan />} />
-                    <Route path="gyeonggi" element={<Gyeonggi />} />
-                    <Route path="chungnam" element={<Chungnam />} />
-                    <Route path="chungbuk" element={<Chungbuk />} />
-                    <Route path="jeonbuk" element={<Jeonbuk />} />
-                    <Route path="jeonnam" element={<Jeonnam />} />
-                    <Route path="gangwon" element={<Gangwon />} />
-                    <Route path="gyeongbuk" element={<Gyeongbuk />} />
-                    <Route path="gyeongnam" element={<Gyeongnam />} />
-                    <Route path="jeju" element={<Jeju />} />
-                    <Route path=":location/map" element={<CameraMap />} />
-                  </Route>
-                  <Route path="/crackdown" element={<CrackDownPage />}>
-                    <Route index element={<CrackDownList />} />
-                    <Route path="read" element={<CrackDownDetail />} />
-                  </Route>
-                  <Route path="/report" element={<ReportPage />}>
-                    <Route index element={<ReportList />} />
-                    <Route path="read" element={<ReportDetail />} />
-                  </Route>
-                  <Route path="/complaint" element={<ComplaintPage />}>
-                    <Route index element={<ComplaintList />} />
-                    <Route path="read" element={<ComplaintDetail />} />
-                  </Route>
-                </Route>
+              <Route path="/crackdown" element={<CrackDownPage />}>
+                <Route index element={<CrackDownList />} />
+                <Route path="read" element={<CrackDownDetail />} />
               </Route>
-              <Route path="*" element={<ErrorPage />} />
-            </>
-          ) : (
-            <Route path="*" element={<AppInstallPage />} />
-          )}
+              <Route path="/report" element={<ReportPage />}>
+                <Route index element={<ReportList />} />
+                <Route path="read" element={<ReportDetail />} />
+              </Route>
+              <Route path="/complaint" element={<ComplaintPage />}>
+                <Route index element={<ComplaintList />} />
+                <Route path="read" element={<ComplaintDetail />} />
+              </Route>
+            </Route>
+          </Route>
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
