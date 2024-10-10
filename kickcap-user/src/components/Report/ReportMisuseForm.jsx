@@ -19,6 +19,8 @@ import { selectIsMap, modalActions } from '../../store/modal';
 import { selectLatitude, selectLongitude, selectAddress, selectCode } from '../../store/location';
 
 import { convertExifToISO } from '../../lib/data/ConvertTime';
+import moment from 'moment/moment';
+import 'moment/locale/ko';
 
 const s = {
   Form: styled.form`
@@ -109,7 +111,7 @@ const ReportMisuseForm = () => {
 
   const [description, setDescription] = useState('');
   const [kickboardNumber, setKickboardNumber] = useState('');
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState('');
 
   const [typeRequest, setTypeRequest] = useState(null);
 
@@ -173,8 +175,8 @@ const ReportMisuseForm = () => {
             const allMetaData = EXIF.getAllTags(this);
             // setDate(allMetaData.DateTimeOriginal || '정보 없음');
 
-            const convertDate = convertExifToISO(allMetaData.DateTimeOriginal);
-            setDate(convertDate || '정보 없음');
+            const convertDate = convertExifToISO(allMetaData.DateTimeOriginal || '');
+            setDate(convertDate ? convertDate : '정보 없음');
           });
         };
       };
@@ -308,7 +310,7 @@ const ReportMisuseForm = () => {
               size={'12px'}
               InputColor="AreaColor"
               placeholder={'사진 첨부 시 정보가 입력됩니다.'}
-              value={date}
+              value={date === '' ? '' : date !== '정보 없음' ? moment(date).format('YYYY.MM.DD A hh:MM') : '정보 없음'}
             />
             <s.InputArea height={'10px'} />
             <s.LocationArea onClick={() => handleOpenMapModal(true)}>
