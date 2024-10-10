@@ -1,5 +1,5 @@
 import asyncio
-from aiohttp import web, WSMsgType, ClientSession, FormData
+from aiohttp import web, WSMsgType, ClientSession, FormData, WebSocketError  # WebSocketError 추가
 import cv2
 import numpy as np
 import os
@@ -32,7 +32,7 @@ async def client_send_loop(ws, camera_idx):
         while True:
             frame_data = await ws.client_queue.get()
             await ws.send_bytes(frame_data)
-    except (asyncio.CancelledError, web.WebSocketError):
+    except (asyncio.CancelledError, WebSocketError):  # 수정된 부분
         pass
     except Exception as e:
         print(f"Error in client_send_loop for camera_idx {camera_idx}: {e}")
