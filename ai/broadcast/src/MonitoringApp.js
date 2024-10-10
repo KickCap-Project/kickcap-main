@@ -4,7 +4,7 @@ const MonitoringApp = () => {
     const [annotatedImage, setAnnotatedImage] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
     const socketRef = useRef(null);
-    const cameraIdx = 2;
+    const cameraIdx = 1;
     const reconnectTimeoutRef = useRef(null);
 
     const connectWebSocket = () => {
