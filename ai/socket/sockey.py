@@ -1,5 +1,5 @@
 import asyncio
-from aiohttp import web, WSMsgType, ClientSession, FormData  # FormData 임포트 추가
+from aiohttp import web, WSMsgType, ClientSession, FormData
 import cv2
 import numpy as np
 import os
@@ -18,8 +18,20 @@ connected_clients = defaultdict(set)  # 각 camera_idx에 연결된 클라이언
 connected_cameras = {}  # 연결된 카메라들: {camera_idx: websocket}
 last_frames = {}  # 각 camera_idx의 마지막 프레임 저장
 
+# 클라이언트에게 프레임을 전송하는 개별 태스크
+async def client_send_loop(ws, camera_idx):
+    try:
+        while True:
+            frame_data = await ws.client_queue.get()
+            await ws.send_bytes(frame_data)
+    except asyncio.CancelledError:
+        pass
+    except Exception as e:
+        print(f"Error in client_send_loop for camera_idx {camera_idx}: {e}")
+    finally:
+        ws.client_queue = None
 
-# 큐에서 이미지를 가져와 해당 클라이언트들에게 브로드캐스트하는 함수
+# 큐에서 이미지를 가져와 각 클라이언트의 큐에 분배하는 함수
 async def broadcast_frames():
     while True:
         for camera_idx in list(image_queues.keys()):
@@ -29,7 +41,6 @@ async def broadcast_frames():
 
             if not queue.empty():
                 print(f"Queue size for camera_idx {camera_idx}: {queue.qsize()}")
-                # 카메라 ID와 이미지를 함께 저장했으므로 (camera_idx, frame) 형식으로 가져옴
                 frame_info = await queue.get()
                 frame_camera_idx, frame_data = frame_info['camera_idx'], frame_info['frame']
                 last_frames[camera_idx] = frame_data  # 마지막 프레임 저장
@@ -43,17 +54,22 @@ async def broadcast_frames():
                 if clients:
                     for ws in clients.copy():
                         try:
-                            # 클라이언트의 camera_idx와 프레임의 camera_idx가 같을 때만 전송
                             if camera_idx == frame_camera_idx:
-                                await ws.send_bytes(frame_data)
+                                # 클라이언트의 큐에 프레임 추가
+                                if ws.client_queue and not ws.client_queue.full():
+                                    await ws.client_queue.put(frame_data)
+                                else:
+                                    # 큐가 가득 찼을 경우 가장 오래된 프레임 제거
+                                    if ws.client_queue:
+                                        ws.client_queue.get_nowait()
+                                        await ws.client_queue.put(frame_data)
                         except Exception as e:
-                            print(f"Error broadcasting to client: {e}")
+                            print(f"Error distributing frame to client: {e}")
                             connected_clients[camera_idx].remove(ws)
                 else:
                     print(f"No connected clients for camera_idx {camera_idx}, but frame exists.")
-            await asyncio.sleep(0.1)
-        await asyncio.sleep(0.1)
-
+            await asyncio.sleep(0.01)
+        await asyncio.sleep(0.01)
 
 # 카메라와 클라이언트 모두를 처리하는 WebSocket 엔드포인트
 async def websocket_handler(request):
@@ -90,8 +106,8 @@ async def websocket_handler(request):
                         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
                         if image is not None:
-                            # 이미지를 640x360 크기로 리사이즈
-                            resized_image = cv2.resize(image, (640, 360))
+                            # 이미지를 320x180 크기로 리사이즈
+                            resized_image = cv2.resize(image, (320, 180))
                             # 리사이즈된 이미지를 JPEG로 인코딩
                             _, resized_image_encoded = cv2.imencode('.jpg', resized_image)
                             # 인코딩된 이미지를 바이트로 변환
@@ -132,6 +148,8 @@ async def websocket_handler(request):
                 print(f"Camera disconnected with camera_idx: {camera_idx}")
     elif role == 'client':
         connected_clients[camera_idx].add(ws)
+        ws.client_queue = asyncio.Queue(maxsize=2)  # 클라이언트 큐 생성
+        client_task = asyncio.create_task(client_send_loop(ws, camera_idx))
         try:
             async for msg in ws:
                 # 서버는 클라이언트로부터의 메시지를 처리하지 않음
@@ -140,6 +158,7 @@ async def websocket_handler(request):
             print(f"Client WebSocket error: {e}")
         finally:
             connected_clients[camera_idx].remove(ws)
+            client_task.cancel()
             print(f"Client disconnected with camera_idx: {camera_idx}")
     else:
         await ws.close(message='Invalid role')
@@ -147,15 +166,12 @@ async def websocket_handler(request):
 
     return ws
 
-
 app = web.Application()
 app.router.add_get('/video', websocket_handler)
-
 
 # 백그라운드에서 프레임을 처리하는 태스크 시작
 async def start_background_tasks(app):
     app['broadcast_task'] = asyncio.create_task(broadcast_frames())
-
 
 app.on_startup.append(start_background_tasks)
 
