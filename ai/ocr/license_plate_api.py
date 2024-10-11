@@ -224,7 +224,7 @@ async def insert_crackdown(request: GetResultRequests):
 
         # 킥보드를 이용한 사람을 업체를 통해 찾음
         select_query = '''
-            SELECT name
+            SELECT name, phone
             FROM gcooter
             WHERE %s BETWEEN start_time AND end_time
             AND kickboard_number = %s;
