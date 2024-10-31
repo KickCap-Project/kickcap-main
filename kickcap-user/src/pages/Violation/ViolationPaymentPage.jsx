@@ -60,7 +60,7 @@ const ViolationPaymentPage = () => {
       pg: 'nice', // PG사
       pay_method: 'card', // 결제수단
       merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
-      amount: 100, // 결제금액
+      amount: pay, // 결제금액
       name: '킥보드 범칙금', // 상품명
       buyer_name: name, // 구매자 이름
       m_redirect_url: `https://www.bardisue.store/violation/payment/success/${id}`,
@@ -74,18 +74,6 @@ const ViolationPaymentPage = () => {
 
     if (success) {
       navigate(`/violation/payment/success/${id}`);
-      // await postBillPay(
-      //   id,
-      //   0,
-      //   (resp) => {
-      //     alert('정상 납부되었습니다.');
-      //     navigate('/violation/payment/success');
-      //   },
-      //   (error) => {
-      //     alert('납부 중 오류가 발생했습니다. 관할 경찰서에 문의하시기 바랍니다.');
-      //     navigate('/main');
-      //   },
-      // );
     } else {
       alert(`납부가 취소되었습니다. 잠시 후 다시 시도해주세요.`);
       navigate(-1);

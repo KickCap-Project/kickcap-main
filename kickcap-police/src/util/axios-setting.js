@@ -41,7 +41,6 @@ export const localAxios = () => {
       // 401 에러 (액세스 토큰 만료 등)
       if (error.response && error.response.status === 401) {
         const refreshToken = getRefreshToken(); // 스토리지에서 리프레시 토큰 가져오기
-        console.log('요청');
         if (refreshToken) {
           try {
             const tokenRefreshResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/tokens/refresh`, {
@@ -58,7 +57,6 @@ export const localAxios = () => {
             // 리프레시 토큰이 만료되었거나 오류가 발생한 경우 로그아웃 처리
             removeTokens(); // 토큰 제거
             window.location.href = '/login'; // 로그인 페이지로 리다이렉트
-            console.log('이건가?');
             return Promise.reject(refreshError);
           }
         } else {
