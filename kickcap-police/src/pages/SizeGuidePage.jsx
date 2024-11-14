@@ -5,7 +5,9 @@ import Text from '../components/Common/Text';
 import Image from './../components/Common/Image';
 const s = {
   Container: styled.section`
-    height: 100%;
+    height: 100vh;
+    position: relative;
+    margin: 0 auto;
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
   `,

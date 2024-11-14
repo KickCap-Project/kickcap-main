@@ -137,7 +137,9 @@ const ReportList = () => {
         ? getReportEndTotalCount(searchParams.get('violationType'))
         : getReportTotalCount(searchParams.get('violationType'));
     },
-    enabled: false,
+    // enabled: false,
+    cacheTime: 0, // 캐시 비활성화
+    staleTime: 0, // 데이터 신선도 설정
   });
 
   const {
@@ -151,7 +153,9 @@ const ReportList = () => {
         ? getReportEndList(searchParams.get('violationType'), searchParams.get('pageNo'))
         : getReportList(searchParams.get('violationType'), searchParams.get('pageNo'));
     },
-    enabled: false,
+    // enabled: false,
+    cacheTime: 0, // 캐시 비활성화
+    staleTime: 0, // 데이터 신선도 설정
   });
 
   if (totalPageError || reportDataError) {
